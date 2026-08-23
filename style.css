@@ -10,29 +10,6 @@ body {
   overflow-x: hidden;
 }
 
-.site-header {
-  position: absolute;
-  z-index: 5;
-  top: 0;
-  left: 0;
-  right: 320px;
-  text-align: center;
-  padding: 24px 16px 8px;
-  pointer-events: none;
-}
-
-.site-header h1 {
-  margin: 0 0 4px;
-  font-size: 28px;
-  letter-spacing: 1px;
-}
-
-.site-header p {
-  margin: 0;
-  opacity: 0.6;
-  font-size: 14px;
-}
-
 #globeViz {
   width: 100vw;
   height: 100vh;
@@ -173,7 +150,10 @@ body {
 
 .modal {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 320px;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
@@ -291,7 +271,7 @@ body {
     height: auto;
   }
 
-  .site-header {
+  .modal {
     right: 0;
   }
 

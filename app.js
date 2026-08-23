@@ -9,6 +9,7 @@ const globe = Globe()(document.getElementById('globeViz'))
     const el = document.createElement('div');
     el.className = 'photo-pin';
     el.style.backgroundImage = `url(${trip.cover})`;
+    el.style.pointerEvents = 'auto';
     el.title = `${trip.city}, ${trip.country}`;
     el.onclick = () => openTrip(trip);
     return el;
