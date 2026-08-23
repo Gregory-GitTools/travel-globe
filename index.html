@@ -10,10 +10,21 @@
 
 <header class="site-header">
   <h1>Мои путешествия</h1>
-  <p>Кликните на фото на глобусе, чтобы открыть заметку о поездке</p>
+  <p>Кликните на фото на глобусе, точку в календаре или альбом справа</p>
 </header>
 
 <div id="globeViz"></div>
+
+<aside class="sidebar">
+  <section class="sidebar-section" id="calendarSection">
+    <h2>Календарь поездок</h2>
+    <div id="calendar" class="calendar"></div>
+  </section>
+  <section class="sidebar-section" id="albumsSection">
+    <h2>Альбомы</h2>
+    <div id="albums" class="albums"></div>
+  </section>
+</aside>
 
 <div id="modal" class="modal hidden">
   <div class="modal-content">
@@ -23,6 +34,12 @@
     <p id="modalNotes"></p>
     <div id="modalGallery" class="gallery"></div>
   </div>
+</div>
+
+<div id="lightbox" class="lightbox hidden">
+  <button id="lightboxClose" class="lightbox-close">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+  <p id="lightboxCaption" class="lightbox-caption"></p>
 </div>
 
 <script src="//unpkg.com/globe.gl"></script>

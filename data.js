@@ -1,65 +1,53 @@
 // Список поездок. Чтобы добавить свою поездку — скопируйте один блок { ... }
 // и заполните своими данными. lat/lng можно найти, кликнув правой кнопкой
 // на точке на Google Maps.
+//
+// startDate / endDate — формат "ГГГГ-ММ-ДД", используются для календаря справа.
+// notes — описание поездки, может быть любой длины.
+// photos — список фото; caption необязателен (можно убрать строку или оставить "").
 const trips = [
   {
-    city: "Париж",
-    country: "Франция",
-    lat: 48.8566,
-    lng: 2.3522,
-    date: "Май 2024",
-    title: "Весна в Париже",
-    notes: "Прогулка вдоль Сены, круассаны по утрам и вид на город с Монмартра.",
-    cover: "https://picsum.photos/seed/paris/200/200",
+    city: "Стокгольм",
+    country: "Швеция",
+    lat: 59.3293,
+    lng: 18.0686,
+    startDate: "2025-10-16",
+    endDate: "2025-10-27",
+    dateLabel: "16–27 октября 2025",
+    title: "Стокгольм — Палермо",
+    notes: "Первая остановка большого путешествия: осенний Стокгольм, велопарковки у станций и жёлтые городские автобусы.",
+    cover: "photos/stockholm/03.jpg",
     photos: [
-      "https://picsum.photos/seed/paris1/400/300",
-      "https://picsum.photos/seed/paris2/400/300",
-      "https://picsum.photos/seed/paris3/400/300"
+      { url: "photos/stockholm/01.jpg", caption: "" },
+      { url: "photos/stockholm/02.jpg", caption: "" },
+      { url: "photos/stockholm/03.jpg", caption: "Велопарковка у станции" },
+      { url: "photos/stockholm/04.jpg", caption: "" },
+      { url: "photos/stockholm/05.jpg", caption: "" },
+      { url: "photos/stockholm/06.jpg", caption: "" },
+      { url: "photos/stockholm/07.jpg", caption: "" },
+      { url: "photos/stockholm/08.jpg", caption: "" },
+      { url: "photos/stockholm/09.jpg", caption: "" },
+      { url: "photos/stockholm/10.jpg", caption: "" },
+      { url: "photos/stockholm/11.jpg", caption: "" }
     ]
   },
   {
-    city: "Токио",
-    country: "Япония",
-    lat: 35.6762,
-    lng: 139.6503,
-    date: "Октябрь 2023",
-    title: "Осень в Токио",
-    notes: "Неон Синдзюку, тишина храма Мэйдзи и лучший рамен в жизни.",
-    cover: "https://picsum.photos/seed/tokyo/200/200",
+    city: "Фуншал",
+    country: "Мадейра, Португалия",
+    lat: 32.6669,
+    lng: -16.9241,
+    startDate: "2026-01-04",
+    endDate: "2026-01-11",
+    dateLabel: "4–11 января 2026",
+    title: "Мадейра",
+    notes: "Серпантины над океаном и вечерний вид на Фуншал с высоты.",
+    cover: "photos/madeira/05.jpg",
     photos: [
-      "https://picsum.photos/seed/tokyo1/400/300",
-      "https://picsum.photos/seed/tokyo2/400/300",
-      "https://picsum.photos/seed/tokyo3/400/300"
-    ]
-  },
-  {
-    city: "Кейптаун",
-    country: "ЮАР",
-    lat: -33.9249,
-    lng: 18.4241,
-    date: "Февраль 2023",
-    title: "На краю Африки",
-    notes: "Подъём на Столовую гору, пингвины на пляже Боулдерс и закат на мысе Доброй Надежды.",
-    cover: "https://picsum.photos/seed/capetown/200/200",
-    photos: [
-      "https://picsum.photos/seed/capetown1/400/300",
-      "https://picsum.photos/seed/capetown2/400/300",
-      "https://picsum.photos/seed/capetown3/400/300"
-    ]
-  },
-  {
-    city: "Рио-де-Жанейро",
-    country: "Бразилия",
-    lat: -22.9068,
-    lng: -43.1729,
-    date: "Январь 2023",
-    title: "Карнавал и пляжи",
-    notes: "Копакабана на рассвете, статуя Христа-Искупителя в облаках и самба до утра.",
-    cover: "https://picsum.photos/seed/rio/200/200",
-    photos: [
-      "https://picsum.photos/seed/rio1/400/300",
-      "https://picsum.photos/seed/rio2/400/300",
-      "https://picsum.photos/seed/rio3/400/300"
+      { url: "photos/madeira/01.jpg", caption: "" },
+      { url: "photos/madeira/02.jpg", caption: "" },
+      { url: "photos/madeira/03.jpg", caption: "" },
+      { url: "photos/madeira/04.jpg", caption: "" },
+      { url: "photos/madeira/05.jpg", caption: "Ночной серпантин над Фуншалом" }
     ]
   }
 ];
