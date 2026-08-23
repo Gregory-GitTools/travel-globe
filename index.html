@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мои путешествия</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Мои путешествия</h1>
+  <p>Кликните на фото на глобусе, чтобы открыть заметку о поездке</p>
+</header>
+
+<div id="globeViz"></div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <button id="modalClose" class="modal-close">&times;</button>
+    <h2 id="modalTitle"></h2>
+    <p id="modalMeta" class="modal-meta"></p>
+    <p id="modalNotes"></p>
+    <div id="modalGallery" class="gallery"></div>
+  </div>
+</div>
+
+<script src="//unpkg.com/globe.gl"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
