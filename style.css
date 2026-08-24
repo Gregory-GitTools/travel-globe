@@ -194,6 +194,49 @@ body {
   font-size: 14px;
 }
 
+.modal-notes-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.modal-notes-row p {
+  margin: 0;
+  flex: 1;
+}
+
+.icon-button {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.gemini-button {
+  margin-top: 12px;
+  background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.gemini-button:hover {
+  filter: brightness(1.1);
+}
+
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -260,6 +303,20 @@ body {
   color: #fff;
   font-size: 32px;
   cursor: pointer;
+}
+
+.map-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.map-button:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Responsive */

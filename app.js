@@ -154,8 +154,13 @@ const modalMeta = document.getElementById('modalMeta');
 const modalNotes = document.getElementById('modalNotes');
 const modalGallery = document.getElementById('modalGallery');
 const modalClose = document.getElementById('modalClose');
+const modalSpeak = document.getElementById('modalSpeak');
+const modalGemini = document.getElementById('modalGemini');
+
+let currentTrip = null;
 
 function openTrip(trip) {
+  currentTrip = trip;
   globe.controls().autoRotate = false;
   modalTitle.textContent = trip.title;
   modalMeta.textContent = `${trip.city}, ${trip.country} — ${trip.dateLabel}`;
@@ -186,6 +191,8 @@ function openTrip(trip) {
 function closeModal() {
   modal.classList.add('hidden');
   globe.controls().autoRotate = true;
+  speechSynthesis.cancel();
+  modalSpeak.textContent = '🔊';
 }
 
 modalClose.onclick = closeModal;
@@ -193,10 +200,42 @@ modal.onclick = e => {
   if (e.target === modal) closeModal();
 };
 
+modalSpeak.onclick = () => {
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    modalSpeak.textContent = '🔊';
+    return;
+  }
+  const utterance = new SpeechSynthesisUtterance(`${currentTrip.title}. ${currentTrip.notes}`);
+  utterance.lang = 'ru-RU';
+  utterance.onend = () => { modalSpeak.textContent = '🔊'; };
+  modalSpeak.textContent = '⏸';
+  speechSynthesis.speak(utterance);
+};
+
+modalGemini.onclick = async () => {
+  const question = `Расскажи подробнее о поездке: ${currentTrip.title} (${currentTrip.city}, ${currentTrip.country}). ${currentTrip.notes}`;
+  try {
+    await navigator.clipboard.writeText(question);
+    const original = modalGemini.textContent;
+    modalGemini.textContent = 'Скопировано! Вставьте в чат Gemini';
+    setTimeout(() => { modalGemini.textContent = original; }, 3000);
+  } catch (e) {
+    // clipboard недоступен (например, при просмотре файла локально) — просто откроем Gemini
+  }
+  window.open('https://gemini.google.com/app', '_blank');
+};
+
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCaption = document.getElementById('lightboxCaption');
 const lightboxClose = document.getElementById('lightboxClose');
+const lightboxMap = document.getElementById('lightboxMap');
+
+lightboxMap.onclick = () => {
+  if (!currentTrip) return;
+  window.open(`https://www.google.com/maps?q=${currentTrip.lat},${currentTrip.lng}`, '_blank');
+};
 
 function openLightbox(url, caption) {
   lightboxImg.src = url;

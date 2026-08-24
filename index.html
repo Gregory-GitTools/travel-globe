@@ -26,7 +26,11 @@
     <button id="modalClose" class="modal-close">&times;</button>
     <h2 id="modalTitle"></h2>
     <p id="modalMeta" class="modal-meta"></p>
-    <p id="modalNotes"></p>
+    <div class="modal-notes-row">
+      <p id="modalNotes"></p>
+      <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
+    </div>
+    <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
     <div id="modalGallery" class="gallery"></div>
   </div>
 </div>
@@ -35,6 +39,7 @@
   <button id="lightboxClose" class="lightbox-close">&times;</button>
   <img id="lightboxImg" src="" alt="">
   <p id="lightboxCaption" class="lightbox-caption"></p>
+  <button id="lightboxMap" class="map-button">Показать на карте</button>
 </div>
 
 <script src="https://unpkg.com/globe.gl"></script>
