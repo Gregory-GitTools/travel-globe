@@ -235,6 +235,8 @@ const lightboxClose = document.getElementById('lightboxClose');
 const lightboxPrev = document.getElementById('lightboxPrev');
 const lightboxNext = document.getElementById('lightboxNext');
 const lightboxSlideshow = document.getElementById('lightboxSlideshow');
+const lightboxMusic = document.getElementById('lightboxMusic');
+const lightboxGemini = document.getElementById('lightboxGemini');
 const lightboxMap = document.getElementById('lightboxMap');
 
 let currentPhotoIndex = 0;
@@ -246,6 +248,66 @@ function updateLightboxPhoto() {
   lightboxCaption.textContent = photo.caption || '';
   lightboxCaption.classList.toggle('hidden', !photo.caption);
 }
+
+const bgAudio = new Audio();
+bgAudio.loop = true;
+
+function getTripMusicUrl(trip) {
+  if (!trip.music) return null;
+  if (trip.music === 'random') {
+    return musicLibrary[Math.floor(Math.random() * musicLibrary.length)];
+  }
+  return trip.music;
+}
+
+function stopMusic() {
+  bgAudio.pause();
+  lightboxMusic.innerHTML = '&#127925; Музыка';
+  lightboxMusic.classList.remove('active');
+}
+
+function toggleMusic() {
+  if (!bgAudio.paused) {
+    stopMusic();
+    return;
+  }
+  const url = getTripMusicUrl(currentTrip);
+  if (!url) return;
+  if (!bgAudio.src.endsWith(url)) {
+    bgAudio.src = url;
+  }
+  bgAudio.play();
+  lightboxMusic.innerHTML = '&#10074;&#10074; Музыка';
+  lightboxMusic.classList.add('active');
+}
+
+lightboxMusic.onclick = toggleMusic;
+
+lightboxGemini.onclick = async () => {
+  const photo = currentTrip.photos[currentPhotoIndex];
+  const photoUrl = new URL(photo.url, location.href).href;
+  const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
+  const question = `Посмотри на фото поездки "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}): ${photoUrl}.${captionPart} Расскажи, что интересного может быть на этом фото.`;
+  try {
+    await navigator.clipboard.writeText(question);
+    const original = lightboxGemini.textContent;
+    lightboxGemini.textContent = 'Скопировано! Вставьте, если запрос не подставился сам';
+    setTimeout(() => { lightboxGemini.textContent = original; }, 4000);
+  } catch (e) {
+    // clipboard недоступен (например, при просмотре файла локально) — просто откроем Gemini
+  }
+  window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
+};
+
+function toggleLightboxFullscreen() {
+  if (!document.fullscreenElement) {
+    lightbox.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+lightboxImg.addEventListener('dblclick', toggleLightboxFullscreen);
 
 function showNextPhoto() {
   currentPhotoIndex = (currentPhotoIndex + 1) % currentTrip.photos.length;
@@ -271,6 +333,9 @@ function toggleSlideshow() {
   } else {
     slideshowTimer = setInterval(showNextPhoto, 3000);
     lightboxSlideshow.innerHTML = '&#10074;&#10074; Слайдшоу';
+    if (!document.fullscreenElement) {
+      lightbox.requestFullscreen().catch(() => {});
+    }
   }
 }
 
@@ -278,12 +343,15 @@ function openLightbox(index) {
   currentPhotoIndex = index;
   updateLightboxPhoto();
   lightbox.classList.remove('hidden');
+  lightboxMusic.classList.toggle('hidden', !currentTrip.music);
 }
 
 function closeLightbox() {
   lightbox.classList.add('hidden');
   lightboxImg.src = '';
   stopSlideshow();
+  stopMusic();
+  if (document.fullscreenElement) document.exitFullscreen();
 }
 
 lightboxClose.onclick = closeLightbox;
@@ -295,6 +363,10 @@ lightboxNext.onclick = () => { showNextPhoto(); stopSlideshow(); };
 lightboxSlideshow.onclick = toggleSlideshow;
 
 document.addEventListener('keydown', e => {
+  if (!mapModal.classList.contains('hidden')) {
+    if (e.key === 'Escape') closeAlbumMap();
+    return;
+  }
   if (lightbox.classList.contains('hidden')) return;
   if (e.key === 'ArrowRight') { showNextPhoto(); stopSlideshow(); }
   if (e.key === 'ArrowLeft') { showPrevPhoto(); stopSlideshow(); }

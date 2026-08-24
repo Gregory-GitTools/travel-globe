@@ -5,6 +5,18 @@
 // startDate / endDate — формат "ГГГГ-ММ-ДД", используются для календаря справа.
 // notes — описание поездки, может быть любой длины.
 // photos — список фото; caption необязателен (можно убрать строку или оставить "").
+// music — необязательное поле поездки: имя файла из папки music/ (например
+// "music/Wildfire - Jessie Villa.mp3") или "random" — тогда во время слайдшоу
+// будет случайно выбран один из треков в musicLibrary ниже.
+const musicLibrary = [
+  "music/Bring It Together - Telecasted.mp3",
+  "music/Mourning Dove - Zachariah Hickman.mp3",
+  "music/Town This Small - Anno Domini Beats.mp3",
+  "music/Two Things - Anno Domini Beats.mp3",
+  "music/Under The Sun - Everet Almond.mp3",
+  "music/Wildfire - Jessie Villa.mp3"
+];
+
 const trips = [
   {
     city: "Стокгольм",
@@ -69,6 +81,24 @@ const trips = [
       { url: "photos/nommeveski/05.jpg", caption: "", lat: 59.503143, lng: 25.787879 },
       { url: "photos/nommeveski/06.jpg", caption: "", lat: 59.503082, lng: 25.787996 },
       { url: "photos/nommeveski/07.jpg", caption: "", lat: 59.503072, lng: 25.788657 }
+    ]
+  },
+  {
+    city: "Таллин",
+    country: "Эстония",
+    lat: 59.439051,
+    lng: 24.845401,
+    startDate: "2026-08-12",
+    endDate: "2026-08-12",
+    dateLabel: "12 августа 2026",
+    title: "Солнечное затмение",
+    notes: "Частичное солнечное затмение прошло в Эстонии вечером 12 августа 2026 года, совпав по времени с закатом солнца и пиком метеорного потока Персеиды.",
+    cover: "photos/eclipse/cover.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/eclipse/01.jpg", caption: "", lat: 59.439051, lng: 24.845401 },
+      { url: "photos/eclipse/02.jpg", caption: "", lat: 59.439051, lng: 24.845401 },
+      { url: "photos/eclipse/03.jpg", caption: "", lat: 59.439051, lng: 24.845401 }
     ]
   }
 ];
