@@ -156,6 +156,30 @@ body {
   padding: 24px 0;
 }
 
+#albums {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+#albums::-webkit-scrollbar {
+  width: 8px;
+}
+
+#albums::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+#albums::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+#albums::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 .album-card {
   display: flex;
   gap: 10px;
@@ -244,6 +268,7 @@ body {
 
 .modal-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   margin-top: 12px;

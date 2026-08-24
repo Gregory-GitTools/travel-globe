@@ -15,6 +15,7 @@
 <div id="globeViz"></div>
 
 <div class="toolbar">
+  <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
   <button id="openCalendarBtn" class="toolbar-button">📅 Календарь</button>
   <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
 </div>
@@ -27,7 +28,7 @@
       <button id="calendarPrev" class="icon-button">&#10094;</button>
       <div id="calendarMonthLabel" class="calendar-month-label"></div>
       <button id="calendarNext" class="icon-button">&#10095;</button>
-      <input type="month" id="calendarMonthPicker" class="calendar-month-picker" title="Перейти к месяцу">
+      <input type="date" id="calendarMonthPicker" class="calendar-month-picker" title="Перейти к месяцу">
     </div>
     <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
     <div id="calendarGrid" class="calendar-grid"></div>
@@ -56,6 +57,8 @@
     <div class="modal-actions">
       <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
       <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
+      <button id="modalSlideshow" class="map-button">&#9654; Слайдшоу</button>
+      <button id="modalMap" class="map-button">Показать альбом на карте</button>
     </div>
     <div id="modalGallery" class="gallery"></div>
   </div>

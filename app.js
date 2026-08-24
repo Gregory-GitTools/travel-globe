@@ -64,7 +64,7 @@ let currentCalendarMonth = tripMonths[0] || formatDateLocal(new Date()).slice(0,
 function renderCalendarMonth() {
   const [year, month] = currentCalendarMonth.split('-').map(Number);
   calendarMonthLabel.textContent = `${monthNames[month - 1]} ${year}`;
-  calendarMonthPicker.value = currentCalendarMonth;
+  calendarMonthPicker.value = `${currentCalendarMonth}-01`;
 
   calendarWeekdaysRow.innerHTML = '';
   weekdayLetters.forEach(w => {
@@ -120,7 +120,7 @@ calendarModal.onclick = e => { if (e.target === calendarModal) closeCalendarModa
 calendarPrev.onclick = () => shiftCalendarMonth(-1);
 calendarNext.onclick = () => shiftCalendarMonth(1);
 calendarMonthPicker.onchange = () => {
-  currentCalendarMonth = calendarMonthPicker.value;
+  currentCalendarMonth = calendarMonthPicker.value.slice(0, 7);
   renderCalendarMonth();
 };
 
@@ -206,7 +206,10 @@ function closeAlbumsModal() {
 document.getElementById('openAlbumsBtn').onclick = openAlbumsModal;
 albumsModalClose.onclick = closeAlbumsModal;
 albumsModal.onclick = e => { if (e.target === albumsModal) closeAlbumsModal(); };
-albumsSearchText.oninput = buildAlbums;
+albumsSearchText.oninput = () => {
+  albumsSearchDate.value = '';
+  buildAlbums();
+};
 albumsSearchDate.onchange = buildAlbums;
 albumsSearchClear.onclick = () => {
   albumsSearchText.value = '';
@@ -228,6 +231,8 @@ const modalGallery = document.getElementById('modalGallery');
 const modalClose = document.getElementById('modalClose');
 const modalSpeak = document.getElementById('modalSpeak');
 const modalGemini = document.getElementById('modalGemini');
+const modalSlideshow = document.getElementById('modalSlideshow');
+const modalMap = document.getElementById('modalMap');
 
 let currentTrip = null;
 
@@ -300,6 +305,17 @@ modalGemini.onclick = async () => {
   window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
 };
 
+modalSlideshow.onclick = () => {
+  if (!currentTrip || !currentTrip.photos.length) return;
+  openLightbox(0);
+  toggleSlideshow();
+};
+
+modalMap.onclick = () => {
+  if (!currentTrip) return;
+  openAlbumMap(currentTrip);
+};
+
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCaption = document.getElementById('lightboxCaption');
@@ -323,6 +339,13 @@ function updateLightboxPhoto() {
 
 const bgAudio = new Audio();
 bgAudio.loop = true;
+
+const toolbarMute = document.getElementById('toolbarMute');
+toolbarMute.onclick = () => {
+  bgAudio.muted = !bgAudio.muted;
+  toolbarMute.textContent = bgAudio.muted ? '🔇' : '🔊';
+  toolbarMute.title = bgAudio.muted ? 'Звук сайта выключен — нажмите, чтобы включить' : 'Звук сайта: вкл/выкл';
+};
 
 function getTripMusicUrl(trip) {
   if (!trip.music) return null;
