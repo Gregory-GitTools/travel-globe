@@ -30,8 +30,8 @@ const trips = [
     notes: "Первая остановка большого путешествия: осенний Стокгольм, велопарковки у станций и жёлтые городские автобусы.",
     cover: "photos/stockholm/03.jpg",
     photos: [
-      { url: "photos/stockholm/01.jpg", caption: "", lat: 59.639503, lng: 17.941715 },
-      { url: "photos/stockholm/02.jpg", caption: "", lat: 59.639474, lng: 17.941626 },
+      { url: "photos/stockholm/01.jpg", caption: "Radisson Blu Airport Terminal Hotel, Stockholm-Arlanda Airport", lat: 59.639503, lng: 17.941715 },
+      { url: "photos/stockholm/02.jpg", caption: "Radisson Blu Airport Terminal Hotel, Stockholm-Arlanda Airport", lat: 59.639474, lng: 17.941626 },
       { url: "photos/stockholm/03.jpg", caption: "Велопарковка у станции", lat: 59.857709, lng: 17.647157 },
       { url: "photos/stockholm/04.jpg", caption: "", lat: 59.858405, lng: 17.646198 },
       { url: "photos/stockholm/05.jpg", caption: "", lat: 59.855359, lng: 17.641467 },
