@@ -42,77 +42,129 @@ function dateRange(startStr, endStr) {
   return dates;
 }
 
-function buildCalendar() {
-  const dayToTrip = {};
-  trips.forEach((trip, tripIndex) => {
-    dateRange(trip.startDate, trip.endDate).forEach(dateStr => {
-      if (!(dateStr in dayToTrip)) dayToTrip[dateStr] = tripIndex;
-    });
+const dayToTrip = {};
+trips.forEach((trip, tripIndex) => {
+  dateRange(trip.startDate, trip.endDate).forEach(dateStr => {
+    if (!(dateStr in dayToTrip)) dayToTrip[dateStr] = tripIndex;
+  });
+});
+const tripMonths = Array.from(new Set(Object.keys(dayToTrip).map(d => d.slice(0, 7)))).sort();
+
+const calendarModal = document.getElementById('calendarModal');
+const calendarModalClose = document.getElementById('calendarModalClose');
+const calendarPrev = document.getElementById('calendarPrev');
+const calendarNext = document.getElementById('calendarNext');
+const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+const calendarMonthPicker = document.getElementById('calendarMonthPicker');
+const calendarWeekdaysRow = document.getElementById('calendarWeekdays');
+const calendarGrid = document.getElementById('calendarGrid');
+
+let currentCalendarMonth = tripMonths[0] || formatDateLocal(new Date()).slice(0, 7);
+
+function renderCalendarMonth() {
+  const [year, month] = currentCalendarMonth.split('-').map(Number);
+  calendarMonthLabel.textContent = `${monthNames[month - 1]} ${year}`;
+  calendarMonthPicker.value = currentCalendarMonth;
+
+  calendarWeekdaysRow.innerHTML = '';
+  weekdayLetters.forEach(w => {
+    const cell = document.createElement('div');
+    cell.textContent = w;
+    calendarWeekdaysRow.appendChild(cell);
   });
 
-  const months = new Set();
-  Object.keys(dayToTrip).forEach(dateStr => months.add(dateStr.slice(0, 7)));
-  const sortedMonths = Array.from(months).sort();
+  calendarGrid.innerHTML = '';
+  const firstOfMonth = new Date(year, month - 1, 1);
+  const leadingBlanks = (firstOfMonth.getDay() + 6) % 7; // Monday-first
+  for (let i = 0; i < leadingBlanks; i++) {
+    calendarGrid.appendChild(document.createElement('div'));
+  }
 
-  const container = document.getElementById('calendar');
-  container.innerHTML = '';
-
-  sortedMonths.forEach(monthKey => {
-    const [year, month] = monthKey.split('-').map(Number);
-    const block = document.createElement('div');
-    block.className = 'calendar-month';
-
-    const header = document.createElement('div');
-    header.className = 'calendar-month-header';
-    header.textContent = `${monthNames[month - 1]} ${year}`;
-    block.appendChild(header);
-
-    const weekdaysRow = document.createElement('div');
-    weekdaysRow.className = 'calendar-grid calendar-weekdays';
-    weekdayLetters.forEach(w => {
-      const cell = document.createElement('div');
-      cell.textContent = w;
-      weekdaysRow.appendChild(cell);
-    });
-    block.appendChild(weekdaysRow);
-
-    const grid = document.createElement('div');
-    grid.className = 'calendar-grid';
-
-    const firstOfMonth = new Date(year, month - 1, 1);
-    const leadingBlanks = (firstOfMonth.getDay() + 6) % 7; // Monday-first
-    for (let i = 0; i < leadingBlanks; i++) {
-      grid.appendChild(document.createElement('div'));
+  const daysInMonth = new Date(year, month, 0).getDate();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${currentCalendarMonth}-${String(day).padStart(2, '0')}`;
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day';
+    cell.textContent = day;
+    if (dateStr in dayToTrip) {
+      cell.classList.add('travel-day');
+      const trip = trips[dayToTrip[dateStr]];
+      cell.title = `${trip.city}, ${trip.country}`;
+      cell.onclick = () => {
+        closeCalendarModal();
+        focusTrip(dayToTrip[dateStr]);
+      };
     }
-
-    const daysInMonth = new Date(year, month, 0).getDate();
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${monthKey}-${String(day).padStart(2, '0')}`;
-      const cell = document.createElement('div');
-      cell.className = 'calendar-day';
-      cell.textContent = day;
-      if (dateStr in dayToTrip) {
-        cell.classList.add('travel-day');
-        const trip = trips[dayToTrip[dateStr]];
-        cell.title = `${trip.city}, ${trip.country}`;
-        cell.onclick = () => focusTrip(dayToTrip[dateStr]);
-      }
-      grid.appendChild(cell);
-    }
-
-    block.appendChild(grid);
-    container.appendChild(block);
-  });
+    calendarGrid.appendChild(cell);
+  }
 }
+
+function shiftCalendarMonth(delta) {
+  const [year, month] = currentCalendarMonth.split('-').map(Number);
+  currentCalendarMonth = formatDateLocal(new Date(year, month - 1 + delta, 1)).slice(0, 7);
+  renderCalendarMonth();
+}
+
+function openCalendarModal() {
+  renderCalendarMonth();
+  calendarModal.classList.remove('hidden');
+}
+
+function closeCalendarModal() {
+  calendarModal.classList.add('hidden');
+}
+
+document.getElementById('openCalendarBtn').onclick = openCalendarModal;
+calendarModalClose.onclick = closeCalendarModal;
+calendarModal.onclick = e => { if (e.target === calendarModal) closeCalendarModal(); };
+calendarPrev.onclick = () => shiftCalendarMonth(-1);
+calendarNext.onclick = () => shiftCalendarMonth(1);
+calendarMonthPicker.onchange = () => {
+  currentCalendarMonth = calendarMonthPicker.value;
+  renderCalendarMonth();
+};
+
+const albumsModal = document.getElementById('albumsModal');
+const albumsModalClose = document.getElementById('albumsModalClose');
+const albumsSearchText = document.getElementById('albumsSearchText');
+const albumsSearchDate = document.getElementById('albumsSearchDate');
+const albumsSearchClear = document.getElementById('albumsSearchClear');
 
 function buildAlbums() {
   const container = document.getElementById('albums');
   container.innerHTML = '';
 
-  trips.forEach((trip, tripIndex) => {
+  const textQuery = albumsSearchText.value.trim().toLowerCase();
+  const dateQuery = albumsSearchDate.value;
+
+  const filtered = trips
+    .map((trip, tripIndex) => ({ trip, tripIndex }))
+    .filter(({ trip }) => {
+      if (textQuery) {
+        const haystack = `${trip.title} ${trip.city} ${trip.country}`.toLowerCase();
+        if (!haystack.includes(textQuery)) return false;
+      }
+      if (dateQuery && !dateRange(trip.startDate, trip.endDate).includes(dateQuery)) {
+        return false;
+      }
+      return true;
+    });
+
+  if (!filtered.length) {
+    const empty = document.createElement('div');
+    empty.className = 'albums-empty';
+    empty.textContent = 'Ничего не найдено';
+    container.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(({ trip, tripIndex }) => {
     const card = document.createElement('div');
     card.className = 'album-card';
-    card.onclick = () => focusTrip(tripIndex);
+    card.onclick = () => {
+      closeAlbumsModal();
+      focusTrip(tripIndex);
+    };
 
     const thumb = document.createElement('div');
     thumb.className = 'album-thumb';
@@ -141,6 +193,26 @@ function buildAlbums() {
     container.appendChild(card);
   });
 }
+
+function openAlbumsModal() {
+  buildAlbums();
+  albumsModal.classList.remove('hidden');
+}
+
+function closeAlbumsModal() {
+  albumsModal.classList.add('hidden');
+}
+
+document.getElementById('openAlbumsBtn').onclick = openAlbumsModal;
+albumsModalClose.onclick = closeAlbumsModal;
+albumsModal.onclick = e => { if (e.target === albumsModal) closeAlbumsModal(); };
+albumsSearchText.oninput = buildAlbums;
+albumsSearchDate.onchange = buildAlbums;
+albumsSearchClear.onclick = () => {
+  albumsSearchText.value = '';
+  albumsSearchDate.value = '';
+  buildAlbums();
+};
 
 function focusTrip(tripIndex) {
   const trip = trips[tripIndex];
@@ -367,6 +439,14 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeAlbumMap();
     return;
   }
+  if (!calendarModal.classList.contains('hidden')) {
+    if (e.key === 'Escape') closeCalendarModal();
+    return;
+  }
+  if (!albumsModal.classList.contains('hidden')) {
+    if (e.key === 'Escape') closeAlbumsModal();
+    return;
+  }
   if (lightbox.classList.contains('hidden')) return;
   if (e.key === 'ArrowRight') { showNextPhoto(); stopSlideshow(); }
   if (e.key === 'ArrowLeft') { showPrevPhoto(); stopSlideshow(); }
@@ -428,6 +508,3 @@ lightboxMap.onclick = () => {
   if (!currentTrip) return;
   openAlbumMap(currentTrip);
 };
-
-buildCalendar();
-buildAlbums();

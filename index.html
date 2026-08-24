@@ -14,16 +14,38 @@
 
 <div id="globeViz"></div>
 
-<aside class="sidebar">
-  <section class="sidebar-section" id="calendarSection">
+<div class="toolbar">
+  <button id="openCalendarBtn" class="toolbar-button">📅 Календарь</button>
+  <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
+</div>
+
+<div id="calendarModal" class="modal hidden">
+  <div class="modal-content">
+    <button id="calendarModalClose" class="modal-close">&times;</button>
     <h2>Календарь поездок</h2>
-    <div id="calendar" class="calendar"></div>
-  </section>
-  <section class="sidebar-section" id="albumsSection">
+    <div class="calendar-nav">
+      <button id="calendarPrev" class="icon-button">&#10094;</button>
+      <div id="calendarMonthLabel" class="calendar-month-label"></div>
+      <button id="calendarNext" class="icon-button">&#10095;</button>
+      <input type="month" id="calendarMonthPicker" class="calendar-month-picker" title="Перейти к месяцу">
+    </div>
+    <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
+    <div id="calendarGrid" class="calendar-grid"></div>
+  </div>
+</div>
+
+<div id="albumsModal" class="modal hidden">
+  <div class="modal-content">
+    <button id="albumsModalClose" class="modal-close">&times;</button>
     <h2>Альбомы</h2>
+    <div class="albums-search">
+      <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
+      <input type="date" id="albumsSearchDate" title="Показать поездки на эту дату">
+      <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+    </div>
     <div id="albums" class="albums"></div>
-  </section>
-</aside>
+  </div>
+</div>
 
 <div id="modal" class="modal hidden">
   <div class="modal-content">
