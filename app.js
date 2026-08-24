@@ -301,6 +301,16 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeLightbox();
 });
 
+let wheelCooldown = false;
+lightbox.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (wheelCooldown) return;
+  wheelCooldown = true;
+  setTimeout(() => { wheelCooldown = false; }, 400);
+  if (e.deltaY > 0) showNextPhoto(); else showPrevPhoto();
+  stopSlideshow();
+}, { passive: false });
+
 // Карта альбома: собираем точки из GPS-координат каждого фото
 // (если у фото нет своих координат — используем общую точку поездки).
 const mapModal = document.getElementById('mapModal');
