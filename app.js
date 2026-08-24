@@ -166,14 +166,14 @@ function openTrip(trip) {
   modalMeta.textContent = `${trip.city}, ${trip.country} — ${trip.dateLabel}`;
   modalNotes.textContent = trip.notes;
   modalGallery.innerHTML = '';
-  trip.photos.forEach(photo => {
+  trip.photos.forEach((photo, index) => {
     const item = document.createElement('div');
     item.className = 'gallery-item';
 
     const img = document.createElement('img');
     img.src = photo.url;
     img.alt = photo.caption || trip.title;
-    img.onclick = () => openLightbox(photo.url, photo.caption);
+    img.onclick = () => openLightbox(index);
     item.appendChild(img);
 
     if (photo.caption) {
@@ -218,40 +218,133 @@ modalGemini.onclick = async () => {
   try {
     await navigator.clipboard.writeText(question);
     const original = modalGemini.textContent;
-    modalGemini.textContent = 'Скопировано! Вставьте в чат Gemini';
-    setTimeout(() => { modalGemini.textContent = original; }, 3000);
+    modalGemini.textContent = 'Скопировано! Вставьте, если запрос не подставился сам';
+    setTimeout(() => { modalGemini.textContent = original; }, 4000);
   } catch (e) {
     // clipboard недоступен (например, при просмотре файла локально) — просто откроем Gemini
   }
-  window.open('https://gemini.google.com/app', '_blank');
+  // Пробуем передать текст прямо в адресе — если Gemini не подхватит параметр,
+  // вопрос всё равно уже скопирован в буфер обмена (см. выше).
+  window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
 };
 
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightboxImg');
 const lightboxCaption = document.getElementById('lightboxCaption');
 const lightboxClose = document.getElementById('lightboxClose');
+const lightboxPrev = document.getElementById('lightboxPrev');
+const lightboxNext = document.getElementById('lightboxNext');
+const lightboxSlideshow = document.getElementById('lightboxSlideshow');
 const lightboxMap = document.getElementById('lightboxMap');
 
-lightboxMap.onclick = () => {
-  if (!currentTrip) return;
-  window.open(`https://www.google.com/maps?q=${currentTrip.lat},${currentTrip.lng}`, '_blank');
-};
+let currentPhotoIndex = 0;
+let slideshowTimer = null;
 
-function openLightbox(url, caption) {
-  lightboxImg.src = url;
-  lightboxCaption.textContent = caption || '';
-  lightboxCaption.classList.toggle('hidden', !caption);
+function updateLightboxPhoto() {
+  const photo = currentTrip.photos[currentPhotoIndex];
+  lightboxImg.src = photo.url;
+  lightboxCaption.textContent = photo.caption || '';
+  lightboxCaption.classList.toggle('hidden', !photo.caption);
+}
+
+function showNextPhoto() {
+  currentPhotoIndex = (currentPhotoIndex + 1) % currentTrip.photos.length;
+  updateLightboxPhoto();
+}
+
+function showPrevPhoto() {
+  currentPhotoIndex = (currentPhotoIndex - 1 + currentTrip.photos.length) % currentTrip.photos.length;
+  updateLightboxPhoto();
+}
+
+function stopSlideshow() {
+  if (slideshowTimer) {
+    clearInterval(slideshowTimer);
+    slideshowTimer = null;
+    lightboxSlideshow.innerHTML = '&#9654; Слайдшоу';
+  }
+}
+
+function toggleSlideshow() {
+  if (slideshowTimer) {
+    stopSlideshow();
+  } else {
+    slideshowTimer = setInterval(showNextPhoto, 3000);
+    lightboxSlideshow.innerHTML = '&#10074;&#10074; Слайдшоу';
+  }
+}
+
+function openLightbox(index) {
+  currentPhotoIndex = index;
+  updateLightboxPhoto();
   lightbox.classList.remove('hidden');
 }
 
 function closeLightbox() {
   lightbox.classList.add('hidden');
   lightboxImg.src = '';
+  stopSlideshow();
 }
 
 lightboxClose.onclick = closeLightbox;
 lightbox.onclick = e => {
   if (e.target === lightbox) closeLightbox();
+};
+lightboxPrev.onclick = () => { showPrevPhoto(); stopSlideshow(); };
+lightboxNext.onclick = () => { showNextPhoto(); stopSlideshow(); };
+lightboxSlideshow.onclick = toggleSlideshow;
+
+document.addEventListener('keydown', e => {
+  if (lightbox.classList.contains('hidden')) return;
+  if (e.key === 'ArrowRight') { showNextPhoto(); stopSlideshow(); }
+  if (e.key === 'ArrowLeft') { showPrevPhoto(); stopSlideshow(); }
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// Карта альбома: собираем точки из GPS-координат каждого фото
+// (если у фото нет своих координат — используем общую точку поездки).
+const mapModal = document.getElementById('mapModal');
+const mapModalClose = document.getElementById('mapModalClose');
+let albumMap = null;
+let albumMapMarkers = [];
+
+function getTripPoints(trip) {
+  const points = trip.photos
+    .filter(photo => typeof photo.lat === 'number' && typeof photo.lng === 'number')
+    .map(photo => ({ lat: photo.lat, lng: photo.lng, caption: photo.caption }));
+  return points.length ? points : [{ lat: trip.lat, lng: trip.lng, caption: trip.title }];
+}
+
+function openAlbumMap(trip) {
+  mapModal.classList.remove('hidden');
+  if (!albumMap) {
+    albumMap = L.map('albumMap');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(albumMap);
+  }
+  albumMapMarkers.forEach(marker => albumMap.removeLayer(marker));
+  const points = getTripPoints(trip);
+  albumMapMarkers = points.map(p => L.marker([p.lat, p.lng]).addTo(albumMap).bindPopup(p.caption || trip.title));
+  setTimeout(() => {
+    albumMap.invalidateSize();
+    const bounds = L.latLngBounds(points.map(p => [p.lat, p.lng]));
+    albumMap.fitBounds(bounds.pad(0.3));
+  }, 50);
+}
+
+function closeAlbumMap() {
+  mapModal.classList.add('hidden');
+}
+
+mapModalClose.onclick = closeAlbumMap;
+mapModal.onclick = e => {
+  if (e.target === mapModal) closeAlbumMap();
+};
+
+lightboxMap.onclick = () => {
+  if (!currentTrip) return;
+  openAlbumMap(currentTrip);
 };
 
 buildCalendar();

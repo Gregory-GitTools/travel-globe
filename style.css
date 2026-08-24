@@ -194,15 +194,11 @@ body {
   font-size: 14px;
 }
 
-.modal-notes-row {
+.modal-actions {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-}
-
-.modal-notes-row p {
-  margin: 0;
-  flex: 1;
+  margin-top: 12px;
 }
 
 .icon-button {
@@ -222,7 +218,6 @@ body {
 }
 
 .gemini-button {
-  margin-top: 12px;
   background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
   border: none;
   color: #fff;
@@ -319,6 +314,58 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+.lightbox-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.lightbox-prev {
+  left: 16px;
+}
+
+.lightbox-next {
+  right: 16px;
+}
+
+/* Album map */
+
+.map-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 320px;
+  bottom: 0;
+  z-index: 25;
+  background: #0b0d14;
+}
+
+.map-modal.hidden {
+  display: none;
+}
+
+.album-map {
+  width: 100%;
+  height: 100%;
+}
+
 /* Responsive */
 
 @media (max-width: 800px) {
@@ -328,7 +375,8 @@ body {
     height: auto;
   }
 
-  .modal {
+  .modal,
+  .map-modal {
     right: 0;
   }
 

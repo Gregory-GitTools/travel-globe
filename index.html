@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Мои путешествия</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,23 +27,34 @@
     <button id="modalClose" class="modal-close">&times;</button>
     <h2 id="modalTitle"></h2>
     <p id="modalMeta" class="modal-meta"></p>
-    <div class="modal-notes-row">
-      <p id="modalNotes"></p>
+    <p id="modalNotes"></p>
+    <div class="modal-actions">
       <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
+      <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
     </div>
-    <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
     <div id="modalGallery" class="gallery"></div>
   </div>
 </div>
 
 <div id="lightbox" class="lightbox hidden">
   <button id="lightboxClose" class="lightbox-close">&times;</button>
+  <button id="lightboxPrev" class="lightbox-nav lightbox-prev">&#10094;</button>
   <img id="lightboxImg" src="" alt="">
+  <button id="lightboxNext" class="lightbox-nav lightbox-next">&#10095;</button>
   <p id="lightboxCaption" class="lightbox-caption"></p>
-  <button id="lightboxMap" class="map-button">Показать на карте</button>
+  <div class="lightbox-actions">
+    <button id="lightboxSlideshow" class="map-button">&#9654; Слайдшоу</button>
+    <button id="lightboxMap" class="map-button">Показать альбом на карте</button>
+  </div>
+</div>
+
+<div id="mapModal" class="map-modal hidden">
+  <button id="mapModalClose" class="modal-close">&times;</button>
+  <div id="albumMap" class="album-map"></div>
 </div>
 
 <script src="https://unpkg.com/globe.gl"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
