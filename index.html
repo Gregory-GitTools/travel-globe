@@ -16,6 +16,7 @@
 
 <div class="toolbar">
   <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
+  <button id="goTodayBtn" class="toolbar-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
   <button id="openCalendarBtn" class="toolbar-button">📅 Календарь</button>
   <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
 </div>
@@ -24,14 +25,19 @@
   <div class="modal-content">
     <button id="calendarModalClose" class="modal-close">&times;</button>
     <h2>Календарь поездок</h2>
+    <div class="calendar-view-toggle">
+      <button id="calendarViewMonth" class="map-button active">Месяц</button>
+      <button id="calendarViewYear" class="map-button">Год целиком</button>
+    </div>
     <div class="calendar-nav">
       <button id="calendarPrev" class="icon-button">&#10094;</button>
-      <div id="calendarMonthLabel" class="calendar-month-label"></div>
+      <select id="calendarMonthSelect" class="calendar-select"></select>
+      <select id="calendarYearSelect" class="calendar-select"></select>
       <button id="calendarNext" class="icon-button">&#10095;</button>
-      <input type="date" id="calendarMonthPicker" class="calendar-month-picker" title="Перейти к месяцу">
     </div>
     <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
     <div id="calendarGrid" class="calendar-grid"></div>
+    <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
   </div>
 </div>
 

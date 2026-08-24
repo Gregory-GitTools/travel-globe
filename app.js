@@ -51,38 +51,51 @@ trips.forEach((trip, tripIndex) => {
 const tripMonths = Array.from(new Set(Object.keys(dayToTrip).map(d => d.slice(0, 7)))).sort();
 
 const calendarModal = document.getElementById('calendarModal');
+const calendarModalContent = calendarModal.querySelector('.modal-content');
 const calendarModalClose = document.getElementById('calendarModalClose');
 const calendarPrev = document.getElementById('calendarPrev');
 const calendarNext = document.getElementById('calendarNext');
-const calendarMonthLabel = document.getElementById('calendarMonthLabel');
-const calendarMonthPicker = document.getElementById('calendarMonthPicker');
+const calendarMonthSelect = document.getElementById('calendarMonthSelect');
+const calendarYearSelect = document.getElementById('calendarYearSelect');
+const calendarViewMonth = document.getElementById('calendarViewMonth');
+const calendarViewYear = document.getElementById('calendarViewYear');
 const calendarWeekdaysRow = document.getElementById('calendarWeekdays');
 const calendarGrid = document.getElementById('calendarGrid');
+const calendarYearGrid = document.getElementById('calendarYearGrid');
+
+monthNames.forEach((name, i) => {
+  const opt = document.createElement('option');
+  opt.value = String(i + 1).padStart(2, '0');
+  opt.textContent = name;
+  calendarMonthSelect.appendChild(opt);
+});
+
+const tripYears = tripMonths.map(m => Number(m.slice(0, 4)));
+const thisYear = new Date().getFullYear();
+const minCalendarYear = Math.min(thisYear, ...tripYears) - 1;
+const maxCalendarYear = Math.max(thisYear, ...tripYears) + 2;
+for (let y = minCalendarYear; y <= maxCalendarYear; y++) {
+  const opt = document.createElement('option');
+  opt.value = String(y);
+  opt.textContent = String(y);
+  calendarYearSelect.appendChild(opt);
+}
 
 let currentCalendarMonth = tripMonths[0] || formatDateLocal(new Date()).slice(0, 7);
+let calendarViewMode = 'month';
 
-function renderCalendarMonth() {
-  const [year, month] = currentCalendarMonth.split('-').map(Number);
-  calendarMonthLabel.textContent = `${monthNames[month - 1]} ${year}`;
-  calendarMonthPicker.value = `${currentCalendarMonth}-01`;
-
-  calendarWeekdaysRow.innerHTML = '';
-  weekdayLetters.forEach(w => {
-    const cell = document.createElement('div');
-    cell.textContent = w;
-    calendarWeekdaysRow.appendChild(cell);
-  });
-
-  calendarGrid.innerHTML = '';
+function fillDayGrid(container, year, month) {
+  container.innerHTML = '';
   const firstOfMonth = new Date(year, month - 1, 1);
   const leadingBlanks = (firstOfMonth.getDay() + 6) % 7; // Monday-first
   for (let i = 0; i < leadingBlanks; i++) {
-    calendarGrid.appendChild(document.createElement('div'));
+    container.appendChild(document.createElement('div'));
   }
 
   const daysInMonth = new Date(year, month, 0).getDate();
+  const monthKey = `${year}-${String(month).padStart(2, '0')}`;
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${currentCalendarMonth}-${String(day).padStart(2, '0')}`;
+    const dateStr = `${monthKey}-${String(day).padStart(2, '0')}`;
     const cell = document.createElement('div');
     cell.className = 'calendar-day';
     cell.textContent = day;
@@ -95,7 +108,65 @@ function renderCalendarMonth() {
         focusTrip(dayToTrip[dateStr]);
       };
     }
-    calendarGrid.appendChild(cell);
+    container.appendChild(cell);
+  }
+}
+
+function renderCalendarMonth() {
+  const [year, month] = currentCalendarMonth.split('-').map(Number);
+  calendarMonthSelect.value = String(month).padStart(2, '0');
+  calendarYearSelect.value = String(year);
+
+  calendarWeekdaysRow.innerHTML = '';
+  weekdayLetters.forEach(w => {
+    const cell = document.createElement('div');
+    cell.textContent = w;
+    calendarWeekdaysRow.appendChild(cell);
+  });
+
+  fillDayGrid(calendarGrid, year, month);
+}
+
+function renderCalendarYear() {
+  const year = Number(calendarYearSelect.value);
+  calendarYearGrid.innerHTML = '';
+  for (let m = 1; m <= 12; m++) {
+    const block = document.createElement('div');
+    block.className = 'calendar-year-month';
+
+    const header = document.createElement('div');
+    header.className = 'calendar-year-month-header';
+    header.textContent = monthNames[m - 1];
+    header.onclick = () => {
+      currentCalendarMonth = `${year}-${String(m).padStart(2, '0')}`;
+      setCalendarViewMode('month');
+    };
+    block.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'calendar-grid calendar-grid-compact';
+    block.appendChild(grid);
+    fillDayGrid(grid, year, m);
+
+    calendarYearGrid.appendChild(block);
+  }
+}
+
+function setCalendarViewMode(mode) {
+  calendarViewMode = mode;
+  calendarViewMonth.classList.toggle('active', mode === 'month');
+  calendarViewYear.classList.toggle('active', mode === 'year');
+  calendarMonthSelect.classList.toggle('hidden', mode === 'year');
+  calendarWeekdaysRow.classList.toggle('hidden', mode === 'year');
+  calendarGrid.classList.toggle('hidden', mode === 'year');
+  calendarYearGrid.classList.toggle('hidden', mode === 'month');
+  calendarModalContent.classList.toggle('wide', mode === 'year');
+
+  if (mode === 'month') {
+    renderCalendarMonth();
+  } else {
+    calendarYearSelect.value = currentCalendarMonth.slice(0, 4);
+    renderCalendarYear();
   }
 }
 
@@ -106,7 +177,7 @@ function shiftCalendarMonth(delta) {
 }
 
 function openCalendarModal() {
-  renderCalendarMonth();
+  setCalendarViewMode(calendarViewMode);
   calendarModal.classList.remove('hidden');
 }
 
@@ -115,14 +186,43 @@ function closeCalendarModal() {
 }
 
 document.getElementById('openCalendarBtn').onclick = openCalendarModal;
+document.getElementById('goTodayBtn').onclick = () => {
+  currentCalendarMonth = formatDateLocal(new Date()).slice(0, 7);
+  calendarViewMode = 'month';
+  openCalendarModal();
+};
 calendarModalClose.onclick = closeCalendarModal;
 calendarModal.onclick = e => { if (e.target === calendarModal) closeCalendarModal(); };
-calendarPrev.onclick = () => shiftCalendarMonth(-1);
-calendarNext.onclick = () => shiftCalendarMonth(1);
-calendarMonthPicker.onchange = () => {
-  currentCalendarMonth = calendarMonthPicker.value.slice(0, 7);
+calendarPrev.onclick = () => {
+  if (calendarViewMode === 'year') {
+    calendarYearSelect.value = String(Number(calendarYearSelect.value) - 1);
+    renderCalendarYear();
+  } else {
+    shiftCalendarMonth(-1);
+  }
+};
+calendarNext.onclick = () => {
+  if (calendarViewMode === 'year') {
+    calendarYearSelect.value = String(Number(calendarYearSelect.value) + 1);
+    renderCalendarYear();
+  } else {
+    shiftCalendarMonth(1);
+  }
+};
+calendarMonthSelect.onchange = () => {
+  currentCalendarMonth = `${calendarYearSelect.value}-${calendarMonthSelect.value}`;
   renderCalendarMonth();
 };
+calendarYearSelect.onchange = () => {
+  if (calendarViewMode === 'year') {
+    renderCalendarYear();
+  } else {
+    currentCalendarMonth = `${calendarYearSelect.value}-${calendarMonthSelect.value}`;
+    renderCalendarMonth();
+  }
+};
+calendarViewMonth.onclick = () => setCalendarViewMode('month');
+calendarViewYear.onclick = () => setCalendarViewMode('year');
 
 const albumsModal = document.getElementById('albumsModal');
 const albumsModalClose = document.getElementById('albumsModalClose');
