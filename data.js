@@ -49,5 +49,26 @@ const trips = [
       { url: "photos/madeira/04.jpg", caption: "" },
       { url: "photos/madeira/05.jpg", caption: "Ночной серпантин над Фуншалом" }
     ]
+  },
+  {
+    city: "Ныммевески",
+    country: "Эстония",
+    lat: 59.504172,
+    lng: 25.788222,
+    startDate: "2026-08-21",
+    endDate: "2026-08-21",
+    dateLabel: "21 августа 2026",
+    title: "Ныммевески",
+    notes: "Стоянка для костра на берегу Валгейыги в Лахемаа: жёлтая от болотной воды река, старые известняковые глыбы и небольшой, но эффектный водопад в глубоком каньоне.",
+    cover: "photos/nommeveski/cover.jpg",
+    photos: [
+      { url: "photos/nommeveski/01.jpg", caption: "" },
+      { url: "photos/nommeveski/02.jpg", caption: "" },
+      { url: "photos/nommeveski/03.jpg", caption: "Водопад Ныммевески" },
+      { url: "photos/nommeveski/04.jpg", caption: "" },
+      { url: "photos/nommeveski/05.jpg", caption: "" },
+      { url: "photos/nommeveski/06.jpg", caption: "" },
+      { url: "photos/nommeveski/07.jpg", caption: "" }
+    ]
   }
 ];
