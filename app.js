@@ -86,10 +86,16 @@ let calendarViewMode = 'month';
 
 function fillDayGrid(container, year, month) {
   container.innerHTML = '';
+  const blankCell = () => {
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day calendar-day-blank';
+    return cell;
+  };
+
   const firstOfMonth = new Date(year, month - 1, 1);
   const leadingBlanks = (firstOfMonth.getDay() + 6) % 7; // Monday-first
   for (let i = 0; i < leadingBlanks; i++) {
-    container.appendChild(document.createElement('div'));
+    container.appendChild(blankCell());
   }
 
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -109,6 +115,14 @@ function fillDayGrid(container, year, month) {
       };
     }
     container.appendChild(cell);
+  }
+
+  // Always pad to 6 full rows (same aspect-ratio as real day cells) so the
+  // grid height never changes between months — a jumping modal height was
+  // disorienting when re-centered vertically.
+  const totalCells = leadingBlanks + daysInMonth;
+  for (let i = totalCells; i < 42; i++) {
+    container.appendChild(blankCell());
   }
 }
 
@@ -176,6 +190,19 @@ function shiftCalendarMonth(delta) {
   renderCalendarMonth();
 }
 
+function shiftCalendarYear(delta) {
+  calendarYearSelect.value = String(Number(calendarYearSelect.value) + delta);
+  renderCalendarYear();
+}
+
+function calendarStep(delta) {
+  if (calendarViewMode === 'year') {
+    shiftCalendarYear(delta);
+  } else {
+    shiftCalendarMonth(delta);
+  }
+}
+
 function openCalendarModal() {
   setCalendarViewMode(calendarViewMode);
   calendarModal.classList.remove('hidden');
@@ -188,27 +215,12 @@ function closeCalendarModal() {
 document.getElementById('openCalendarBtn').onclick = openCalendarModal;
 document.getElementById('goTodayBtn').onclick = () => {
   currentCalendarMonth = formatDateLocal(new Date()).slice(0, 7);
-  calendarViewMode = 'month';
-  openCalendarModal();
+  setCalendarViewMode('month');
 };
 calendarModalClose.onclick = closeCalendarModal;
 calendarModal.onclick = e => { if (e.target === calendarModal) closeCalendarModal(); };
-calendarPrev.onclick = () => {
-  if (calendarViewMode === 'year') {
-    calendarYearSelect.value = String(Number(calendarYearSelect.value) - 1);
-    renderCalendarYear();
-  } else {
-    shiftCalendarMonth(-1);
-  }
-};
-calendarNext.onclick = () => {
-  if (calendarViewMode === 'year') {
-    calendarYearSelect.value = String(Number(calendarYearSelect.value) + 1);
-    renderCalendarYear();
-  } else {
-    shiftCalendarMonth(1);
-  }
-};
+calendarPrev.onclick = () => calendarStep(-1);
+calendarNext.onclick = () => calendarStep(1);
 calendarMonthSelect.onchange = () => {
   currentCalendarMonth = `${calendarYearSelect.value}-${calendarMonthSelect.value}`;
   renderCalendarMonth();
@@ -223,6 +235,18 @@ calendarYearSelect.onchange = () => {
 };
 calendarViewMonth.onclick = () => setCalendarViewMode('month');
 calendarViewYear.onclick = () => setCalendarViewMode('year');
+
+// Mouse-wheel navigation on the prev/next/select row, replacing the need to
+// click the arrows; scoped to this row (not the grid) so it doesn't block
+// native page scrolling over the tall 12-month year-view grid.
+let calendarWheelBusy = false;
+document.getElementById('calendarNav').addEventListener('wheel', e => {
+  e.preventDefault();
+  if (calendarWheelBusy) return;
+  calendarWheelBusy = true;
+  setTimeout(() => { calendarWheelBusy = false; }, 220);
+  calendarStep(e.deltaY > 0 ? 1 : -1);
+}, { passive: false });
 
 const albumsModal = document.getElementById('albumsModal');
 const albumsModalClose = document.getElementById('albumsModalClose');
@@ -242,7 +266,8 @@ function buildAlbums() {
     .filter(({ trip }) => {
       if (textQuery) {
         const haystack = `${trip.title} ${trip.city} ${trip.country}`.toLowerCase();
-        if (!haystack.includes(textQuery)) return false;
+        const words = textQuery.split(/\s+/).filter(Boolean);
+        if (!words.every(w => haystack.includes(w))) return false;
       }
       if (dateQuery && !dateRange(trip.startDate, trip.endDate).includes(dateQuery)) {
         return false;

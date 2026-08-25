@@ -89,6 +89,11 @@ body {
   text-align-last: center;
 }
 
+.calendar-select option {
+  background: #fff;
+  color: #12141c;
+}
+
 .calendar-view-toggle {
   display: flex;
   gap: 8px;
@@ -283,6 +288,11 @@ body {
 
 .modal-content.wide {
   max-width: 820px;
+}
+
+.modal-anchor-top {
+  align-items: flex-start;
+  padding-top: 40px;
 }
 
 .modal-close {

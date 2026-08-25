@@ -16,20 +16,20 @@
 
 <div class="toolbar">
   <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
-  <button id="goTodayBtn" class="toolbar-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
   <button id="openCalendarBtn" class="toolbar-button">📅 Календарь</button>
   <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
 </div>
 
-<div id="calendarModal" class="modal hidden">
+<div id="calendarModal" class="modal modal-anchor-top hidden">
   <div class="modal-content">
     <button id="calendarModalClose" class="modal-close">&times;</button>
     <h2>Календарь поездок</h2>
     <div class="calendar-view-toggle">
       <button id="calendarViewMonth" class="map-button active">Месяц</button>
       <button id="calendarViewYear" class="map-button">Год целиком</button>
+      <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
     </div>
-    <div class="calendar-nav">
+    <div id="calendarNav" class="calendar-nav">
       <button id="calendarPrev" class="icon-button">&#10094;</button>
       <select id="calendarMonthSelect" class="calendar-select"></select>
       <select id="calendarYearSelect" class="calendar-select"></select>
