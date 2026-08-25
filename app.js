@@ -588,14 +588,15 @@ function toggleMusic() {
 lightboxMusic.onclick = toggleMusic;
 
 lightboxGemini.onclick = async () => {
+  // Gemini не может сам открыть ссылку на фото сайта (не индексируется извне) —
+  // поэтому просим прикрепить скриншот вручную вместо передачи URL картинки.
   const photo = currentTrip.photos[currentPhotoIndex];
-  const photoUrl = new URL(photo.url, location.href).href;
   const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
-  const question = `Посмотри на фото поездки "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}): ${photoUrl}.${captionPart} Расскажи, что интересного может быть на этом фото.`;
+  const question = `Поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart} Прикрепляю скриншот фото — расскажи, что интересного может быть на нём.`;
   try {
     await navigator.clipboard.writeText(question);
     const original = lightboxGemini.textContent;
-    lightboxGemini.textContent = 'Скопировано! Вставьте, если запрос не подставился сам';
+    lightboxGemini.textContent = 'Скопировано! Прикрепите скриншот фото в Gemini';
     setTimeout(() => { lightboxGemini.textContent = original; }, 4000);
   } catch (e) {
     // clipboard недоступен (например, при просмотре файла локально) — просто откроем Gemini
@@ -627,7 +628,7 @@ function stopSlideshow() {
   if (slideshowTimer) {
     clearInterval(slideshowTimer);
     slideshowTimer = null;
-    lightboxSlideshow.innerHTML = '&#9654; Слайдшоу';
+    lightboxSlideshow.innerHTML = '&#127909; Слайдшоу';
   }
 }
 
@@ -636,7 +637,7 @@ function toggleSlideshow() {
     stopSlideshow();
   } else {
     slideshowTimer = setInterval(showNextPhoto, 3000);
-    lightboxSlideshow.innerHTML = '&#10074;&#10074; Слайдшоу';
+    lightboxSlideshow.innerHTML = '&#9209; Остановить';
     if (!document.fullscreenElement) {
       lightbox.requestFullscreen().catch(() => {});
     }
@@ -696,7 +697,9 @@ function openAlbumMapWindow(trip, photoIndex) {
   const tripIndex = trips.indexOf(trip);
   let url = `map.html?trip=${tripIndex}`;
   if (typeof photoIndex === 'number') url += `&photo=${photoIndex}`;
-  window.open(url, '_blank', 'width=960,height=720');
+  // Именованное окно: повторные клики обновляют уже открытую карту вместо
+  // открытия новой вкладки каждый раз.
+  window.open(url, 'travelGlobeMap', 'width=960,height=720');
 }
 
 lightboxMap.onclick = () => {
