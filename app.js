@@ -257,6 +257,8 @@ function shiftSelectedDate(delta) {
 
 document.getElementById('goTodayBtn').onclick = () => {
   setSelectedDate(todayStr);
+  albumsSearchText.value = '';
+  buildAlbums();
 };
 calendarPrev.onclick = () => shiftSelectedDate(-1);
 calendarNext.onclick = () => shiftSelectedDate(1);
