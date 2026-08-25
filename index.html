@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,68 +14,68 @@
 <div id="globeViz"></div>
 
 <div class="toolbar">
-  <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
-  <button id="openCalendarBtn" class="toolbar-button">📅 Календарь</button>
   <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
+  <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
 </div>
 
-<div id="calendarModal" class="modal modal-anchor-top hidden">
-  <div class="modal-content calendar-modal-content">
-    <button id="calendarModalClose" class="modal-close">&times;</button>
-    <div class="calendar-header">
-      <h2>Календарь поездок</h2>
-      <div class="calendar-view-toggle">
-        <button id="calendarViewMonth" class="map-button active">Месяц</button>
-        <button id="calendarViewYear" class="map-button">Год целиком</button>
-        <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
-      </div>
-      <div id="calendarNav" class="calendar-nav">
-        <button id="calendarPrev" class="icon-button">&#10094;</button>
-        <div class="calendar-dd" id="calendarMonthDD">
-          <button type="button" id="calendarMonthBtn" class="calendar-select"></button>
-          <div id="calendarMonthList" class="calendar-dd-list hidden"></div>
-        </div>
-        <div class="calendar-dd" id="calendarYearDD">
-          <button type="button" id="calendarYearBtn" class="calendar-select"></button>
-          <div id="calendarYearList" class="calendar-dd-list hidden"></div>
-        </div>
-        <button id="calendarNext" class="icon-button">&#10095;</button>
-      </div>
-    </div>
-    <div class="calendar-body">
-      <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
-      <div id="calendarGrid" class="calendar-grid"></div>
-      <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
-    </div>
-  </div>
-</div>
-
-<div id="albumsModal" class="modal hidden">
-  <div class="modal-content">
+<div id="albumsModal" class="modal modal-anchor-top hidden">
+  <div class="modal-content modal-content-split">
     <button id="albumsModalClose" class="modal-close">&times;</button>
-    <h2>Альбомы</h2>
-    <div class="albums-search">
-      <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
-      <input type="date" id="albumsSearchDate" title="Показать поездки на эту дату">
-      <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+    <div class="modal-header">
+      <h2>Альбомы</h2>
+      <div class="albums-search">
+        <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
+        <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+      </div>
+      <div id="albumsCalendar" class="albums-calendar">
+        <div id="calendarNav" class="calendar-nav">
+          <button id="calendarPrev" class="icon-button">&#10094;</button>
+          <div class="calendar-dd" id="calendarDayDD">
+            <button type="button" id="calendarDayBtn" class="calendar-select"></button>
+            <div id="calendarDayList" class="calendar-dd-list hidden"></div>
+          </div>
+          <div class="calendar-dd" id="calendarMonthDD">
+            <button type="button" id="calendarMonthBtn" class="calendar-select"></button>
+            <div id="calendarMonthList" class="calendar-dd-list hidden"></div>
+          </div>
+          <div class="calendar-dd" id="calendarYearDD">
+            <button type="button" id="calendarYearBtn" class="calendar-select"></button>
+            <div id="calendarYearList" class="calendar-dd-list hidden"></div>
+          </div>
+          <button id="calendarNext" class="icon-button">&#10095;</button>
+          <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшней дате">📍 Сегодня</button>
+          <button id="albumsCalendarToggle" class="icon-button" title="Свернуть/развернуть календарь">🔼</button>
+        </div>
+        <div id="calendarBody">
+          <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+      </div>
     </div>
-    <div id="albums" class="albums"></div>
+    <div class="modal-body">
+      <div id="albums" class="albums"></div>
+    </div>
   </div>
 </div>
 
 <div id="modal" class="modal hidden">
-  <div class="modal-content">
+  <div class="modal-content modal-content-split">
     <button id="modalClose" class="modal-close">&times;</button>
-    <h2 id="modalTitle"></h2>
-    <p id="modalMeta" class="modal-meta"></p>
-    <p id="modalNotes"></p>
-    <div class="modal-actions">
-      <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
-      <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
-      <button id="modalSlideshow" class="map-button">&#9654; Слайдшоу</button>
-      <button id="modalMap" class="map-button">Показать альбом на карте</button>
+    <div class="modal-header">
+      <h2 id="modalTitle"></h2>
+      <p id="modalNotes"></p>
+      <div class="modal-actions">
+        <button id="modalSlideshow" class="map-button">&#127909; Слайдшоу</button>
+        <button id="modalMap" class="map-button">&#128205; Карта</button>
+        <button id="modalGeminiText" class="gemini-button">💬 Gemini</button>
+        <button id="modalGeminiPhoto" class="gemini-button">📷 Gemini</button>
+        <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
+        <span id="modalMeta" class="modal-meta"></span>
+      </div>
     </div>
-    <div id="modalGallery" class="gallery"></div>
+    <div class="modal-body">
+      <div id="modalGallery" class="gallery"></div>
+    </div>
   </div>
 </div>
 
@@ -85,22 +84,18 @@
   <button id="lightboxPrev" class="lightbox-nav lightbox-prev">&#10094;</button>
   <img id="lightboxImg" src="" alt="">
   <button id="lightboxNext" class="lightbox-nav lightbox-next">&#10095;</button>
-  <p id="lightboxCaption" class="lightbox-caption"></p>
-  <div class="lightbox-actions">
-    <button id="lightboxSlideshow" class="map-button">&#9654; Слайдшоу</button>
-    <button id="lightboxMusic" class="map-button">&#127925; Музыка</button>
-    <button id="lightboxGemini" class="gemini-button">Запрос Gemini</button>
-    <button id="lightboxMap" class="map-button">Показать альбом на карте</button>
+  <div class="lightbox-overlay">
+    <p id="lightboxCaption" class="lightbox-caption"></p>
+    <div class="lightbox-actions">
+      <button id="lightboxSlideshow" class="map-button">&#127909; Слайдшоу</button>
+      <button id="lightboxMap" class="map-button">&#128205; Карта</button>
+      <button id="lightboxGeminiText" class="gemini-button">💬 Gemini</button>
+      <button id="lightboxGeminiPhoto" class="gemini-button">📷 Gemini</button>
+    </div>
   </div>
 </div>
 
-<div id="mapModal" class="map-modal hidden">
-  <button id="mapModalClose" class="modal-close">&times;</button>
-  <div id="albumMap" class="album-map"></div>
-</div>
-
 <script src="https://unpkg.com/globe.gl"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
