@@ -90,8 +90,8 @@ body {
 }
 
 .calendar-select option {
-  background: #fff;
-  color: #12141c;
+  background: #181b26;
+  color: #f0f0f0;
 }
 
 .calendar-view-toggle {

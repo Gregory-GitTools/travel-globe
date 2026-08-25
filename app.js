@@ -126,10 +126,22 @@ function fillDayGrid(container, year, month) {
   }
 }
 
+function setCalendarYearOption(year) {
+  const value = String(year);
+  if (!Array.from(calendarYearSelect.options).some(o => o.value === value)) {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = value;
+    const before = Array.from(calendarYearSelect.options).find(o => Number(o.value) > year);
+    calendarYearSelect.insertBefore(opt, before || null);
+  }
+  calendarYearSelect.value = value;
+}
+
 function renderCalendarMonth() {
   const [year, month] = currentCalendarMonth.split('-').map(Number);
   calendarMonthSelect.value = String(month).padStart(2, '0');
-  calendarYearSelect.value = String(year);
+  setCalendarYearOption(year);
 
   calendarWeekdaysRow.innerHTML = '';
   weekdayLetters.forEach(w => {
@@ -179,7 +191,7 @@ function setCalendarViewMode(mode) {
   if (mode === 'month') {
     renderCalendarMonth();
   } else {
-    calendarYearSelect.value = currentCalendarMonth.slice(0, 4);
+    setCalendarYearOption(Number(currentCalendarMonth.slice(0, 4)));
     renderCalendarYear();
   }
 }
@@ -191,7 +203,7 @@ function shiftCalendarMonth(delta) {
 }
 
 function shiftCalendarYear(delta) {
-  calendarYearSelect.value = String(Number(calendarYearSelect.value) + delta);
+  setCalendarYearOption(Number(calendarYearSelect.value) + delta);
   renderCalendarYear();
 }
 
