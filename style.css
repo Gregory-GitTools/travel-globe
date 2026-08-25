@@ -71,6 +71,10 @@ body {
   margin-top: 10px;
 }
 
+.albums-calendar.collapsed {
+  display: none;
+}
+
 .calendar-nav {
   display: flex;
   align-items: center;
@@ -154,9 +158,11 @@ body {
 
 .calendar-year-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   margin-top: 14px;
+  max-height: 320px;
+  overflow-y: auto;
 }
 
 .calendar-year-month-header {
@@ -178,8 +184,8 @@ body {
 }
 
 .calendar-grid-compact .calendar-day {
-  font-size: 8px;
-  border-radius: 2px;
+  font-size: 11px;
+  border-radius: 3px;
 }
 
 .calendar-weekdays {
@@ -210,8 +216,8 @@ body {
   background: #5c92ff;
 }
 
-.calendar-day.selected {
-  outline: 2px solid #fff;
+.calendar-day.today {
+  outline: 2px solid #ffce54;
   outline-offset: -2px;
 }
 
