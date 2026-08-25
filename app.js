@@ -242,13 +242,17 @@ function setSelectedDate(dateStr) {
 // wheel scroll so navigation never lands on an empty day.
 function shiftSelectedDate(delta) {
   if (!tripDates.length) return;
+  let target;
   if (delta > 0) {
     const next = tripDates.find(d => d > selectedDate);
-    setSelectedDate(next || tripDates[tripDates.length - 1]);
+    target = next || tripDates[tripDates.length - 1];
   } else {
     const earlier = tripDates.filter(d => d < selectedDate);
-    setSelectedDate(earlier.length ? earlier[earlier.length - 1] : tripDates[0]);
+    target = earlier.length ? earlier[earlier.length - 1] : tripDates[0];
   }
+  setSelectedDate(target);
+  albumsSearchText.value = trips[dayToTrip[target]].title;
+  buildAlbums();
 }
 
 document.getElementById('goTodayBtn').onclick = () => {
@@ -264,6 +268,7 @@ let calendarWheelBusy = false;
 document.getElementById('albumsCalendar').addEventListener('wheel', e => {
   if (e.target.closest('.calendar-dd-list')) return;
   e.preventDefault();
+  e.stopPropagation();
   if (calendarWheelBusy) return;
   calendarWheelBusy = true;
   setTimeout(() => { calendarWheelBusy = false; }, 220);
@@ -274,6 +279,7 @@ const albumsModal = document.getElementById('albumsModal');
 const albumsModalClose = document.getElementById('albumsModalClose');
 const albumsModalBody = albumsModal.querySelector('.modal-body');
 const albumsCalendarEl = document.getElementById('albumsCalendar');
+const calendarBodyEl = document.getElementById('calendarBody');
 const albumsCalendarToggle = document.getElementById('albumsCalendarToggle');
 const albumsSearchText = document.getElementById('albumsSearchText');
 const albumsSearchClear = document.getElementById('albumsSearchClear');
@@ -281,7 +287,7 @@ let calendarCollapsed = false;
 
 function setCalendarCollapsed(collapsed) {
   calendarCollapsed = collapsed;
-  albumsCalendarEl.classList.toggle('collapsed', collapsed);
+  calendarBodyEl.classList.toggle('collapsed', collapsed);
   albumsCalendarToggle.textContent = collapsed ? '📅' : '🔼';
 }
 
