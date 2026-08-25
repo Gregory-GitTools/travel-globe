@@ -15,50 +15,39 @@
 
 <div class="toolbar">
   <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
-  <button id="openCalendarBtn" class="toolbar-button">📅 Календарь</button>
   <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
 </div>
 
-<div id="calendarModal" class="modal modal-anchor-top hidden">
-  <div class="modal-content calendar-modal-content">
-    <button id="calendarModalClose" class="modal-close">&times;</button>
-    <div class="calendar-header">
-      <h2>Календарь поездок</h2>
-      <div class="calendar-view-toggle">
-        <button id="calendarViewMonth" class="map-button active">Месяц</button>
-        <button id="calendarViewYear" class="map-button">Год целиком</button>
-        <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
-      </div>
-      <div id="calendarNav" class="calendar-nav">
-        <button id="calendarPrev" class="icon-button">&#10094;</button>
-        <div class="calendar-dd" id="calendarMonthDD">
-          <button type="button" id="calendarMonthBtn" class="calendar-select"></button>
-          <div id="calendarMonthList" class="calendar-dd-list hidden"></div>
-        </div>
-        <div class="calendar-dd" id="calendarYearDD">
-          <button type="button" id="calendarYearBtn" class="calendar-select"></button>
-          <div id="calendarYearList" class="calendar-dd-list hidden"></div>
-        </div>
-        <button id="calendarNext" class="icon-button">&#10095;</button>
-      </div>
-    </div>
-    <div class="calendar-body">
-      <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
-      <div id="calendarGrid" class="calendar-grid"></div>
-      <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
-    </div>
-  </div>
-</div>
-
-<div id="albumsModal" class="modal hidden">
+<div id="albumsModal" class="modal modal-anchor-top hidden">
   <div class="modal-content modal-content-split">
     <button id="albumsModalClose" class="modal-close">&times;</button>
     <div class="modal-header">
       <h2>Альбомы</h2>
       <div class="albums-search">
         <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
-        <input type="date" id="albumsSearchDate" title="Показать поездки на эту дату">
         <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+      </div>
+      <div class="calendar-view-toggle">
+        <button id="calendarViewMonth" class="map-button active">Месяц</button>
+        <button id="calendarViewYear" class="map-button">Год целиком</button>
+        <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
+      </div>
+      <div id="albumsCalendar" class="albums-calendar">
+        <div id="calendarNav" class="calendar-nav">
+          <button id="calendarPrev" class="icon-button">&#10094;</button>
+          <div class="calendar-dd" id="calendarMonthDD">
+            <button type="button" id="calendarMonthBtn" class="calendar-select"></button>
+            <div id="calendarMonthList" class="calendar-dd-list hidden"></div>
+          </div>
+          <div class="calendar-dd" id="calendarYearDD">
+            <button type="button" id="calendarYearBtn" class="calendar-select"></button>
+            <div id="calendarYearList" class="calendar-dd-list hidden"></div>
+          </div>
+          <button id="calendarNext" class="icon-button">&#10095;</button>
+        </div>
+        <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+        <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
       </div>
     </div>
     <div class="modal-body">

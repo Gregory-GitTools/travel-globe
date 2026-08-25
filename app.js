@@ -67,9 +67,6 @@ trips.forEach((trip, tripIndex) => {
 });
 const tripMonths = Array.from(new Set(Object.keys(dayToTrip).map(d => d.slice(0, 7)))).sort();
 
-const calendarModal = document.getElementById('calendarModal');
-const calendarModalContent = calendarModal.querySelector('.modal-content');
-const calendarModalClose = document.getElementById('calendarModalClose');
 const calendarPrev = document.getElementById('calendarPrev');
 const calendarNext = document.getElementById('calendarNext');
 const calendarMonthDD = document.getElementById('calendarMonthDD');
@@ -179,10 +176,12 @@ function fillDayGrid(container, year, month) {
       const trip = trips[dayToTrip[dateStr]];
       cell.title = `${trip.city}, ${trip.country}`;
       cell.onclick = () => {
-        closeCalendarModal();
-        focusTrip(dayToTrip[dateStr]);
+        albumsDateFilter = albumsDateFilter === dateStr ? '' : dateStr;
+        renderCalendarCurrent();
+        buildAlbums();
       };
     }
+    if (dateStr === albumsDateFilter) cell.classList.add('selected');
     container.appendChild(cell);
   }
 
@@ -236,6 +235,14 @@ function renderCalendarYear() {
   }
 }
 
+function renderCalendarCurrent() {
+  if (calendarViewMode === 'year') {
+    renderCalendarYear();
+  } else {
+    renderCalendarMonth();
+  }
+}
+
 function setCalendarViewMode(mode) {
   calendarViewMode = mode;
   calendarViewMonth.classList.toggle('active', mode === 'month');
@@ -244,7 +251,7 @@ function setCalendarViewMode(mode) {
   calendarWeekdaysRow.classList.toggle('hidden', mode === 'year');
   calendarGrid.classList.toggle('hidden', mode === 'year');
   calendarYearGrid.classList.toggle('hidden', mode === 'month');
-  calendarModalContent.classList.toggle('wide', mode === 'year');
+  albumsModalContent.classList.toggle('wide', mode === 'year');
   closeCalendarDropdowns();
 
   if (mode === 'month') {
@@ -274,23 +281,10 @@ function calendarStep(delta) {
   }
 }
 
-function openCalendarModal() {
-  setCalendarViewMode(calendarViewMode);
-  calendarModal.classList.remove('hidden');
-}
-
-function closeCalendarModal() {
-  closeCalendarDropdowns();
-  calendarModal.classList.add('hidden');
-}
-
-document.getElementById('openCalendarBtn').onclick = openCalendarModal;
 document.getElementById('goTodayBtn').onclick = () => {
   currentCalendarMonth = formatDateLocal(new Date()).slice(0, 7);
   setCalendarViewMode('month');
 };
-calendarModalClose.onclick = closeCalendarModal;
-calendarModal.onclick = e => { if (e.target === calendarModal) closeCalendarModal(); };
 calendarPrev.onclick = () => calendarStep(-1);
 calendarNext.onclick = () => calendarStep(1);
 calendarViewMonth.onclick = () => setCalendarViewMode('month');
@@ -300,7 +294,7 @@ calendarViewYear.onclick = () => setCalendarViewMode('year');
 // to click the arrows; skipped while an open dropdown list is under the
 // cursor so a long list can still be scrolled normally.
 let calendarWheelBusy = false;
-document.getElementById('calendarNav').addEventListener('wheel', e => {
+document.getElementById('albumsCalendar').addEventListener('wheel', e => {
   if (e.target.closest('.calendar-dd-list')) return;
   e.preventDefault();
   if (calendarWheelBusy) return;
@@ -309,24 +303,22 @@ document.getElementById('calendarNav').addEventListener('wheel', e => {
   calendarStep(e.deltaY > 0 ? 1 : -1);
 }, { passive: false });
 
-const calendarBody = calendarModal.querySelector('.calendar-body');
-makeWheelScrollable(calendarModal, calendarBody, '#calendarNav');
-
 const albumsModal = document.getElementById('albumsModal');
+const albumsModalContent = albumsModal.querySelector('.modal-content');
 const albumsModalClose = document.getElementById('albumsModalClose');
 const albumsModalBody = albumsModal.querySelector('.modal-body');
 const albumsSearchText = document.getElementById('albumsSearchText');
-const albumsSearchDate = document.getElementById('albumsSearchDate');
 const albumsSearchClear = document.getElementById('albumsSearchClear');
+let albumsDateFilter = '';
 
-makeWheelScrollable(albumsModal, albumsModalBody);
+makeWheelScrollable(albumsModal, albumsModalBody, '#albumsCalendar');
 
 function buildAlbums() {
   const container = document.getElementById('albums');
   container.innerHTML = '';
 
   const textQuery = albumsSearchText.value.trim().toLowerCase();
-  const dateQuery = albumsSearchDate.value;
+  const dateQuery = albumsDateFilter;
 
   const filtered = trips
     .map((trip, tripIndex) => ({ trip, tripIndex }))
@@ -387,6 +379,8 @@ function buildAlbums() {
 }
 
 function openAlbumsModal() {
+  currentCalendarMonth = formatDateLocal(new Date()).slice(0, 7);
+  setCalendarViewMode('month');
   buildAlbums();
   albumsModal.classList.remove('hidden');
 }
@@ -399,13 +393,14 @@ document.getElementById('openAlbumsBtn').onclick = openAlbumsModal;
 albumsModalClose.onclick = closeAlbumsModal;
 albumsModal.onclick = e => { if (e.target === albumsModal) closeAlbumsModal(); };
 albumsSearchText.oninput = () => {
-  albumsSearchDate.value = '';
+  albumsDateFilter = '';
+  renderCalendarCurrent();
   buildAlbums();
 };
-albumsSearchDate.onchange = buildAlbums;
 albumsSearchClear.onclick = () => {
   albumsSearchText.value = '';
-  albumsSearchDate.value = '';
+  albumsDateFilter = '';
+  renderCalendarCurrent();
   buildAlbums();
 };
 
@@ -705,10 +700,6 @@ lightboxNext.onclick = () => { showNextPhoto(); stopSlideshow(); };
 lightboxSlideshow.onclick = toggleSlideshow;
 
 document.addEventListener('keydown', e => {
-  if (!calendarModal.classList.contains('hidden')) {
-    if (e.key === 'Escape') closeCalendarModal();
-    return;
-  }
   if (!albumsModal.classList.contains('hidden')) {
     if (e.key === 'Escape') closeAlbumsModal();
     return;
