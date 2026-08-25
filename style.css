@@ -77,19 +77,31 @@ body {
 
 .calendar-nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 8px;
 }
 
 .calendar-dd {
   position: relative;
   flex: 1;
+  min-width: 0;
 }
 
 #calendarDayDD {
   flex: 0.6;
+}
+
+.calendar-nav .icon-button {
+  flex-shrink: 0;
+}
+
+.calendar-nav .map-button {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .calendar-select {
@@ -185,7 +197,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 14px;
   border-radius: 4px;
   opacity: 0.5;
 }
@@ -214,15 +226,9 @@ body {
 
 .albums-search {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   margin-bottom: 8px;
-}
-
-.albums-search-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .albums-search input[type="text"] {

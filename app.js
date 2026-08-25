@@ -66,6 +66,7 @@ trips.forEach((trip, tripIndex) => {
   });
 });
 const todayStr = formatDateLocal(new Date());
+const tripDates = Object.keys(dayToTrip).sort();
 
 const calendarPrev = document.getElementById('calendarPrev');
 const calendarNext = document.getElementById('calendarNext');
@@ -196,7 +197,7 @@ function fillDayGrid(container, year, month) {
       };
     }
     if (dateStr === todayStr) cell.classList.add('today');
-    if (dateStr === selectedDate) cell.classList.add('focused');
+    if (dateStr === selectedDate && (dateStr in dayToTrip || dateStr === todayStr)) cell.classList.add('focused');
     container.appendChild(cell);
   }
 
@@ -236,9 +237,18 @@ function setSelectedDate(dateStr) {
   renderCalendarMonth();
 }
 
+// Steps between real travel dates only (blue cells), clamped to the
+// dataset's earliest/latest trip date — used by the prev/next arrows and
+// wheel scroll so navigation never lands on an empty day.
 function shiftSelectedDate(delta) {
-  const [year, month, day] = selectedDate.split('-').map(Number);
-  setSelectedDate(formatDateLocal(new Date(year, month - 1, day + delta)));
+  if (!tripDates.length) return;
+  if (delta > 0) {
+    const next = tripDates.find(d => d > selectedDate);
+    setSelectedDate(next || tripDates[tripDates.length - 1]);
+  } else {
+    const earlier = tripDates.filter(d => d < selectedDate);
+    setSelectedDate(earlier.length ? earlier[earlier.length - 1] : tripDates[0]);
+  }
 }
 
 document.getElementById('goTodayBtn').onclick = () => {
