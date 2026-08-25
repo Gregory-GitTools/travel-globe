@@ -543,7 +543,6 @@ const lightboxClose = document.getElementById('lightboxClose');
 const lightboxPrev = document.getElementById('lightboxPrev');
 const lightboxNext = document.getElementById('lightboxNext');
 const lightboxSlideshow = document.getElementById('lightboxSlideshow');
-const lightboxMusic = document.getElementById('lightboxMusic');
 const lightboxGeminiText = document.getElementById('lightboxGeminiText');
 const lightboxGeminiPhoto = document.getElementById('lightboxGeminiPhoto');
 const lightboxMap = document.getElementById('lightboxMap');
@@ -570,12 +569,8 @@ toolbarMute.onclick = () => {
   toolbarMute.title = siteSoundOn ? 'Звук сайта: вкл/выкл' : 'Звук сайта выключен — нажмите, чтобы включить';
   if (!siteSoundOn) {
     bgAudio.pause();
-    lightboxMusic.innerHTML = '&#127925; Музыка';
-    lightboxMusic.classList.remove('active');
   } else if (bgAudio.src) {
     bgAudio.play();
-    lightboxMusic.innerHTML = '&#10074;&#10074; Музыка';
-    lightboxMusic.classList.add('active');
   }
 };
 
@@ -586,16 +581,10 @@ function getTripMusicUrl(trip) {
 
 function stopMusic() {
   bgAudio.pause();
-  lightboxMusic.innerHTML = '&#127925; Музыка';
-  lightboxMusic.classList.remove('active');
 }
 
-function toggleMusic() {
-  if (!bgAudio.paused) {
-    stopMusic();
-    return;
-  }
-  const url = getTripMusicUrl(currentTrip);
+function playMusicForTrip(trip) {
+  const url = getTripMusicUrl(trip);
   if (!url) return;
   if (!bgAudio.src.endsWith(url)) {
     bgAudio.src = url;
@@ -606,11 +595,7 @@ function toggleMusic() {
     toolbarMute.title = 'Звук сайта: вкл/выкл';
   }
   bgAudio.play();
-  lightboxMusic.innerHTML = '&#10074;&#10074; Музыка';
-  lightboxMusic.classList.add('active');
 }
-
-lightboxMusic.onclick = toggleMusic;
 
 lightboxGeminiText.onclick = async () => {
   const photo = currentTrip.photos[currentPhotoIndex];
@@ -653,6 +638,7 @@ function stopSlideshow() {
     clearInterval(slideshowTimer);
     slideshowTimer = null;
     lightboxSlideshow.innerHTML = '&#127909; Слайдшоу';
+    stopMusic();
   }
 }
 
@@ -665,6 +651,7 @@ function toggleSlideshow() {
     if (!document.fullscreenElement) {
       lightbox.requestFullscreen().catch(() => {});
     }
+    playMusicForTrip(currentTrip);
   }
 }
 
