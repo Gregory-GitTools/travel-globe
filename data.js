@@ -100,5 +100,47 @@ const trips = [
       { url: "photos/eclipse/02.jpg", caption: "", lat: 59.439051, lng: 24.845401 },
       { url: "photos/eclipse/03.jpg", caption: "", lat: 59.439051, lng: 24.845401 }
     ]
+  },
+  {
+    city: "Силламяэ",
+    country: "Эстония",
+    lat: 59.399728,
+    lng: 27.765953,
+    startDate: "2026-07-03",
+    endDate: "2026-07-03",
+    dateLabel: "3–4 июля 2026",
+    title: "В гостях у Стасика в Силламяэ",
+    notes: "Небольшая поездка вдоль побережья Ида-Вирумаа 3–4 июля 2026 года: по дороге — водопад Валасте на клинте, замок Германа в Нарве и старый санаторий в Нарва-Йыэсуу, а вечером — приморский бульвар Силламяэ и в гости к Стасику. На второй день — прогулка лесной тропой вдоль ручья и праздник в саду с друзьями.",
+    cover: "photos/sillamae/14.jpg",
+    photos: [
+      { url: "photos/sillamae/01.jpg", caption: "", lat: 59.407022, lng: 27.108166 },
+      { url: "photos/sillamae/02.jpg", caption: "", lat: 59.443851, lng: 27.335806 },
+      { url: "photos/sillamae/03.jpg", caption: "", lat: 59.444022, lng: 27.335447 },
+      { url: "photos/sillamae/04.jpg", caption: "Водопад Валасте", lat: 59.444341, lng: 27.335265 },
+      { url: "photos/sillamae/05.jpg", caption: "Замок Германа, Нарва", lat: 59.371752, lng: 28.20375 },
+      { url: "photos/sillamae/06.jpg", caption: "", lat: 59.373233, lng: 28.201884 },
+      { url: "photos/sillamae/07.jpg", caption: "", lat: 59.377166, lng: 28.203375 },
+      { url: "photos/sillamae/08.jpg", caption: "", lat: 59.460891, lng: 28.032576 },
+      { url: "photos/sillamae/09.jpg", caption: "Санаторий в Нарва-Йыэсуу", lat: 59.462067, lng: 28.03642 },
+      { url: "photos/sillamae/10.jpg", caption: "", lat: 59.462481, lng: 28.034701 },
+      { url: "photos/sillamae/11.jpg", caption: "", lat: 59.396176, lng: 27.762477 },
+      { url: "photos/sillamae/12.jpg", caption: "", lat: 59.396176, lng: 27.762477 },
+      { url: "photos/sillamae/13.jpg", caption: "", lat: 59.396525, lng: 27.763034 },
+      { url: "photos/sillamae/14.jpg", caption: "Приморский бульвар Силламяэ", lat: 59.399728, lng: 27.765953 },
+      { url: "photos/sillamae/15.jpg", caption: "", lat: 59.401587, lng: 27.757544 },
+      { url: "photos/sillamae/16.jpg", caption: "Лесная тропа с мостиком", lat: 59.39683, lng: 27.830714 },
+      { url: "photos/sillamae/17.jpg", caption: "", lat: 59.396473, lng: 27.823687 },
+      { url: "photos/sillamae/18.jpg", caption: "", lat: 59.39625, lng: 27.821617 },
+      { url: "photos/sillamae/19.jpg", caption: "", lat: 59.396249, lng: 27.821592 },
+      { url: "photos/sillamae/20.jpg", caption: "", lat: 59.395148, lng: 27.819257 },
+      { url: "photos/sillamae/21.jpg", caption: "", lat: 59.394373, lng: 27.81335 },
+      { url: "photos/sillamae/22.jpg", caption: "", lat: 59.394592, lng: 27.806809 },
+      { url: "photos/sillamae/23.jpg", caption: "", lat: 59.394596, lng: 27.806539 },
+      { url: "photos/sillamae/24.jpg", caption: "", lat: 59.400005, lng: 27.76591 },
+      { url: "photos/sillamae/25.jpg", caption: "", lat: 59.396832, lng: 27.763499 },
+      { url: "photos/sillamae/26.jpg", caption: "", lat: 59.395972, lng: 27.76501 },
+      { url: "photos/sillamae/27.jpg", caption: "Праздник в саду у Стасика", lat: 59.385619, lng: 27.795568 },
+      { url: "photos/sillamae/28.jpg", caption: "Цапли на камне у моря" }
+    ]
   }
 ];
