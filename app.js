@@ -107,9 +107,9 @@ function toggleCalendarDropdown(list) {
   if (!wasOpen) list.classList.remove('hidden');
 }
 
-calendarDayBtn.onclick = e => { e.stopPropagation(); toggleCalendarDropdown(calendarDayList); };
-calendarMonthBtn.onclick = e => { e.stopPropagation(); toggleCalendarDropdown(calendarMonthList); };
-calendarYearBtn.onclick = e => { e.stopPropagation(); toggleCalendarDropdown(calendarYearList); };
+calendarDayBtn.onclick = e => { e.stopPropagation(); setCalendarCollapsed(false); toggleCalendarDropdown(calendarDayList); };
+calendarMonthBtn.onclick = e => { e.stopPropagation(); setCalendarCollapsed(false); toggleCalendarDropdown(calendarMonthList); };
+calendarYearBtn.onclick = e => { e.stopPropagation(); setCalendarCollapsed(false); toggleCalendarDropdown(calendarYearList); };
 document.addEventListener('click', closeCalendarDropdowns);
 
 function rebuildDayList(daysInMonth, activeDay) {
@@ -274,6 +274,23 @@ document.getElementById('albumsCalendar').addEventListener('wheel', e => {
   setTimeout(() => { calendarWheelBusy = false; }, 220);
   shiftSelectedDate(e.deltaY > 0 ? 1 : -1);
 }, { passive: false });
+
+// Свайп на телефоне: горизонтальный свайп листает даты, так же как
+// колесо мыши на десктопе (свайп влево — вперёд, вправо — назад).
+let calendarTouchStartX = 0;
+let calendarTouchStartY = 0;
+document.getElementById('albumsCalendar').addEventListener('touchstart', e => {
+  calendarTouchStartX = e.changedTouches[0].clientX;
+  calendarTouchStartY = e.changedTouches[0].clientY;
+}, { passive: true });
+
+document.getElementById('albumsCalendar').addEventListener('touchend', e => {
+  if (e.target.closest('.calendar-dd-list')) return;
+  const dx = e.changedTouches[0].clientX - calendarTouchStartX;
+  const dy = e.changedTouches[0].clientY - calendarTouchStartY;
+  if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  shiftSelectedDate(dx < 0 ? 1 : -1);
+}, { passive: true });
 
 const albumsModal = document.getElementById('albumsModal');
 const albumsModalClose = document.getElementById('albumsModalClose');
