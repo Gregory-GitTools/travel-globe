@@ -509,19 +509,27 @@ function updateLightboxPhoto() {
 const bgAudio = new Audio();
 bgAudio.loop = true;
 
+let siteSoundOn = true;
+
 const toolbarMute = document.getElementById('toolbarMute');
 toolbarMute.onclick = () => {
-  bgAudio.muted = !bgAudio.muted;
-  toolbarMute.textContent = bgAudio.muted ? '🔇' : '🔊';
-  toolbarMute.title = bgAudio.muted ? 'Звук сайта выключен — нажмите, чтобы включить' : 'Звук сайта: вкл/выкл';
+  siteSoundOn = !siteSoundOn;
+  toolbarMute.textContent = siteSoundOn ? '🔊' : '🔇';
+  toolbarMute.title = siteSoundOn ? 'Звук сайта: вкл/выкл' : 'Звук сайта выключен — нажмите, чтобы включить';
+  if (!siteSoundOn) {
+    bgAudio.pause();
+    lightboxMusic.innerHTML = '&#127925; Музыка';
+    lightboxMusic.classList.remove('active');
+  } else if (bgAudio.src) {
+    bgAudio.play();
+    lightboxMusic.innerHTML = '&#10074;&#10074; Музыка';
+    lightboxMusic.classList.add('active');
+  }
 };
 
 function getTripMusicUrl(trip) {
-  if (!trip.music) return null;
-  if (trip.music === 'random') {
-    return musicLibrary[Math.floor(Math.random() * musicLibrary.length)];
-  }
-  return trip.music;
+  if (trip.music && trip.music !== 'random') return trip.music;
+  return musicLibrary[Math.floor(Math.random() * musicLibrary.length)];
 }
 
 function stopMusic() {
@@ -539,6 +547,11 @@ function toggleMusic() {
   if (!url) return;
   if (!bgAudio.src.endsWith(url)) {
     bgAudio.src = url;
+  }
+  if (!siteSoundOn) {
+    siteSoundOn = true;
+    toolbarMute.textContent = '🔊';
+    toolbarMute.title = 'Звук сайта: вкл/выкл';
   }
   bgAudio.play();
   lightboxMusic.innerHTML = '&#10074;&#10074; Музыка';
@@ -607,14 +620,12 @@ function openLightbox(index) {
   currentPhotoIndex = index;
   updateLightboxPhoto();
   lightbox.classList.remove('hidden');
-  lightboxMusic.classList.toggle('hidden', !currentTrip.music);
 }
 
 function closeLightbox() {
   lightbox.classList.add('hidden');
   lightboxImg.src = '';
   stopSlideshow();
-  stopMusic();
   if (document.fullscreenElement) document.exitFullscreen();
 }
 
