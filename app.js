@@ -423,7 +423,8 @@ const modalNotes = document.getElementById('modalNotes');
 const modalGallery = document.getElementById('modalGallery');
 const modalClose = document.getElementById('modalClose');
 const modalSpeak = document.getElementById('modalSpeak');
-const modalGemini = document.getElementById('modalGemini');
+const modalGeminiText = document.getElementById('modalGeminiText');
+const modalGeminiPhoto = document.getElementById('modalGeminiPhoto');
 const modalSlideshow = document.getElementById('modalSlideshow');
 const modalMap = document.getElementById('modalMap');
 
@@ -435,7 +436,7 @@ function openTrip(trip) {
   currentTrip = trip;
   globe.controls().autoRotate = false;
   modalTitle.textContent = trip.title;
-  modalMeta.textContent = `${trip.city}, ${trip.country} — ${trip.dateLabel}`;
+  modalMeta.textContent = trip.dateLabel;
   modalNotes.textContent = trip.notes;
   modalGallery.innerHTML = '';
   trip.photos.forEach((photo, index) => {
@@ -485,11 +486,24 @@ modalSpeak.onclick = () => {
   speechSynthesis.speak(utterance);
 };
 
-// Копируем в буфер обмена и текст вопроса, и саму картинку (image/png),
-// чтобы в Gemini можно было просто нажать Ctrl+V и вставить фото с описанием,
-// не делая скриншот вручную. Если браузер не поддерживает копирование
-// картинок в буфер — тихо откатываемся на копирование одного текста.
-async function copyGeminiPrompt(button, text, imgUrl) {
+// Gemini не читает адрес страницы и не подхватывает текст из параметра ?q=,
+// а буфер обмена с двумя представлениями (картинка + текст) при вставке
+// (Ctrl+V) отдаёт получателю только ОДНО из них на выбор приложения — не оба
+// сразу. Поэтому вопрос текстом и вопрос с фото — это две разные кнопки:
+// одна копирует только текст, другая — только фото.
+async function copyGeminiText(button, text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    // clipboard недоступен (например, при просмотре файла локально)
+  }
+  const original = button.textContent;
+  button.textContent = 'Скопировано! Вставьте текст в Gemini (Ctrl+V)';
+  setTimeout(() => { button.textContent = original; }, 4000);
+  window.open(`https://gemini.google.com/app?q=${encodeURIComponent(text)}`, '_blank');
+}
+
+async function copyGeminiPhoto(button, promptText, imgUrl) {
   let imageCopied = false;
   try {
     const resp = await fetch(imgUrl);
@@ -500,29 +514,27 @@ async function copyGeminiPrompt(button, text, imgUrl) {
     canvas.height = bitmap.height;
     canvas.getContext('2d').drawImage(bitmap, 0, 0);
     const pngBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-    await navigator.clipboard.write([
-      new ClipboardItem({
-        'image/png': pngBlob,
-        'text/plain': new Blob([text], { type: 'text/plain' })
-      })
-    ]);
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
     imageCopied = true;
   } catch (e) {
-    try { await navigator.clipboard.writeText(text); } catch (e2) {}
+    // копирование картинки не поддерживается браузером
   }
   const original = button.textContent;
   button.textContent = imageCopied
-    ? 'Скопировано! Вставьте в Gemini (Ctrl+V)'
-    : 'Скопировано! Вставьте, если запрос не подставился сам';
-  setTimeout(() => { button.textContent = original; }, 4000);
+    ? `Фото скопировано! Вставьте (Ctrl+V) и допишите: «${promptText}»`
+    : 'Не удалось скопировать фото';
+  setTimeout(() => { button.textContent = original; }, 6000);
+  window.open('https://gemini.google.com/app', '_blank');
 }
 
-modalGemini.onclick = async () => {
+modalGeminiText.onclick = async () => {
   const question = `Расскажи подробнее о поездке: ${currentTrip.title} (${currentTrip.city}, ${currentTrip.country}). ${currentTrip.notes}`;
-  await copyGeminiPrompt(modalGemini, question, currentTrip.cover);
-  // Пробуем передать текст прямо в адресе — если Gemini не подхватит параметр,
-  // вопрос всё равно уже скопирован в буфер обмена (см. выше).
-  window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
+  await copyGeminiText(modalGeminiText, question);
+};
+
+modalGeminiPhoto.onclick = async () => {
+  const prompt = `Расскажи и прочитай по скриншоту окна: поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).`;
+  await copyGeminiPhoto(modalGeminiPhoto, prompt, currentTrip.cover);
 };
 
 modalSlideshow.onclick = () => {
@@ -545,7 +557,8 @@ const lightboxPrev = document.getElementById('lightboxPrev');
 const lightboxNext = document.getElementById('lightboxNext');
 const lightboxSlideshow = document.getElementById('lightboxSlideshow');
 const lightboxMusic = document.getElementById('lightboxMusic');
-const lightboxGemini = document.getElementById('lightboxGemini');
+const lightboxGeminiText = document.getElementById('lightboxGeminiText');
+const lightboxGeminiPhoto = document.getElementById('lightboxGeminiPhoto');
 const lightboxMap = document.getElementById('lightboxMap');
 
 let currentPhotoIndex = 0;
@@ -612,15 +625,20 @@ function toggleMusic() {
 
 lightboxMusic.onclick = toggleMusic;
 
-lightboxGemini.onclick = async () => {
-  // Gemini не может сам открыть ссылку на фото сайта (не индексируется извне) —
-  // поэтому копируем само фото в буфер обмена (image/png), чтобы его можно
-  // было вставить в Gemini вместе с текстом вопроса.
+lightboxGeminiText.onclick = async () => {
   const photo = currentTrip.photos[currentPhotoIndex];
   const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
-  const question = `Поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart} Прикрепляю фото — расскажи, что интересного может быть на нём.`;
-  await copyGeminiPrompt(lightboxGemini, question, photo.url);
-  window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
+  const question = `Поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart} Расскажи, что интересного может быть на этом фото.`;
+  await copyGeminiText(lightboxGeminiText, question);
+};
+
+lightboxGeminiPhoto.onclick = async () => {
+  // Gemini не может сам открыть ссылку на фото сайта (не индексируется извне) —
+  // поэтому копируем само фото в буфер обмена (image/png).
+  const photo = currentTrip.photos[currentPhotoIndex];
+  const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
+  const prompt = `Расскажи и прочитай по скриншоту окна: поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart}`;
+  await copyGeminiPhoto(lightboxGeminiPhoto, prompt, photo.url);
 };
 
 function toggleLightboxFullscreen() {
