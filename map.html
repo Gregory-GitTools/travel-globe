@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта поездки</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #0b0d14; font-family: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  #mapHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 12px 18px;
+    background: rgba(8, 10, 18, 0.85);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  #albumMap {
+    position: absolute;
+    inset: 0;
+  }
+  .highlight-pin {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ff4d4f;
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px rgba(255, 77, 79, 0.9);
+  }
+</style>
+</head>
+<body>
+<div id="mapHeader"></div>
+<div id="albumMap"></div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="data.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const tripIndex = Number(params.get('trip'));
+  const photoIndex = params.has('photo') ? Number(params.get('photo')) : null;
+  const trip = trips[tripIndex];
+  const header = document.getElementById('mapHeader');
+
+  function getTripPoints(t) {
+    const points = t.photos
+      .map((photo, index) => ({ photo, index }))
+      .filter(({ photo }) => typeof photo.lat === 'number' && typeof photo.lng === 'number')
+      .map(({ photo, index }) => ({ lat: photo.lat, lng: photo.lng, caption: photo.caption, index }));
+    return points.length ? points : [{ lat: t.lat, lng: t.lng, caption: t.title, index: -1 }];
+  }
+
+  if (!trip) {
+    header.textContent = 'Поездка не найдена';
+  } else {
+    header.textContent = `${trip.title} — ${trip.city}, ${trip.country}`;
+
+    const map = L.map('albumMap');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const points = getTripPoints(trip);
+    let highlightMarker = null;
+    points.forEach(p => {
+      const isHighlighted = photoIndex !== null && p.index === photoIndex;
+      const marker = isHighlighted
+        ? L.marker([p.lat, p.lng], {
+            icon: L.divIcon({ className: '', html: '<div class="highlight-pin"></div>', iconSize: [20, 20] }),
+            zIndexOffset: 1000
+          }).addTo(map)
+        : L.marker([p.lat, p.lng]).addTo(map);
+      marker.bindPopup(p.caption || trip.title);
+      if (isHighlighted) highlightMarker = marker;
+    });
+
+    const bounds = L.latLngBounds(points.map(p => [p.lat, p.lng]));
+    setTimeout(() => {
+      map.invalidateSize();
+      map.fitBounds(bounds.pad(0.3));
+      if (highlightMarker) {
+        map.setView(highlightMarker.getLatLng(), Math.max(map.getZoom(), 15));
+        highlightMarker.openPopup();
+      }
+    }, 50);
+  }
+</script>
+</body>
+</html>

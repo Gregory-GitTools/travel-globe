@@ -42,14 +42,16 @@ function dateRange(startStr, endStr) {
   return dates;
 }
 
-// Lets the mouse wheel scroll a window's body no matter where over the
-// window the cursor is, while the header (title/description/buttons)
-// stays static — the header has no scroll of its own, so wheeling over
-// it is forwarded to the scrollable body. `skipSelector` lets a sub-area
-// (e.g. the calendar's own month/year wheel navigation) keep its own
-// wheel behaviour instead of being hijacked.
-function makeWheelScrollable(container, body, skipSelector) {
-  container.addEventListener('wheel', e => {
+// Lets the mouse wheel scroll a modal's body no matter where over the
+// browser window the cursor is — including the dark backdrop area
+// outside the modal card itself — while the header (title/description/
+// buttons) stays static. `overlay` is the full-viewport `.modal` element
+// (not just the card), since that's the only ancestor that actually
+// receives wheel events fired over the backdrop. `skipSelector` lets a
+// sub-area (e.g. the calendar's own month/year wheel navigation) keep
+// its own wheel behaviour instead of being hijacked.
+function makeWheelScrollable(overlay, body, skipSelector) {
+  overlay.addEventListener('wheel', e => {
     if (body.contains(e.target)) return;
     if (skipSelector && e.target.closest(skipSelector)) return;
     e.preventDefault();
@@ -308,17 +310,16 @@ document.getElementById('calendarNav').addEventListener('wheel', e => {
 }, { passive: false });
 
 const calendarBody = calendarModal.querySelector('.calendar-body');
-makeWheelScrollable(calendarModalContent, calendarBody, '#calendarNav');
+makeWheelScrollable(calendarModal, calendarBody, '#calendarNav');
 
 const albumsModal = document.getElementById('albumsModal');
 const albumsModalClose = document.getElementById('albumsModalClose');
-const albumsModalContent = albumsModal.querySelector('.modal-content');
 const albumsModalBody = albumsModal.querySelector('.modal-body');
 const albumsSearchText = document.getElementById('albumsSearchText');
 const albumsSearchDate = document.getElementById('albumsSearchDate');
 const albumsSearchClear = document.getElementById('albumsSearchClear');
 
-makeWheelScrollable(albumsModalContent, albumsModalBody);
+makeWheelScrollable(albumsModal, albumsModalBody);
 
 function buildAlbums() {
   const container = document.getElementById('albums');
@@ -415,7 +416,6 @@ function focusTrip(tripIndex) {
 }
 
 const modal = document.getElementById('modal');
-const modalContent = modal.querySelector('.modal-content');
 const modalBody = modal.querySelector('.modal-body');
 const modalTitle = document.getElementById('modalTitle');
 const modalMeta = document.getElementById('modalMeta');
@@ -427,7 +427,7 @@ const modalGemini = document.getElementById('modalGemini');
 const modalSlideshow = document.getElementById('modalSlideshow');
 const modalMap = document.getElementById('modalMap');
 
-makeWheelScrollable(modalContent, modalBody);
+makeWheelScrollable(modal, modalBody);
 
 let currentTrip = null;
 
@@ -509,7 +509,7 @@ modalSlideshow.onclick = () => {
 modalMap.onclick = () => {
   if (!currentTrip) return;
   stopSlideshow();
-  openAlbumMap(currentTrip);
+  openAlbumMapWindow(currentTrip);
 };
 
 const lightbox = document.getElementById('lightbox');
@@ -665,10 +665,6 @@ lightboxNext.onclick = () => { showNextPhoto(); stopSlideshow(); };
 lightboxSlideshow.onclick = toggleSlideshow;
 
 document.addEventListener('keydown', e => {
-  if (!mapModal.classList.contains('hidden')) {
-    if (e.key === 'Escape') closeAlbumMap();
-    return;
-  }
   if (!calendarModal.classList.contains('hidden')) {
     if (e.key === 'Escape') closeCalendarModal();
     return;
@@ -693,49 +689,18 @@ lightbox.addEventListener('wheel', e => {
   stopSlideshow();
 }, { passive: false });
 
-// Карта альбома: собираем точки из GPS-координат каждого фото
-// (если у фото нет своих координат — используем общую точку поездки).
-const mapModal = document.getElementById('mapModal');
-const mapModalClose = document.getElementById('mapModalClose');
-let albumMap = null;
-let albumMapMarkers = [];
-
-function getTripPoints(trip) {
-  const points = trip.photos
-    .filter(photo => typeof photo.lat === 'number' && typeof photo.lng === 'number')
-    .map(photo => ({ lat: photo.lat, lng: photo.lng, caption: photo.caption }));
-  return points.length ? points : [{ lat: trip.lat, lng: trip.lng, caption: trip.title }];
+// Карта альбома открывается в отдельном окне (map.html), которое само
+// строит точки из GPS-координат фото и подсвечивает выбранное фото,
+// если оно указано (переход из просмотра конкретного фото в лайтбоксе).
+function openAlbumMapWindow(trip, photoIndex) {
+  const tripIndex = trips.indexOf(trip);
+  let url = `map.html?trip=${tripIndex}`;
+  if (typeof photoIndex === 'number') url += `&photo=${photoIndex}`;
+  window.open(url, '_blank', 'width=960,height=720');
 }
-
-function openAlbumMap(trip) {
-  mapModal.classList.remove('hidden');
-  if (!albumMap) {
-    albumMap = L.map('albumMap');
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap'
-    }).addTo(albumMap);
-  }
-  albumMapMarkers.forEach(marker => albumMap.removeLayer(marker));
-  const points = getTripPoints(trip);
-  albumMapMarkers = points.map(p => L.marker([p.lat, p.lng]).addTo(albumMap).bindPopup(p.caption || trip.title));
-  setTimeout(() => {
-    albumMap.invalidateSize();
-    const bounds = L.latLngBounds(points.map(p => [p.lat, p.lng]));
-    albumMap.fitBounds(bounds.pad(0.3));
-  }, 50);
-}
-
-function closeAlbumMap() {
-  mapModal.classList.add('hidden');
-}
-
-mapModalClose.onclick = closeAlbumMap;
-mapModal.onclick = e => {
-  if (e.target === mapModal) closeAlbumMap();
-};
 
 lightboxMap.onclick = () => {
   if (!currentTrip) return;
   stopSlideshow();
-  openAlbumMap(currentTrip);
+  openAlbumMapWindow(currentTrip, currentPhotoIndex);
 };

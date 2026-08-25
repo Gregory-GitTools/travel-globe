@@ -150,5 +150,74 @@ const trips = [
       { url: "photos/nafplio/35.jpg", caption: "", lat: 37.566447, lng: 22.795924 },
       { url: "photos/nafplio/36.jpg", caption: "", lat: 37.562539, lng: 22.792261 }
     ]
+  },
+  {
+    city: "Центральная Эстония",
+    country: "Эстония",
+    lat: 58.818867,
+    lng: 25.756507,
+    startDate: "2026-07-26",
+    endDate: "2026-07-26",
+    dateLabel: "26 июля 2026",
+    title: "Дни открытых хуторов 2026",
+    notes: "Поездка по хуторам Центральной Эстонии в рамках ежегодного дня открытых дверей — фермы и усадьбы Ярвамаа, Вильяндимаа и Йыгевамаа, открытые для гостей всего один день в году.",
+    cover: "photos/hutorud/01.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/hutorud/01.jpg", caption: "", lat: 58.837297, lng: 25.816558 },
+      { url: "photos/hutorud/02.jpg", caption: "", lat: 58.837311, lng: 25.815924 },
+      { url: "photos/hutorud/03.jpg", caption: "", lat: 58.808925, lng: 25.931864 },
+      { url: "photos/hutorud/04.jpg", caption: "", lat: 58.809374, lng: 25.932186 },
+      { url: "photos/hutorud/05.jpg", caption: "", lat: 58.809740, lng: 25.931554 },
+      { url: "photos/hutorud/06.jpg", caption: "", lat: 58.809748, lng: 25.932063 },
+      { url: "photos/hutorud/07.jpg", caption: "" },
+      { url: "photos/hutorud/08.jpg", caption: "", lat: 58.655447, lng: 25.967317 },
+      { url: "photos/hutorud/09.jpg", caption: "", lat: 58.654350, lng: 25.967193 },
+      { url: "photos/hutorud/10.jpg", caption: "", lat: 58.804662, lng: 25.428851 },
+      { url: "photos/hutorud/11.jpg", caption: "", lat: 58.883156, lng: 25.583173 },
+      { url: "photos/hutorud/12.jpg", caption: "", lat: 58.888873, lng: 25.571256 },
+      { url: "photos/hutorud/13.jpg", caption: "", lat: 58.889717, lng: 25.573818 },
+      { url: "photos/hutorud/14.jpg", caption: "", lat: 58.888526, lng: 25.569785 },
+      { url: "photos/hutorud/15.jpg", caption: "", lat: 58.887016, lng: 25.569549 }
+    ]
+  },
+  {
+    city: "Лауласмаа",
+    country: "Эстония",
+    lat: 59.400864,
+    lng: 24.201927,
+    startDate: "2026-07-11",
+    endDate: "2026-07-11",
+    dateLabel: "11 июля 2026",
+    title: "Лауласмаа",
+    notes: "Прогулка по побережью Лохусалуского полуострова — сосновый лес, пляж и закат над заливом в Лауласмаа.",
+    cover: "photos/laulasmaa/01.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/laulasmaa/01.jpg", caption: "", lat: 59.400864, lng: 24.201927 },
+      { url: "photos/laulasmaa/02.jpg", caption: "", lat: 59.398920, lng: 24.203086 },
+      { url: "photos/laulasmaa/03.jpg", caption: "", lat: 59.397110, lng: 24.208106 },
+      { url: "photos/laulasmaa/04.jpg", caption: "", lat: 59.391226, lng: 24.233016 }
+    ]
+  },
+  {
+    city: "Неэме",
+    country: "Харьюмаа, Эстония",
+    lat: 59.473921,
+    lng: 25.152025,
+    startDate: "2026-07-12",
+    endDate: "2026-07-12",
+    dateLabel: "12 июля 2026",
+    title: "Неэме",
+    notes: "Вечерняя поездка на полуостров Виймси — рыбацкая деревня Неэме на берегу Финского залива.",
+    cover: "photos/neeme/01.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/neeme/01.jpg", caption: "", lat: 59.473921, lng: 25.152025 },
+      { url: "photos/neeme/02.jpg", caption: "", lat: 59.473591, lng: 25.141351 },
+      { url: "photos/neeme/03.jpg", caption: "", lat: 59.475870, lng: 25.152426 },
+      { url: "photos/neeme/04.jpg", caption: "", lat: 59.486710, lng: 25.162695 },
+      { url: "photos/neeme/05.jpg", caption: "", lat: 59.501093, lng: 25.183969 }
+    ]
   }
 ];
