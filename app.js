@@ -485,16 +485,41 @@ modalSpeak.onclick = () => {
   speechSynthesis.speak(utterance);
 };
 
+// Копируем в буфер обмена и текст вопроса, и саму картинку (image/png),
+// чтобы в Gemini можно было просто нажать Ctrl+V и вставить фото с описанием,
+// не делая скриншот вручную. Если браузер не поддерживает копирование
+// картинок в буфер — тихо откатываемся на копирование одного текста.
+async function copyGeminiPrompt(button, text, imgUrl) {
+  let imageCopied = false;
+  try {
+    const resp = await fetch(imgUrl);
+    const blob = await resp.blob();
+    const bitmap = await createImageBitmap(blob);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0);
+    const pngBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        'image/png': pngBlob,
+        'text/plain': new Blob([text], { type: 'text/plain' })
+      })
+    ]);
+    imageCopied = true;
+  } catch (e) {
+    try { await navigator.clipboard.writeText(text); } catch (e2) {}
+  }
+  const original = button.textContent;
+  button.textContent = imageCopied
+    ? 'Скопировано! Вставьте в Gemini (Ctrl+V)'
+    : 'Скопировано! Вставьте, если запрос не подставился сам';
+  setTimeout(() => { button.textContent = original; }, 4000);
+}
+
 modalGemini.onclick = async () => {
   const question = `Расскажи подробнее о поездке: ${currentTrip.title} (${currentTrip.city}, ${currentTrip.country}). ${currentTrip.notes}`;
-  try {
-    await navigator.clipboard.writeText(question);
-    const original = modalGemini.textContent;
-    modalGemini.textContent = 'Скопировано! Вставьте, если запрос не подставился сам';
-    setTimeout(() => { modalGemini.textContent = original; }, 4000);
-  } catch (e) {
-    // clipboard недоступен (например, при просмотре файла локально) — просто откроем Gemini
-  }
+  await copyGeminiPrompt(modalGemini, question, currentTrip.cover);
   // Пробуем передать текст прямо в адресе — если Gemini не подхватит параметр,
   // вопрос всё равно уже скопирован в буфер обмена (см. выше).
   window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
@@ -589,18 +614,12 @@ lightboxMusic.onclick = toggleMusic;
 
 lightboxGemini.onclick = async () => {
   // Gemini не может сам открыть ссылку на фото сайта (не индексируется извне) —
-  // поэтому просим прикрепить скриншот вручную вместо передачи URL картинки.
+  // поэтому копируем само фото в буфер обмена (image/png), чтобы его можно
+  // было вставить в Gemini вместе с текстом вопроса.
   const photo = currentTrip.photos[currentPhotoIndex];
   const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
-  const question = `Поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart} Прикрепляю скриншот фото — расскажи, что интересного может быть на нём.`;
-  try {
-    await navigator.clipboard.writeText(question);
-    const original = lightboxGemini.textContent;
-    lightboxGemini.textContent = 'Скопировано! Прикрепите скриншот фото в Gemini';
-    setTimeout(() => { lightboxGemini.textContent = original; }, 4000);
-  } catch (e) {
-    // clipboard недоступен (например, при просмотре файла локально) — просто откроем Gemini
-  }
+  const question = `Поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart} Прикрепляю фото — расскажи, что интересного может быть на нём.`;
+  await copyGeminiPrompt(lightboxGemini, question, photo.url);
   window.open(`https://gemini.google.com/app?q=${encodeURIComponent(question)}`, '_blank');
 };
 
@@ -689,6 +708,23 @@ lightbox.addEventListener('wheel', e => {
   if (e.deltaY > 0) showNextPhoto(); else showPrevPhoto();
   stopSlideshow();
 }, { passive: false });
+
+// Свайп на телефоне: горизонтальный свайп листает фото, если он заметно
+// более горизонтальный, чем вертикальный (иначе это просто скролл/тап).
+let touchStartX = 0;
+let touchStartY = 0;
+lightbox.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].clientX;
+  touchStartY = e.changedTouches[0].clientY;
+}, { passive: true });
+
+lightbox.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  if (dx < 0) showNextPhoto(); else showPrevPhoto();
+  stopSlideshow();
+}, { passive: true });
 
 // Карта альбома открывается в отдельном окне (map.html), которое само
 // строит точки из GPS-координат фото и подсвечивает выбранное фото,

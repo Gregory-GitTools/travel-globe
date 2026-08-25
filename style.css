@@ -392,6 +392,20 @@ body {
   font-size: 14px;
 }
 
+.modal-notes-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.modal-notes-row .icon-button {
+  flex-shrink: 0;
+}
+
+.modal-notes-row p {
+  margin: 4px 0;
+}
+
 .modal-actions {
   display: flex;
   flex-wrap: wrap;
