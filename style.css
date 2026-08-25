@@ -256,27 +256,25 @@ body {
   padding: 24px 0;
 }
 
-#albums {
-  max-height: 50vh;
-  overflow-y: auto;
+.modal-content-split .modal-body {
   padding-right: 4px;
 }
 
-#albums::-webkit-scrollbar {
+.modal-content-split .modal-body::-webkit-scrollbar {
   width: 8px;
 }
 
-#albums::-webkit-scrollbar-track {
+.modal-content-split .modal-body::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
 }
 
-#albums::-webkit-scrollbar-thumb {
+.modal-content-split .modal-body::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.25);
   border-radius: 4px;
 }
 
-#albums::-webkit-scrollbar-thumb:hover {
+.modal-content-split .modal-body::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.4);
 }
 
@@ -350,6 +348,25 @@ body {
 
 .modal-content.wide {
   max-width: 820px;
+}
+
+/* Split layout: static header (title/description/buttons) on top,
+   scrollable body below — wheel scrolling works anywhere over the
+   window via JS forwarding to .modal-body. */
+.modal-content-split {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-content-split .modal-header {
+  flex-shrink: 0;
+}
+
+.modal-content-split .modal-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-anchor-top {
@@ -440,13 +457,8 @@ body {
 .lightbox {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
+  background: #000;
   z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
 }
 
 .lightbox.hidden {
@@ -454,9 +466,24 @@ body {
 }
 
 .lightbox img {
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 6px;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lightbox-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 24px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
 }
 
 .lightbox-caption {
@@ -503,6 +530,8 @@ body {
 
 .lightbox-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
 }
 

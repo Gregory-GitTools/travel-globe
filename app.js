@@ -42,6 +42,21 @@ function dateRange(startStr, endStr) {
   return dates;
 }
 
+// Lets the mouse wheel scroll a window's body no matter where over the
+// window the cursor is, while the header (title/description/buttons)
+// stays static — the header has no scroll of its own, so wheeling over
+// it is forwarded to the scrollable body. `skipSelector` lets a sub-area
+// (e.g. the calendar's own month/year wheel navigation) keep its own
+// wheel behaviour instead of being hijacked.
+function makeWheelScrollable(container, body, skipSelector) {
+  container.addEventListener('wheel', e => {
+    if (body.contains(e.target)) return;
+    if (skipSelector && e.target.closest(skipSelector)) return;
+    e.preventDefault();
+    body.scrollTop += e.deltaY;
+  }, { passive: false });
+}
+
 const dayToTrip = {};
 trips.forEach((trip, tripIndex) => {
   dateRange(trip.startDate, trip.endDate).forEach(dateStr => {
@@ -292,11 +307,18 @@ document.getElementById('calendarNav').addEventListener('wheel', e => {
   calendarStep(e.deltaY > 0 ? 1 : -1);
 }, { passive: false });
 
+const calendarBody = calendarModal.querySelector('.calendar-body');
+makeWheelScrollable(calendarModalContent, calendarBody, '#calendarNav');
+
 const albumsModal = document.getElementById('albumsModal');
 const albumsModalClose = document.getElementById('albumsModalClose');
+const albumsModalContent = albumsModal.querySelector('.modal-content');
+const albumsModalBody = albumsModal.querySelector('.modal-body');
 const albumsSearchText = document.getElementById('albumsSearchText');
 const albumsSearchDate = document.getElementById('albumsSearchDate');
 const albumsSearchClear = document.getElementById('albumsSearchClear');
+
+makeWheelScrollable(albumsModalContent, albumsModalBody);
 
 function buildAlbums() {
   const container = document.getElementById('albums');
@@ -393,6 +415,8 @@ function focusTrip(tripIndex) {
 }
 
 const modal = document.getElementById('modal');
+const modalContent = modal.querySelector('.modal-content');
+const modalBody = modal.querySelector('.modal-body');
 const modalTitle = document.getElementById('modalTitle');
 const modalMeta = document.getElementById('modalMeta');
 const modalNotes = document.getElementById('modalNotes');
@@ -402,6 +426,8 @@ const modalSpeak = document.getElementById('modalSpeak');
 const modalGemini = document.getElementById('modalGemini');
 const modalSlideshow = document.getElementById('modalSlideshow');
 const modalMap = document.getElementById('modalMap');
+
+makeWheelScrollable(modalContent, modalBody);
 
 let currentTrip = null;
 
@@ -482,6 +508,7 @@ modalSlideshow.onclick = () => {
 
 modalMap.onclick = () => {
   if (!currentTrip) return;
+  stopSlideshow();
   openAlbumMap(currentTrip);
 };
 
@@ -709,5 +736,6 @@ mapModal.onclick = e => {
 
 lightboxMap.onclick = () => {
   if (!currentTrip) return;
+  stopSlideshow();
   openAlbumMap(currentTrip);
 };

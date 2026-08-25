@@ -52,31 +52,39 @@
 </div>
 
 <div id="albumsModal" class="modal hidden">
-  <div class="modal-content">
+  <div class="modal-content modal-content-split">
     <button id="albumsModalClose" class="modal-close">&times;</button>
-    <h2>Альбомы</h2>
-    <div class="albums-search">
-      <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
-      <input type="date" id="albumsSearchDate" title="Показать поездки на эту дату">
-      <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+    <div class="modal-header">
+      <h2>Альбомы</h2>
+      <div class="albums-search">
+        <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
+        <input type="date" id="albumsSearchDate" title="Показать поездки на эту дату">
+        <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+      </div>
     </div>
-    <div id="albums" class="albums"></div>
+    <div class="modal-body">
+      <div id="albums" class="albums"></div>
+    </div>
   </div>
 </div>
 
 <div id="modal" class="modal hidden">
-  <div class="modal-content">
+  <div class="modal-content modal-content-split">
     <button id="modalClose" class="modal-close">&times;</button>
-    <h2 id="modalTitle"></h2>
-    <p id="modalMeta" class="modal-meta"></p>
-    <p id="modalNotes"></p>
-    <div class="modal-actions">
-      <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
-      <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
-      <button id="modalSlideshow" class="map-button">&#9654; Слайдшоу</button>
-      <button id="modalMap" class="map-button">Показать альбом на карте</button>
+    <div class="modal-header">
+      <h2 id="modalTitle"></h2>
+      <p id="modalMeta" class="modal-meta"></p>
+      <p id="modalNotes"></p>
+      <div class="modal-actions">
+        <button id="modalSpeak" class="icon-button" title="Прослушать описание">🔊</button>
+        <button id="modalGemini" class="gemini-button">Запрос Gemini</button>
+        <button id="modalSlideshow" class="map-button">&#9654; Слайдшоу</button>
+        <button id="modalMap" class="map-button">Показать альбом на карте</button>
+      </div>
     </div>
-    <div id="modalGallery" class="gallery"></div>
+    <div class="modal-body">
+      <div id="modalGallery" class="gallery"></div>
+    </div>
   </div>
 </div>
 
@@ -85,12 +93,14 @@
   <button id="lightboxPrev" class="lightbox-nav lightbox-prev">&#10094;</button>
   <img id="lightboxImg" src="" alt="">
   <button id="lightboxNext" class="lightbox-nav lightbox-next">&#10095;</button>
-  <p id="lightboxCaption" class="lightbox-caption"></p>
-  <div class="lightbox-actions">
-    <button id="lightboxSlideshow" class="map-button">&#9654; Слайдшоу</button>
-    <button id="lightboxMusic" class="map-button">&#127925; Музыка</button>
-    <button id="lightboxGemini" class="gemini-button">Запрос Gemini</button>
-    <button id="lightboxMap" class="map-button">Показать альбом на карте</button>
+  <div class="lightbox-overlay">
+    <p id="lightboxCaption" class="lightbox-caption"></p>
+    <div class="lightbox-actions">
+      <button id="lightboxSlideshow" class="map-button">&#9654; Слайдшоу</button>
+      <button id="lightboxMusic" class="map-button">&#127925; Музыка</button>
+      <button id="lightboxGemini" class="gemini-button">Запрос Gemini</button>
+      <button id="lightboxMap" class="map-button">Показать альбом на карте</button>
+    </div>
   </div>
 </div>
 
