@@ -363,6 +363,15 @@ body {
   flex-shrink: 0;
 }
 
+#modalTitle {
+  margin: 0 0 8px;
+}
+
+#modalNotes {
+  margin: 0 0 10px;
+  line-height: 1.35;
+}
+
 .modal-content-split .modal-body {
   overflow-y: auto;
   flex: 1;

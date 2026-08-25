@@ -500,7 +500,9 @@ async function copyGeminiText(button, text) {
   const original = button.textContent;
   button.textContent = 'Скопировано! Вставьте текст в Gemini (Ctrl+V)';
   setTimeout(() => { button.textContent = original; }, 4000);
-  window.open(`https://gemini.google.com/app?q=${encodeURIComponent(text)}`, '_blank');
+  // Gemini не подхватывает текст из параметра ?q= (проверено — работает не
+  // всегда и не для всех поездок), поэтому просто открываем чат для вставки.
+  window.open('https://gemini.google.com/app', '_blank');
 }
 
 async function copyGeminiPhoto(button, promptText, imgUrl) {
@@ -528,7 +530,7 @@ async function copyGeminiPhoto(button, promptText, imgUrl) {
 }
 
 modalGeminiText.onclick = async () => {
-  const question = `Расскажи подробнее о поездке: ${currentTrip.title} (${currentTrip.city}, ${currentTrip.country}). ${currentTrip.notes}`;
+  const question = `Расскажи и прочитай про это место: ${currentTrip.title} (${currentTrip.city}, ${currentTrip.country}). ${currentTrip.notes}`;
   await copyGeminiText(modalGeminiText, question);
 };
 
@@ -628,7 +630,7 @@ lightboxMusic.onclick = toggleMusic;
 lightboxGeminiText.onclick = async () => {
   const photo = currentTrip.photos[currentPhotoIndex];
   const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
-  const question = `Поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart} Расскажи, что интересного может быть на этом фото.`;
+  const question = `Расскажи и прочитай про это место: поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart}`;
   await copyGeminiText(lightboxGeminiText, question);
 };
 
