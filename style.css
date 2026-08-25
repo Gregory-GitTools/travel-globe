@@ -77,14 +77,19 @@ body {
 
 .calendar-nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 8px;
 }
 
 .calendar-dd {
   position: relative;
   flex: 1;
+}
+
+#calendarDayDD {
+  flex: 0.6;
 }
 
 .calendar-select {
@@ -127,6 +132,24 @@ body {
   padding: 4px;
 }
 
+.calendar-dd-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.calendar-dd-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.calendar-dd-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+.calendar-dd-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 .calendar-dd-item {
   padding: 7px 10px;
   border-radius: 5px;
@@ -144,48 +167,10 @@ body {
   font-weight: 600;
 }
 
-.calendar-view-toggle {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-}
-
-.calendar-year-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 14px;
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-.calendar-year-month-header {
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 6px;
-  cursor: pointer;
-  border-radius: 6px;
-  padding: 4px 0;
-}
-
-.calendar-year-month-header:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.calendar-grid-compact {
-  gap: 2px;
-}
-
-.calendar-grid-compact .calendar-day {
-  font-size: 11px;
-  border-radius: 3px;
 }
 
 .calendar-weekdays {
@@ -221,12 +206,23 @@ body {
   outline-offset: -2px;
 }
 
+.calendar-day.focused {
+  box-shadow: 0 0 0 2px #fff inset;
+}
+
 /* Albums */
 
 .albums-search {
   display: flex;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 8px;
+}
+
+.albums-search-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .albums-search input[type="text"] {
@@ -356,6 +352,10 @@ body {
 
 .modal-content-split .modal-header {
   flex-shrink: 0;
+}
+
+.modal-content-split .modal-header h2 {
+  margin: 0 0 10px;
 }
 
 #modalTitle {

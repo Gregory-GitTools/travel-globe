@@ -25,17 +25,18 @@
       <h2>Альбомы</h2>
       <div class="albums-search">
         <input type="text" id="albumsSearchText" placeholder="Поиск по названию или городу">
-        <button id="albumsCalendarToggle" class="icon-button" title="Свернуть/развернуть календарь">🔼</button>
-        <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
-      </div>
-      <div class="calendar-view-toggle">
-        <button id="calendarViewMonth" class="map-button active">Месяц</button>
-        <button id="calendarViewYear" class="map-button">Год целиком</button>
-        <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
+        <div class="albums-search-buttons">
+          <button id="albumsSearchClear" class="icon-button" title="Сбросить фильтр">&times;</button>
+          <button id="albumsCalendarToggle" class="icon-button" title="Свернуть/развернуть календарь">🔼</button>
+        </div>
       </div>
       <div id="albumsCalendar" class="albums-calendar">
         <div id="calendarNav" class="calendar-nav">
           <button id="calendarPrev" class="icon-button">&#10094;</button>
+          <div class="calendar-dd" id="calendarDayDD">
+            <button type="button" id="calendarDayBtn" class="calendar-select"></button>
+            <div id="calendarDayList" class="calendar-dd-list hidden"></div>
+          </div>
           <div class="calendar-dd" id="calendarMonthDD">
             <button type="button" id="calendarMonthBtn" class="calendar-select"></button>
             <div id="calendarMonthList" class="calendar-dd-list hidden"></div>
@@ -45,10 +46,10 @@
             <div id="calendarYearList" class="calendar-dd-list hidden"></div>
           </div>
           <button id="calendarNext" class="icon-button">&#10095;</button>
+          <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшней дате">📍 Сегодня</button>
         </div>
         <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
         <div id="calendarGrid" class="calendar-grid"></div>
-        <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
       </div>
     </div>
     <div class="modal-body">
