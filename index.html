@@ -21,23 +21,33 @@
 </div>
 
 <div id="calendarModal" class="modal modal-anchor-top hidden">
-  <div class="modal-content">
+  <div class="modal-content calendar-modal-content">
     <button id="calendarModalClose" class="modal-close">&times;</button>
-    <h2>Календарь поездок</h2>
-    <div class="calendar-view-toggle">
-      <button id="calendarViewMonth" class="map-button active">Месяц</button>
-      <button id="calendarViewYear" class="map-button">Год целиком</button>
-      <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
+    <div class="calendar-header">
+      <h2>Календарь поездок</h2>
+      <div class="calendar-view-toggle">
+        <button id="calendarViewMonth" class="map-button active">Месяц</button>
+        <button id="calendarViewYear" class="map-button">Год целиком</button>
+        <button id="goTodayBtn" class="map-button" title="Перейти к сегодняшнему месяцу">📍 Сегодня</button>
+      </div>
+      <div id="calendarNav" class="calendar-nav">
+        <button id="calendarPrev" class="icon-button">&#10094;</button>
+        <div class="calendar-dd" id="calendarMonthDD">
+          <button type="button" id="calendarMonthBtn" class="calendar-select"></button>
+          <div id="calendarMonthList" class="calendar-dd-list hidden"></div>
+        </div>
+        <div class="calendar-dd" id="calendarYearDD">
+          <button type="button" id="calendarYearBtn" class="calendar-select"></button>
+          <div id="calendarYearList" class="calendar-dd-list hidden"></div>
+        </div>
+        <button id="calendarNext" class="icon-button">&#10095;</button>
+      </div>
     </div>
-    <div id="calendarNav" class="calendar-nav">
-      <button id="calendarPrev" class="icon-button">&#10094;</button>
-      <select id="calendarMonthSelect" class="calendar-select"></select>
-      <select id="calendarYearSelect" class="calendar-select"></select>
-      <button id="calendarNext" class="icon-button">&#10095;</button>
+    <div class="calendar-body">
+      <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
+      <div id="calendarGrid" class="calendar-grid"></div>
+      <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
     </div>
-    <div id="calendarWeekdays" class="calendar-grid calendar-weekdays"></div>
-    <div id="calendarGrid" class="calendar-grid"></div>
-    <div id="calendarYearGrid" class="calendar-year-grid hidden"></div>
   </div>
 </div>
 

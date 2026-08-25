@@ -55,34 +55,86 @@ const calendarModalContent = calendarModal.querySelector('.modal-content');
 const calendarModalClose = document.getElementById('calendarModalClose');
 const calendarPrev = document.getElementById('calendarPrev');
 const calendarNext = document.getElementById('calendarNext');
-const calendarMonthSelect = document.getElementById('calendarMonthSelect');
-const calendarYearSelect = document.getElementById('calendarYearSelect');
+const calendarMonthDD = document.getElementById('calendarMonthDD');
+const calendarMonthBtn = document.getElementById('calendarMonthBtn');
+const calendarMonthList = document.getElementById('calendarMonthList');
+const calendarYearBtn = document.getElementById('calendarYearBtn');
+const calendarYearList = document.getElementById('calendarYearList');
 const calendarViewMonth = document.getElementById('calendarViewMonth');
 const calendarViewYear = document.getElementById('calendarViewYear');
 const calendarWeekdaysRow = document.getElementById('calendarWeekdays');
 const calendarGrid = document.getElementById('calendarGrid');
 const calendarYearGrid = document.getElementById('calendarYearGrid');
 
+// Custom dark dropdowns replace native <select> — Chrome/Edge on Windows
+// render a native <select>'s open popup list with an OS-controlled white
+// background that page CSS cannot restyle, which looked out of place here.
 monthNames.forEach((name, i) => {
-  const opt = document.createElement('option');
-  opt.value = String(i + 1).padStart(2, '0');
-  opt.textContent = name;
-  calendarMonthSelect.appendChild(opt);
+  const item = document.createElement('div');
+  item.className = 'calendar-dd-item';
+  item.dataset.value = String(i + 1).padStart(2, '0');
+  item.textContent = name;
+  item.onclick = () => {
+    const [year] = currentCalendarMonth.split('-');
+    currentCalendarMonth = `${year}-${item.dataset.value}`;
+    closeCalendarDropdowns();
+    renderCalendarMonth();
+  };
+  calendarMonthList.appendChild(item);
 });
 
-const tripYears = tripMonths.map(m => Number(m.slice(0, 4)));
-const thisYear = new Date().getFullYear();
-const minCalendarYear = Math.min(thisYear, ...tripYears) - 1;
-const maxCalendarYear = Math.max(thisYear, ...tripYears) + 2;
-for (let y = minCalendarYear; y <= maxCalendarYear; y++) {
-  const opt = document.createElement('option');
-  opt.value = String(y);
-  opt.textContent = String(y);
-  calendarYearSelect.appendChild(opt);
+function closeCalendarDropdowns() {
+  calendarMonthList.classList.add('hidden');
+  calendarYearList.classList.add('hidden');
+}
+
+function toggleCalendarDropdown(list) {
+  const wasOpen = !list.classList.contains('hidden');
+  closeCalendarDropdowns();
+  if (!wasOpen) list.classList.remove('hidden');
+}
+
+calendarMonthBtn.onclick = e => { e.stopPropagation(); toggleCalendarDropdown(calendarMonthList); };
+calendarYearBtn.onclick = e => { e.stopPropagation(); toggleCalendarDropdown(calendarYearList); };
+document.addEventListener('click', closeCalendarDropdowns);
+
+function rebuildYearList(activeYear) {
+  calendarYearList.innerHTML = '';
+  for (let y = activeYear - 6; y <= activeYear + 6; y++) {
+    const item = document.createElement('div');
+    item.className = 'calendar-dd-item';
+    if (y === activeYear) item.classList.add('active');
+    item.textContent = String(y);
+    item.onclick = () => {
+      closeCalendarDropdowns();
+      if (calendarViewMode === 'year') {
+        calendarYearViewValue = y;
+        renderCalendarYear();
+      } else {
+        const [, month] = currentCalendarMonth.split('-');
+        currentCalendarMonth = `${y}-${month}`;
+        renderCalendarMonth();
+      }
+    };
+    calendarYearList.appendChild(item);
+  }
+}
+
+function setMonthLabel(month) {
+  calendarMonthBtn.textContent = monthNames[month - 1];
+  calendarMonthList.querySelectorAll('.calendar-dd-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.value === String(month).padStart(2, '0'));
+  });
+}
+
+function setYearLabel(year) {
+  calendarYearBtn.textContent = String(year);
+  rebuildYearList(year);
 }
 
 let currentCalendarMonth = tripMonths[0] || formatDateLocal(new Date()).slice(0, 7);
 let calendarViewMode = 'month';
+let calendarYearViewValue = Number(currentCalendarMonth.slice(0, 4));
 
 function fillDayGrid(container, year, month) {
   container.innerHTML = '';
@@ -126,22 +178,10 @@ function fillDayGrid(container, year, month) {
   }
 }
 
-function setCalendarYearOption(year) {
-  const value = String(year);
-  if (!Array.from(calendarYearSelect.options).some(o => o.value === value)) {
-    const opt = document.createElement('option');
-    opt.value = value;
-    opt.textContent = value;
-    const before = Array.from(calendarYearSelect.options).find(o => Number(o.value) > year);
-    calendarYearSelect.insertBefore(opt, before || null);
-  }
-  calendarYearSelect.value = value;
-}
-
 function renderCalendarMonth() {
   const [year, month] = currentCalendarMonth.split('-').map(Number);
-  calendarMonthSelect.value = String(month).padStart(2, '0');
-  setCalendarYearOption(year);
+  setMonthLabel(month);
+  setYearLabel(year);
 
   calendarWeekdaysRow.innerHTML = '';
   weekdayLetters.forEach(w => {
@@ -154,7 +194,8 @@ function renderCalendarMonth() {
 }
 
 function renderCalendarYear() {
-  const year = Number(calendarYearSelect.value);
+  const year = calendarYearViewValue;
+  setYearLabel(year);
   calendarYearGrid.innerHTML = '';
   for (let m = 1; m <= 12; m++) {
     const block = document.createElement('div');
@@ -182,16 +223,17 @@ function setCalendarViewMode(mode) {
   calendarViewMode = mode;
   calendarViewMonth.classList.toggle('active', mode === 'month');
   calendarViewYear.classList.toggle('active', mode === 'year');
-  calendarMonthSelect.classList.toggle('hidden', mode === 'year');
+  calendarMonthDD.classList.toggle('hidden', mode === 'year');
   calendarWeekdaysRow.classList.toggle('hidden', mode === 'year');
   calendarGrid.classList.toggle('hidden', mode === 'year');
   calendarYearGrid.classList.toggle('hidden', mode === 'month');
   calendarModalContent.classList.toggle('wide', mode === 'year');
+  closeCalendarDropdowns();
 
   if (mode === 'month') {
     renderCalendarMonth();
   } else {
-    setCalendarYearOption(Number(currentCalendarMonth.slice(0, 4)));
+    calendarYearViewValue = Number(currentCalendarMonth.slice(0, 4));
     renderCalendarYear();
   }
 }
@@ -203,7 +245,7 @@ function shiftCalendarMonth(delta) {
 }
 
 function shiftCalendarYear(delta) {
-  setCalendarYearOption(Number(calendarYearSelect.value) + delta);
+  calendarYearViewValue += delta;
   renderCalendarYear();
 }
 
@@ -221,6 +263,7 @@ function openCalendarModal() {
 }
 
 function closeCalendarModal() {
+  closeCalendarDropdowns();
   calendarModal.classList.add('hidden');
 }
 
@@ -233,26 +276,15 @@ calendarModalClose.onclick = closeCalendarModal;
 calendarModal.onclick = e => { if (e.target === calendarModal) closeCalendarModal(); };
 calendarPrev.onclick = () => calendarStep(-1);
 calendarNext.onclick = () => calendarStep(1);
-calendarMonthSelect.onchange = () => {
-  currentCalendarMonth = `${calendarYearSelect.value}-${calendarMonthSelect.value}`;
-  renderCalendarMonth();
-};
-calendarYearSelect.onchange = () => {
-  if (calendarViewMode === 'year') {
-    renderCalendarYear();
-  } else {
-    currentCalendarMonth = `${calendarYearSelect.value}-${calendarMonthSelect.value}`;
-    renderCalendarMonth();
-  }
-};
 calendarViewMonth.onclick = () => setCalendarViewMode('month');
 calendarViewYear.onclick = () => setCalendarViewMode('year');
 
-// Mouse-wheel navigation on the prev/next/select row, replacing the need to
-// click the arrows; scoped to this row (not the grid) so it doesn't block
-// native page scrolling over the tall 12-month year-view grid.
+// Mouse-wheel navigation on the prev/next/dropdown row, replacing the need
+// to click the arrows; skipped while an open dropdown list is under the
+// cursor so a long list can still be scrolled normally.
 let calendarWheelBusy = false;
 document.getElementById('calendarNav').addEventListener('wheel', e => {
+  if (e.target.closest('.calendar-dd-list')) return;
   e.preventDefault();
   if (calendarWheelBusy) return;
   calendarWheelBusy = true;
