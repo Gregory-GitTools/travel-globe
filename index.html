@@ -17,13 +17,24 @@
 <div id="cloudOverlay" class="cloud-overlay hidden"></div>
 
 <div id="flatMap" class="flat-map layer-off">
-  <button id="flatMapBack" class="toolbar-button flat-map-back">🌐 Глобус</button>
   <div id="flatMapCanvas"></div>
 </div>
 
 <div class="toolbar">
   <button id="openAlbumsBtn" class="toolbar-button">📁 Альбомы</button>
-  <button id="toolbarMute" class="toolbar-button" title="Звук сайта: вкл/выкл">🔊</button>
+  <button id="toolbarMapToggle" class="toolbar-button" title="Переключить карта/глобус">🗺️ Карта</button>
+  <button id="toolbarSettings" class="toolbar-button" title="Настройки">⚙️</button>
+</div>
+
+<div id="settingsModal" class="modal hidden">
+  <div class="modal-content">
+    <button id="settingsModalClose" class="modal-close">&times;</button>
+    <h2>Настройки</h2>
+    <label class="settings-row">
+      <span>Автовращение глобуса</span>
+      <input type="checkbox" id="settingAutoRotate">
+    </label>
+  </div>
 </div>
 
 <div id="albumsModal" class="modal modal-anchor-top hidden">

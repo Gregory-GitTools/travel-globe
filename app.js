@@ -39,8 +39,21 @@ new ResizeObserver(resizeGlobe).observe(globeVizEl);
 let modalOpenBlockingRotate = false;
 let zoomAllowsRotate = true;
 
+// Настройки посетителя (публичная шестерёнка) — хранятся только в
+// localStorage конкретного браузера, ничего личного/приватного здесь нет.
+const SETTINGS_KEY = 'travelGlobeSettings';
+function loadSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+const settings = loadSettings();
+let userAutoRotateOff = settings.autoRotate === false;
+
 function applyAutoRotateState() {
-  globe.controls().autoRotate = zoomAllowsRotate && !modalOpenBlockingRotate && !inFlatMapMode;
+  globe.controls().autoRotate = zoomAllowsRotate && !modalOpenBlockingRotate && !inFlatMapMode && !userAutoRotateOff;
 }
 
 function checkGlobeZoomRotate() {
@@ -66,7 +79,7 @@ setInterval(checkGlobeZoomRotate, 250);
 const cloudOverlay = document.getElementById('cloudOverlay');
 const flatMapEl = document.getElementById('flatMap');
 const flatMapCanvas = document.getElementById('flatMapCanvas');
-const flatMapBack = document.getElementById('flatMapBack');
+const toolbarMapToggle = document.getElementById('toolbarMapToggle');
 
 let inFlatMapMode = false;
 let flatMap = null;
@@ -120,22 +133,42 @@ function crossfade(fromEl, toEl, onSwap) {
   }, 280);
 }
 
-function descendToMap() {
-  if (inFlatMapMode || modalOpenBlockingRotate) return;
+function updateMapToggleLabel() {
+  toolbarMapToggle.textContent = inFlatMapMode ? '🌐 Глобус' : '🗺️ Карта';
+  toolbarMapToggle.title = inFlatMapMode ? 'Вернуться к глобусу' : 'Открыть карту';
+}
+
+// Единая точка входа на карту: если уже на карте — просто перелетаем на
+// новое место (без повторного кросс-фейда), если ещё на глобусе — сначала
+// проваливаемся сквозь облака.
+function goToMapAt(lat, lng) {
+  if (inFlatMapMode) {
+    ensureFlatMap().flyTo([lat, lng], 17);
+    return;
+  }
+  if (modalOpenBlockingRotate) return;
   if (!albumsModal.classList.contains('hidden')) return;
   inFlatMapMode = true;
   applyAutoRotateState();
+  crossfade(globeVizEl, flatMapEl, () => {
+    const map = ensureFlatMap();
+    map.setView([lat, lng], 17, { animate: false });
+    map.invalidateSize();
+  });
+  updateMapToggleLabel();
+}
+
+function descendToMap() {
+  if (inFlatMapMode || modalOpenBlockingRotate) return;
+  if (!albumsModal.classList.contains('hidden')) return;
   const pov = globe.pointOfView();
   // Прыгаем сразу в район ближайшего альбома, а не туда, куда случайно
   // смотрела камера — подползать к нему смысла нет.
   const target = nearestTrip(pov.lat, pov.lng);
-  crossfade(globeVizEl, flatMapEl, () => {
-    const map = ensureFlatMap();
-    map.setView([target.lat, target.lng], 17, { animate: false });
-    map.invalidateSize();
-  });
+  goToMapAt(target.lat, target.lng);
 }
 
+// Выход с карты — только по кнопке, никогда по жесту зума.
 function returnToGlobe() {
   if (!inFlatMapMode) return;
   const center = flatMap.getCenter();
@@ -148,9 +181,37 @@ function returnToGlobe() {
   inFlatMapMode = false;
   zoomAllowsRotate = true;
   applyAutoRotateState();
+  updateMapToggleLabel();
 }
 
-flatMapBack.onclick = returnToGlobe;
+toolbarMapToggle.onclick = () => {
+  if (inFlatMapMode) {
+    returnToGlobe();
+  } else {
+    descendToMap();
+  }
+};
+
+// --- Настройки (шестерёнка) ---
+
+const settingsModal = document.getElementById('settingsModal');
+const settingsModalClose = document.getElementById('settingsModalClose');
+const toolbarSettings = document.getElementById('toolbarSettings');
+const settingAutoRotate = document.getElementById('settingAutoRotate');
+
+settingAutoRotate.checked = !userAutoRotateOff;
+
+toolbarSettings.onclick = () => settingsModal.classList.remove('hidden');
+settingsModalClose.onclick = () => settingsModal.classList.add('hidden');
+settingsModal.onclick = e => {
+  if (e.target === settingsModal) settingsModal.classList.add('hidden');
+};
+settingAutoRotate.onchange = () => {
+  userAutoRotateOff = !settingAutoRotate.checked;
+  settings.autoRotate = settingAutoRotate.checked;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  applyAutoRotateState();
+};
 
 // Прогреваем кэш тайлов вокруг каждого альбома заранее (небольшой набор,
 // не весь земной шар), чтобы при провале карта открывалась уже в резком
@@ -692,7 +753,8 @@ modalSlideshow.onclick = () => {
 modalMap.onclick = () => {
   if (!currentTrip) return;
   stopSlideshow();
-  openAlbumMapWindow(currentTrip);
+  closeModal();
+  goToMapAt(currentTrip.lat, currentTrip.lng);
 };
 
 const lightbox = document.getElementById('lightbox');
@@ -721,18 +783,6 @@ bgAudio.loop = true;
 
 let siteSoundOn = true;
 
-const toolbarMute = document.getElementById('toolbarMute');
-toolbarMute.onclick = () => {
-  siteSoundOn = !siteSoundOn;
-  toolbarMute.textContent = siteSoundOn ? '🔊' : '🔇';
-  toolbarMute.title = siteSoundOn ? 'Звук сайта: вкл/выкл' : 'Звук сайта выключен — нажмите, чтобы включить';
-  if (!siteSoundOn) {
-    bgAudio.pause();
-  } else if (bgAudio.src) {
-    bgAudio.play().catch(() => {});
-  }
-};
-
 function getTripMusicUrl(trip) {
   if (trip.music && trip.music !== 'random') return trip.music;
   return musicLibrary[Math.floor(Math.random() * musicLibrary.length)];
@@ -748,11 +798,7 @@ function playMusicForTrip(trip) {
   if (!bgAudio.src.endsWith(url)) {
     bgAudio.src = url;
   }
-  if (!siteSoundOn) {
-    siteSoundOn = true;
-    toolbarMute.textContent = '🔊';
-    toolbarMute.title = 'Звук сайта: вкл/выкл';
-  }
+  siteSoundOn = true;
   bgAudio.play().catch(() => {
     // Браузер заблокировал автовоспроизведение (например, iOS при
     // переключателе "Бесшумно" глушит звук у <audio>, в отличие от <video>).
@@ -876,20 +922,13 @@ lightbox.addEventListener('touchend', e => {
   stopSlideshow();
 }, { passive: true });
 
-// Карта альбома открывается в отдельном окне (map.html), которое само
-// строит точки из GPS-координат фото и подсвечивает выбранное фото,
-// если оно указано (переход из просмотра конкретного фото в лайтбоксе).
-function openAlbumMapWindow(trip, photoIndex) {
-  const tripIndex = trips.indexOf(trip);
-  let url = `map.html?trip=${tripIndex}`;
-  if (typeof photoIndex === 'number') url += `&photo=${photoIndex}`;
-  // Именованное окно: повторные клики обновляют уже открытую карту вместо
-  // открытия новой вкладки каждый раз.
-  window.open(url, 'travelGlobeMap', 'width=960,height=720');
-}
-
 lightboxMap.onclick = () => {
   if (!currentTrip) return;
+  const photo = currentTrip.photos[currentPhotoIndex];
+  const lat = photo && photo.lat != null ? photo.lat : currentTrip.lat;
+  const lng = photo && photo.lng != null ? photo.lng : currentTrip.lng;
   stopSlideshow();
-  openAlbumMapWindow(currentTrip, currentPhotoIndex);
+  closeLightbox();
+  closeModal();
+  goToMapAt(lat, lng);
 };
