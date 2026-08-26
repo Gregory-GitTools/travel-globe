@@ -18,6 +18,19 @@ const globe = Globe()(document.getElementById('globeViz'))
 globe.controls().autoRotate = true;
 globe.controls().autoRotateSpeed = 0.4;
 
+// globe.gl не переразмеривает свой WebGL-канвас сам при изменении размеров
+// окна (например, при раскрытии телефона-раскладушки — ширина/высота
+// экрана меняются, а канвас остаётся зафиксирован в старом разрешении).
+// Подстраиваем канвас под контейнер вручную.
+const globeVizEl = document.getElementById('globeViz');
+function resizeGlobe() {
+  globe.width(globeVizEl.clientWidth);
+  globe.height(globeVizEl.clientHeight);
+}
+window.addEventListener('resize', resizeGlobe);
+window.addEventListener('orientationchange', resizeGlobe);
+new ResizeObserver(resizeGlobe).observe(globeVizEl);
+
 // Автовращение крутит глобус с постоянной угловой скоростью, поэтому при
 // сильном приближении (камера почти у поверхности) та же скорость на экране
 // выглядит в разы быстрее и глобус невозможно "поймать" взглядом. Останав-
@@ -597,7 +610,7 @@ toolbarMute.onclick = () => {
   if (!siteSoundOn) {
     bgAudio.pause();
   } else if (bgAudio.src) {
-    bgAudio.play();
+    bgAudio.play().catch(() => {});
   }
 };
 
@@ -621,7 +634,10 @@ function playMusicForTrip(trip) {
     toolbarMute.textContent = '🔊';
     toolbarMute.title = 'Звук сайта: вкл/выкл';
   }
-  bgAudio.play();
+  bgAudio.play().catch(() => {
+    // Браузер заблокировал автовоспроизведение (например, iOS при
+    // переключателе "Бесшумно" глушит звук у <audio>, в отличие от <video>).
+  });
 }
 
 lightboxGeminiText.onclick = async () => {
