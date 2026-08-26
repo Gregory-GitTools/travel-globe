@@ -40,21 +40,86 @@ let modalOpenBlockingRotate = false;
 let zoomAllowsRotate = true;
 
 function applyAutoRotateState() {
-  globe.controls().autoRotate = zoomAllowsRotate && !modalOpenBlockingRotate;
+  globe.controls().autoRotate = zoomAllowsRotate && !modalOpenBlockingRotate && !inFlatMapMode;
 }
 
 function checkGlobeZoomRotate() {
+  if (inFlatMapMode) return;
   const camera = globe.camera();
   const dist = camera.position.length();
   const globeRadius = globe.getGlobeRadius();
   const halfFovRad = (camera.fov / 2) * Math.PI / 180;
   const horizonVisible = (globeRadius / dist) <= Math.sin(halfFovRad);
   if (horizonVisible !== zoomAllowsRotate) {
+    const wasVisible = zoomAllowsRotate;
     zoomAllowsRotate = horizonVisible;
     applyAutoRotateState();
+    // Тот самый момент "полной потери очертаний" глобуса при приближении —
+    // проваливаемся сквозь облака на плоскую карту той же точки.
+    if (wasVisible && !horizonVisible) descendToMap();
   }
 }
 setInterval(checkGlobeZoomRotate, 250);
+
+// --- Переход глобус -> плоская карта ("сквозь облака") ---
+
+const cloudOverlay = document.getElementById('cloudOverlay');
+const flatMapEl = document.getElementById('flatMap');
+const flatMapCanvas = document.getElementById('flatMapCanvas');
+const flatMapBack = document.getElementById('flatMapBack');
+
+let inFlatMapMode = false;
+let flatMap = null;
+
+function ensureFlatMap() {
+  if (flatMap) return flatMap;
+  flatMap = L.map(flatMapCanvas, { attributionControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(flatMap);
+  return flatMap;
+}
+
+function descendToMap() {
+  if (inFlatMapMode || modalOpenBlockingRotate) return;
+  if (!albumsModal.classList.contains('hidden')) return;
+  inFlatMapMode = true;
+  applyAutoRotateState();
+  const pov = globe.pointOfView();
+  cloudOverlay.classList.remove('hidden');
+  cloudOverlay.classList.add('visible');
+  setTimeout(() => {
+    globeVizEl.style.display = 'none';
+    flatMapEl.classList.remove('hidden');
+    const map = ensureFlatMap();
+    map.invalidateSize();
+    map.setView([pov.lat, pov.lng], 15);
+    cloudOverlay.classList.remove('visible');
+    setTimeout(() => cloudOverlay.classList.add('hidden'), 600);
+  }, 550);
+}
+
+function returnToGlobe() {
+  if (!inFlatMapMode) return;
+  const center = flatMap.getCenter();
+  cloudOverlay.classList.remove('hidden');
+  cloudOverlay.classList.add('visible');
+  setTimeout(() => {
+    flatMapEl.classList.add('hidden');
+    globeVizEl.style.display = '';
+    resizeGlobe();
+    // Отдаляемся безопасно выше порога исчезновения горизонта, чтобы не
+    // провалиться обратно на карту сразу же.
+    globe.pointOfView({ lat: center.lat, lng: center.lng, altitude: 3 }, 0);
+    inFlatMapMode = false;
+    zoomAllowsRotate = true;
+    applyAutoRotateState();
+    cloudOverlay.classList.remove('visible');
+    setTimeout(() => cloudOverlay.classList.add('hidden'), 600);
+  }, 550);
+}
+
+flatMapBack.onclick = returnToGlobe;
 
 const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
   "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];

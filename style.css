@@ -37,6 +37,45 @@ body {
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.9);
 }
 
+/* Cloud transition + flat map (globe -> map descent) */
+
+.cloud-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(255,255,255,0.95), transparent 70%),
+    radial-gradient(ellipse 50% 35% at 70% 60%, rgba(255,255,255,0.9), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 80%, rgba(255,255,255,0.95), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 85% 20%, rgba(255,255,255,0.9), transparent 70%),
+    #e8ecf2;
+}
+
+.cloud-overlay.visible {
+  opacity: 1;
+}
+
+.flat-map {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+}
+
+#flatMapCanvas {
+  position: absolute;
+  inset: 0;
+}
+
+.flat-map-back {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 5;
+}
+
 /* Toolbar */
 
 .toolbar {
