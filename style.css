@@ -82,6 +82,15 @@ body {
   inset: 0;
 }
 
+.highlight-pin {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  border: 3px solid #fff;
+  box-shadow: 0 0 10px rgba(255, 77, 79, 0.9);
+}
+
 /* Toolbar */
 
 .toolbar {
@@ -108,6 +117,22 @@ body {
 
 .toolbar-button:hover {
   background: rgba(20, 24, 38, 0.9);
+}
+
+/* На десктопе кнопки и так крупные, с хорошей областью клика — фон-плашка
+   больше не нужна, оставляем только текст/иконку с тенью для читаемости. */
+@media (min-width: 801px) {
+  .toolbar-button {
+    background: none;
+    border: none;
+    backdrop-filter: none;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85), 0 0 14px rgba(0, 0, 0, 0.5);
+  }
+
+  .toolbar-button:hover {
+    background: none;
+    opacity: 0.75;
+  }
 }
 
 .settings-row {

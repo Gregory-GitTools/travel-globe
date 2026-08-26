@@ -97,6 +97,38 @@ function ensureFlatMap() {
   return flatMap;
 }
 
+// Точки альбома на карте: по одной на каждое фото с GPS-координатами
+// (или центр поездки, если у фото координат нет) — та же логика, что
+// раньше была в отдельном map.html.
+function getTripPoints(trip) {
+  const points = trip.photos
+    .map((photo, index) => ({ photo, index }))
+    .filter(({ photo }) => typeof photo.lat === 'number' && typeof photo.lng === 'number')
+    .map(({ photo, index }) => ({ lat: photo.lat, lng: photo.lng, caption: photo.caption, index }));
+  return points.length ? points : [{ lat: trip.lat, lng: trip.lng, caption: trip.title, index: -1 }];
+}
+
+let tripMarkersLayer = null;
+
+function showTripMarkers(map, trip, highlightIndex) {
+  if (tripMarkersLayer) tripMarkersLayer.remove();
+  tripMarkersLayer = L.layerGroup();
+  const points = getTripPoints(trip);
+  points.forEach(p => {
+    const isHighlighted = highlightIndex != null && p.index === highlightIndex;
+    const marker = isHighlighted
+      ? L.marker([p.lat, p.lng], {
+          icon: L.divIcon({ className: '', html: '<div class="highlight-pin"></div>', iconSize: [20, 20] }),
+          zIndexOffset: 1000
+        })
+      : L.marker([p.lat, p.lng]);
+    marker.bindPopup(p.caption || trip.title);
+    marker.addTo(tripMarkersLayer);
+  });
+  tripMarkersLayer.addTo(map);
+  return points;
+}
+
 function nearestTrip(lat, lng) {
   const R = 6371;
   const toRad = deg => deg * Math.PI / 180;
@@ -140,10 +172,15 @@ function updateMapToggleLabel() {
 
 // Единая точка входа на карту: если уже на карте — просто перелетаем на
 // новое место (без повторного кросс-фейда), если ещё на глобусе — сначала
-// проваливаемся сквозь облака.
-function goToMapAt(lat, lng) {
+// проваливаемся сквозь облака. Заодно расставляет метки по фото альбома
+// (highlightIndex — подсветить конкретное фото, если пришли из лайтбокса).
+function goToMapAt(trip, highlightIndex) {
+  const points = getTripPoints(trip);
+  const target = (highlightIndex != null && points.find(p => p.index === highlightIndex)) || points[0];
   if (inFlatMapMode) {
-    ensureFlatMap().flyTo([lat, lng], 17);
+    const map = ensureFlatMap();
+    showTripMarkers(map, trip, highlightIndex);
+    map.flyTo([target.lat, target.lng], 17);
     return;
   }
   if (modalOpenBlockingRotate) return;
@@ -152,7 +189,8 @@ function goToMapAt(lat, lng) {
   applyAutoRotateState();
   crossfade(globeVizEl, flatMapEl, () => {
     const map = ensureFlatMap();
-    map.setView([lat, lng], 17, { animate: false });
+    showTripMarkers(map, trip, highlightIndex);
+    map.setView([target.lat, target.lng], 17, { animate: false });
     map.invalidateSize();
   });
   updateMapToggleLabel();
@@ -165,7 +203,7 @@ function descendToMap() {
   // Прыгаем сразу в район ближайшего альбома, а не туда, куда случайно
   // смотрела камера — подползать к нему смысла нет.
   const target = nearestTrip(pov.lat, pov.lng);
-  goToMapAt(target.lat, target.lng);
+  goToMapAt(target);
 }
 
 // Выход с карты — только по кнопке, никогда по жесту зума.
@@ -754,7 +792,7 @@ modalMap.onclick = () => {
   if (!currentTrip) return;
   stopSlideshow();
   closeModal();
-  goToMapAt(currentTrip.lat, currentTrip.lng);
+  goToMapAt(currentTrip);
 };
 
 const lightbox = document.getElementById('lightbox');
@@ -924,11 +962,8 @@ lightbox.addEventListener('touchend', e => {
 
 lightboxMap.onclick = () => {
   if (!currentTrip) return;
-  const photo = currentTrip.photos[currentPhotoIndex];
-  const lat = photo && photo.lat != null ? photo.lat : currentTrip.lat;
-  const lng = photo && photo.lng != null ? photo.lng : currentTrip.lng;
   stopSlideshow();
   closeLightbox();
   closeModal();
-  goToMapAt(lat, lng);
+  goToMapAt(currentTrip, currentPhotoIndex);
 };
