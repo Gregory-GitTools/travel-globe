@@ -127,6 +127,37 @@ const trips = [
     ]
   },
   {
+    city: "Виймси",
+    country: "Эстония",
+    lat: 59.512627,
+    lng: 24.890923,
+    startDate: "2026-01-13",
+    endDate: "2026-01-13",
+    dateLabel: "13 января 2026",
+    title: "Лыжная прогулка в Виймси",
+    notes: "Утренняя пробежка на беговых лыжах по укатанной трассе в лесу под Таллином — низкое зимнее солнце над снежной колеёй.",
+    cover: "photos/viimsi-suusk/01.jpg",
+    photos: [
+      { url: "photos/viimsi-suusk/01.jpg", caption: "" }
+    ]
+  },
+  {
+    city: "Таллин",
+    country: "Эстония",
+    lat: 59.388365,
+    lng: 24.670288,
+    startDate: "2026-01-24",
+    endDate: "2026-01-24",
+    dateLabel: "24 января 2026",
+    title: "Вечернее катание в Нымме Лумепарк",
+    notes: "Катание на лыжах после захода солнца на освещённом склоне Мустамяэ: искусственный снег, прожекторы и силуэты лыжников на трассе.",
+    cover: "photos/nomme-lumepark/01.jpg",
+    photos: [
+      { url: "photos/nomme-lumepark/01.jpg", caption: "" },
+      { url: "photos/nomme-lumepark/02.jpg", caption: "", lat: 59.389443, lng: 24.671746 }
+    ]
+  },
+  {
     city: "Ныммевески",
     country: "Эстония",
     lat: 59.508580,
