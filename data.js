@@ -412,5 +412,24 @@ const trips = [
       { url: "photos/neeme/04.jpg", caption: "", lat: 59.486710, lng: 25.162695 },
       { url: "photos/neeme/05.jpg", caption: "", lat: 59.501093, lng: 25.183969 }
     ]
+  },
+  {
+    city: "Маарду",
+    country: "Харьюмаа, Эстония",
+    lat: 59.449533,
+    lng: 24.987358,
+    startDate: "2026-01-31",
+    endDate: "2026-01-31",
+    dateLabel: "31 января 2026",
+    title: "Озеро Маарду",
+    notes: "Зимняя прогулка вдоль заснеженного тростника на берегу озера Маарду в низком солнце.",
+    cover: "photos/maardu-lake/01.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/maardu-lake/01.jpg", caption: "", lat: 59.449533, lng: 24.987358 },
+      { url: "photos/maardu-lake/02.jpg", caption: "", lat: 59.449553, lng: 24.987403 },
+      { url: "photos/maardu-lake/03.jpg", caption: "", lat: 59.449140, lng: 24.987888 },
+      { url: "photos/maardu-lake/04.jpg", caption: "", lat: 59.449379, lng: 24.987802 }
+    ]
   }
 ];
