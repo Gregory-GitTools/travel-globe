@@ -19,6 +19,26 @@ const musicLibrary = [
 
 const trips = [
   {
+    city: "Юминда",
+    country: "Эстония",
+    lat: 59.588719,
+    lng: 25.595241,
+    startDate: "2025-08-10",
+    endDate: "2025-08-10",
+    dateLabel: "10 августа 2025",
+    title: "Тропа Майакиви-Пиканымме",
+    notes: "Учебная тропа RMK на полуострове Юминда в Лахемаа: деревянный настил через болотистые луга, берёзовые рощи и сосновый лес в вечернем свете.",
+    cover: "photos/juminda/01.jpg",
+    photos: [
+      { url: "photos/juminda/01.jpg", caption: "Настил через болотный луг" },
+      { url: "photos/juminda/02.jpg", caption: "" },
+      { url: "photos/juminda/03.jpg", caption: "" },
+      { url: "photos/juminda/04.jpg", caption: "" },
+      { url: "photos/juminda/05.jpg", caption: "Солнце сквозь берёзы" },
+      { url: "photos/juminda/06.jpg", caption: "Сосновый лес" }
+    ]
+  },
+  {
     city: "Стокгольм",
     country: "Швеция",
     lat: 59.3293,
