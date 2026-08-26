@@ -49,15 +49,15 @@ function checkGlobeZoomRotate() {
   const dist = camera.position.length();
   const globeRadius = globe.getGlobeRadius();
   const halfFovRad = (camera.fov / 2) * Math.PI / 180;
-  const horizonVisible = (globeRadius / dist) <= Math.sin(halfFovRad);
+  const horizonThresholdDist = globeRadius / Math.sin(halfFovRad);
+  const horizonVisible = dist >= horizonThresholdDist;
   if (horizonVisible !== zoomAllowsRotate) {
-    const wasVisible = zoomAllowsRotate;
     zoomAllowsRotate = horizonVisible;
     applyAutoRotateState();
-    // Тот самый момент "полной потери очертаний" глобуса при приближении —
-    // проваливаемся сквозь облака на плоскую карту той же точки.
-    if (wasVisible && !horizonVisible) descendToMap();
   }
+  // Провал на карту — отдельный, более близкий порог (в 2 раза ближе, чем
+  // порог исчезновения горизонта), чтобы переход не срабатывал слишком рано.
+  if (dist <= horizonThresholdDist * 0.5) descendToMap();
 }
 setInterval(checkGlobeZoomRotate, 250);
 
@@ -73,11 +73,51 @@ let flatMap = null;
 
 function ensureFlatMap() {
   if (flatMap) return flatMap;
+  // #flatMap остаётся смонтированным с реальными размерами (скрыт только
+  // через opacity/pointer-events, не display:none), поэтому Leaflet сразу
+  // получает верный размер контейнера и не грузит тайлы "вслепую".
   flatMap = L.map(flatMapCanvas, { attributionControl: true });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap'
+    attribution: '&copy; OpenStreetMap',
+    maxZoom: 19
   }).addTo(flatMap);
   return flatMap;
+}
+
+function nearestTrip(lat, lng) {
+  const R = 6371;
+  const toRad = deg => deg * Math.PI / 180;
+  let best = trips[0];
+  let bestDist = Infinity;
+  trips.forEach(trip => {
+    const dLat = toRad(trip.lat - lat);
+    const dLng = toRad(trip.lng - lng);
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat)) * Math.cos(toRad(trip.lat)) * Math.sin(dLng / 2) ** 2;
+    const d = 2 * R * Math.asin(Math.sqrt(a));
+    if (d < bestDist) {
+      bestDist = d;
+      best = trip;
+    }
+  });
+  return best;
+}
+
+// Кросс-фейд между глобусом и картой: оба слоя всё время смонтированы,
+// просто плавно меняем прозрачность (короткий переход, без сплошной белой
+// заслонки) — это же используется и для входа, и для симметричного выхода.
+function crossfade(fromEl, toEl, onSwap) {
+  cloudOverlay.classList.remove('hidden');
+  requestAnimationFrame(() => cloudOverlay.classList.add('visible'));
+  onSwap();
+  requestAnimationFrame(() => {
+    fromEl.classList.add('layer-off');
+    toEl.classList.remove('layer-off');
+  });
+  setTimeout(() => {
+    cloudOverlay.classList.remove('visible');
+    setTimeout(() => cloudOverlay.classList.add('hidden'), 300);
+  }, 280);
 }
 
 function descendToMap() {
@@ -86,40 +126,54 @@ function descendToMap() {
   inFlatMapMode = true;
   applyAutoRotateState();
   const pov = globe.pointOfView();
-  cloudOverlay.classList.remove('hidden');
-  cloudOverlay.classList.add('visible');
-  setTimeout(() => {
-    globeVizEl.style.display = 'none';
-    flatMapEl.classList.remove('hidden');
+  // Прыгаем сразу в район ближайшего альбома, а не туда, куда случайно
+  // смотрела камера — подползать к нему смысла нет.
+  const target = nearestTrip(pov.lat, pov.lng);
+  crossfade(globeVizEl, flatMapEl, () => {
     const map = ensureFlatMap();
+    map.setView([target.lat, target.lng], 17, { animate: false });
     map.invalidateSize();
-    map.setView([pov.lat, pov.lng], 15);
-    cloudOverlay.classList.remove('visible');
-    setTimeout(() => cloudOverlay.classList.add('hidden'), 600);
-  }, 550);
+  });
 }
 
 function returnToGlobe() {
   if (!inFlatMapMode) return;
   const center = flatMap.getCenter();
-  cloudOverlay.classList.remove('hidden');
-  cloudOverlay.classList.add('visible');
-  setTimeout(() => {
-    flatMapEl.classList.add('hidden');
-    globeVizEl.style.display = '';
+  crossfade(flatMapEl, globeVizEl, () => {
     resizeGlobe();
     // Отдаляемся безопасно выше порога исчезновения горизонта, чтобы не
     // провалиться обратно на карту сразу же.
     globe.pointOfView({ lat: center.lat, lng: center.lng, altitude: 3 }, 0);
-    inFlatMapMode = false;
-    zoomAllowsRotate = true;
-    applyAutoRotateState();
-    cloudOverlay.classList.remove('visible');
-    setTimeout(() => cloudOverlay.classList.add('hidden'), 600);
-  }, 550);
+  });
+  inFlatMapMode = false;
+  zoomAllowsRotate = true;
+  applyAutoRotateState();
 }
 
 flatMapBack.onclick = returnToGlobe;
+
+// Прогреваем кэш тайлов вокруг каждого альбома заранее (небольшой набор,
+// не весь земной шар), чтобы при провале карта открывалась уже в резком
+// разрешении, а не догружалась на глазах.
+function warmTripTileCache() {
+  const zoom = 17;
+  const radius = 1;
+  const subdomains = ['a', 'b', 'c'];
+  trips.forEach(trip => {
+    const n = 2 ** zoom;
+    const cx = Math.floor((trip.lng + 180) / 360 * n);
+    const latRad = trip.lat * Math.PI / 180;
+    const cy = Math.floor((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n);
+    for (let dx = -radius; dx <= radius; dx++) {
+      for (let dy = -radius; dy <= radius; dy++) {
+        const x = cx + dx, y = cy + dy;
+        const s = subdomains[(x + y + subdomains.length) % subdomains.length];
+        new Image().src = `https://${s}.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+      }
+    }
+  });
+}
+setTimeout(warmTripTileCache, 2000);
 
 const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
   "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
