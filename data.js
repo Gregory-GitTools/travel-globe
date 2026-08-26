@@ -119,6 +119,27 @@ const trips = [
     ]
   },
   {
+    city: "Палдиски",
+    country: "Эстония",
+    lat: 59.353561,
+    lng: 24.160162,
+    startDate: "2026-06-23",
+    endDate: "2026-06-23",
+    dateLabel: "23 июня 2026",
+    title: "Яанипяев в Палдиски",
+    notes: "Иванов день на полуострове Пакри: пасущиеся лошадки на лугу, скалистый берег залива, костёр на закате и вечерняя прогулка на скутере вдоль моря.",
+    cover: "photos/paldiski/06.jpg",
+    photos: [
+      { url: "photos/paldiski/01.jpg", caption: "Лошадка на лугу", lat: 59.353561, lng: 24.160162 },
+      { url: "photos/paldiski/02.jpg", caption: "", lat: 59.353368, lng: 24.159917 },
+      { url: "photos/paldiski/03.jpg", caption: "Скамейка над заливом", lat: 59.354397, lng: 24.161526 },
+      { url: "photos/paldiski/04.jpg", caption: "Каменистый берег", lat: 59.355043, lng: 24.162055 },
+      { url: "photos/paldiski/05.jpg", caption: "", lat: 59.353286, lng: 24.159819 },
+      { url: "photos/paldiski/06.jpg", caption: "Костёр на Яанипяев", lat: 59.350599, lng: 24.162052 },
+      { url: "photos/paldiski/07.jpg", caption: "Вечерняя прогулка на скутере", lat: 59.354193, lng: 24.161348 }
+    ]
+  },
+  {
     city: "Таллин",
     country: "Эстония",
     lat: 59.439051,
