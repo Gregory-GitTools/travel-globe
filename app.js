@@ -18,6 +18,31 @@ const globe = Globe()(document.getElementById('globeViz'))
 globe.controls().autoRotate = true;
 globe.controls().autoRotateSpeed = 0.4;
 
+// Автовращение крутит глобус с постоянной угловой скоростью, поэтому при
+// сильном приближении (камера почти у поверхности) та же скорость на экране
+// выглядит в разы быстрее и глобус невозможно "поймать" взглядом. Останав-
+// ливаем вращение, как только окружность горизонта глобуса выходит за
+// пределы поля зрения камеры (весь экран занят ближней поверхностью).
+let modalOpenBlockingRotate = false;
+let zoomAllowsRotate = true;
+
+function applyAutoRotateState() {
+  globe.controls().autoRotate = zoomAllowsRotate && !modalOpenBlockingRotate;
+}
+
+function checkGlobeZoomRotate() {
+  const camera = globe.camera();
+  const dist = camera.position.length();
+  const globeRadius = globe.getGlobeRadius();
+  const halfFovRad = (camera.fov / 2) * Math.PI / 180;
+  const horizonVisible = (globeRadius / dist) <= Math.sin(halfFovRad);
+  if (horizonVisible !== zoomAllowsRotate) {
+    zoomAllowsRotate = horizonVisible;
+    applyAutoRotateState();
+  }
+}
+setInterval(checkGlobeZoomRotate, 250);
+
 const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
   "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 const weekdayLetters = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
@@ -419,7 +444,8 @@ let currentTrip = null;
 
 function openTrip(trip) {
   currentTrip = trip;
-  globe.controls().autoRotate = false;
+  modalOpenBlockingRotate = true;
+  applyAutoRotateState();
   modalTitle.textContent = trip.title;
   modalMeta.textContent = trip.dateLabel;
   modalNotes.textContent = trip.notes;
@@ -448,7 +474,8 @@ function openTrip(trip) {
 
 function closeModal() {
   modal.classList.add('hidden');
-  globe.controls().autoRotate = true;
+  modalOpenBlockingRotate = false;
+  applyAutoRotateState();
   speechSynthesis.cancel();
   modalSpeak.textContent = '🔊';
 }
