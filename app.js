@@ -80,9 +80,16 @@ const cloudOverlay = document.getElementById('cloudOverlay');
 const flatMapEl = document.getElementById('flatMap');
 const flatMapCanvas = document.getElementById('flatMapCanvas');
 const toolbarMapToggle = document.getElementById('toolbarMapToggle');
+const mapToolsEl = document.getElementById('mapTools');
+const rulerToggleBtn = document.getElementById('rulerToggle');
+const rulerClearBtn = document.getElementById('rulerClear');
 
 let inFlatMapMode = false;
 let flatMap = null;
+
+// Откуда нырнули на карту (открытая модалка поездки или фото в лайтбоксе) —
+// нужно, чтобы кнопка "Назад" знала, куда вернуться, а не всегда на глобус.
+let mapEntryContext = null;
 
 function ensureFlatMap() {
   if (flatMap) return flatMap;
@@ -128,6 +135,65 @@ function showTripMarkers(map, trip, highlightIndex) {
   tripMarkersLayer.addTo(map);
   return points;
 }
+
+// --- Линейка: измерение расстояния на карте кликами по точкам ---
+
+let rulerActive = false;
+let rulerPoints = [];
+let rulerLine = null;
+let rulerMarkers = null;
+
+function formatDistance(meters) {
+  return meters >= 1000 ? `${(meters / 1000).toFixed(2)} км` : `${Math.round(meters)} м`;
+}
+
+function clearRuler() {
+  rulerPoints = [];
+  if (rulerLine) { rulerLine.remove(); rulerLine = null; }
+  if (rulerMarkers) { rulerMarkers.remove(); rulerMarkers = null; }
+  rulerClearBtn.classList.add('hidden');
+}
+
+function redrawRuler(map) {
+  if (rulerLine) { rulerLine.remove(); rulerLine = null; }
+  if (rulerMarkers) { rulerMarkers.remove(); rulerMarkers = null; }
+  if (!rulerPoints.length) {
+    rulerClearBtn.classList.add('hidden');
+    return;
+  }
+  rulerMarkers = L.layerGroup(rulerPoints.map(p =>
+    L.circleMarker(p, { radius: 5, color: '#ffce54', fillColor: '#ffce54', fillOpacity: 1 })
+  ));
+  rulerMarkers.addTo(map);
+  if (rulerPoints.length > 1) {
+    let total = 0;
+    for (let i = 1; i < rulerPoints.length; i++) total += map.distance(rulerPoints[i - 1], rulerPoints[i]);
+    rulerLine = L.polyline(rulerPoints, { color: '#ffce54', weight: 3, dashArray: '6 6' }).addTo(map);
+    rulerLine.bindTooltip(formatDistance(total), { permanent: true, direction: 'right', className: 'ruler-tooltip' }).openTooltip();
+  }
+  rulerClearBtn.classList.remove('hidden');
+}
+
+function onRulerClick(e) {
+  rulerPoints.push(e.latlng);
+  redrawRuler(e.target);
+}
+
+function setRulerActive(active) {
+  rulerActive = active;
+  const map = ensureFlatMap();
+  map.off('click', onRulerClick);
+  if (active) {
+    map.on('click', onRulerClick);
+    map.getContainer().style.cursor = 'crosshair';
+  } else {
+    map.getContainer().style.cursor = '';
+  }
+  rulerToggleBtn.classList.toggle('active', active);
+}
+
+rulerToggleBtn.onclick = () => setRulerActive(!rulerActive);
+rulerClearBtn.onclick = () => clearRuler();
 
 function nearestTrip(lat, lng) {
   const R = 6371;
@@ -177,6 +243,7 @@ function updateMapToggleLabel() {
 function goToMapAt(trip, highlightIndex) {
   const points = getTripPoints(trip);
   const target = (highlightIndex != null && points.find(p => p.index === highlightIndex)) || points[0];
+  mapToolsEl.classList.remove('hidden');
   if (inFlatMapMode) {
     const map = ensureFlatMap();
     showTripMarkers(map, trip, highlightIndex);
@@ -194,6 +261,7 @@ function goToMapAt(trip, highlightIndex) {
     map.invalidateSize();
   });
   updateMapToggleLabel();
+  syncUrlBookmark();
 }
 
 function descendToMap() {
@@ -203,6 +271,8 @@ function descendToMap() {
   // Прыгаем сразу в район ближайшего альбома, а не туда, куда случайно
   // смотрела камера — подползать к нему смысла нет.
   const target = nearestTrip(pov.lat, pov.lng);
+  // Вход без конкретного альбома/фото — "Назад" с такой карты ведёт на глобус.
+  mapEntryContext = null;
   goToMapAt(target);
 }
 
@@ -218,8 +288,13 @@ function returnToGlobe() {
   });
   inFlatMapMode = false;
   zoomAllowsRotate = true;
+  mapEntryContext = null;
+  mapToolsEl.classList.add('hidden');
+  setRulerActive(false);
+  clearRuler();
   applyAutoRotateState();
   updateMapToggleLabel();
+  syncUrlBookmark();
 }
 
 toolbarMapToggle.onclick = () => {
@@ -230,6 +305,96 @@ toolbarMapToggle.onclick = () => {
   }
 };
 
+// --- Кнопка "Назад": возврат туда, откуда нырнули (альбом/фото/глобус) ---
+
+const navBackBtn = document.getElementById('navBack');
+const navRefreshBtn = document.getElementById('navRefresh');
+const backJokeEl = document.getElementById('backJoke');
+
+const backJokes = [
+  '🌍 Дальше только открытый космос. Тут разворачиваемся.',
+  '🚀 Ракеты пока не подвезли — возвращайтесь на глобус.',
+  '🧭 Приехали. Дальше пешком не выйдет.',
+  '🪐 За глобусом — только соседние планеты, а туда мы ещё не летали.'
+];
+let jokeTimer = null;
+function showBackJoke() {
+  clearTimeout(jokeTimer);
+  backJokeEl.textContent = backJokes[Math.floor(Math.random() * backJokes.length)];
+  backJokeEl.classList.remove('hidden');
+  requestAnimationFrame(() => backJokeEl.classList.add('visible'));
+  jokeTimer = setTimeout(() => {
+    backJokeEl.classList.remove('visible');
+    setTimeout(() => backJokeEl.classList.add('hidden'), 300);
+  }, 2500);
+}
+
+function navBack() {
+  if (!lightbox.classList.contains('hidden')) {
+    closeLightbox();
+    return;
+  }
+  if (inFlatMapMode) {
+    const ctx = mapEntryContext;
+    mapEntryContext = null;
+    returnToGlobe();
+    if (ctx && ctx.type === 'modal') {
+      openTrip(trips[ctx.tripIndex]);
+    } else if (ctx && ctx.type === 'lightbox') {
+      openTrip(trips[ctx.tripIndex]);
+      openLightbox(ctx.photoIndex);
+    }
+    return;
+  }
+  if (!modal.classList.contains('hidden')) {
+    closeModal();
+    return;
+  }
+  showBackJoke();
+}
+
+navBackBtn.onclick = navBack;
+navRefreshBtn.onclick = () => location.reload();
+
+// --- Закладка состояния в URL — чтобы "Обновить" не сбрасывало на глобус ---
+
+function syncUrlBookmark() {
+  const params = new URLSearchParams();
+  if (inFlatMapMode) {
+    params.set('view', 'map');
+    if (mapEntryContext) {
+      params.set('trip', String(mapEntryContext.tripIndex));
+      if (mapEntryContext.type === 'lightbox') params.set('photo', String(mapEntryContext.photoIndex));
+    }
+  } else if (!lightbox.classList.contains('hidden') && currentTrip) {
+    params.set('trip', String(trips.indexOf(currentTrip)));
+    params.set('photo', String(currentPhotoIndex));
+  } else if (!modal.classList.contains('hidden') && currentTrip) {
+    params.set('trip', String(trips.indexOf(currentTrip)));
+  }
+  const qs = params.toString();
+  history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+}
+
+function restoreFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const tripIndex = params.has('trip') ? Number(params.get('trip')) : null;
+  const photoIndex = params.has('photo') ? Number(params.get('photo')) : null;
+  if (tripIndex == null || Number.isNaN(tripIndex) || !trips[tripIndex]) return;
+  const trip = trips[tripIndex];
+  if (params.get('view') === 'map') {
+    mapEntryContext = photoIndex != null && !Number.isNaN(photoIndex)
+      ? { type: 'lightbox', tripIndex, photoIndex }
+      : { type: 'modal', tripIndex };
+    goToMapAt(trip, mapEntryContext.type === 'lightbox' ? photoIndex : undefined);
+    return;
+  }
+  openTrip(trip);
+  if (photoIndex != null && !Number.isNaN(photoIndex)) openLightbox(photoIndex);
+}
+// Вызывается в самом конце файла (см. низ) — после того, как объявлены все
+// функции/константы, на которые опирается открытие модалки/лайтбокса/карты.
+
 // --- Настройки (шестерёнка) ---
 
 const settingsModal = document.getElementById('settingsModal');
@@ -238,6 +403,9 @@ const toolbarSettings = document.getElementById('toolbarSettings');
 const settingAutoRotate = document.getElementById('settingAutoRotate');
 
 settingAutoRotate.checked = !userAutoRotateOff;
+// Сохранённая настройка вращения раньше применялась только при следующем
+// событии (зум/модалка/карта) — на самой загрузке страницы игнорировалась.
+applyAutoRotateState();
 
 toolbarSettings.onclick = () => settingsModal.classList.remove('hidden');
 settingsModalClose.onclick = () => settingsModal.classList.add('hidden');
@@ -701,6 +869,7 @@ function openTrip(trip) {
     modalGallery.appendChild(item);
   });
   modal.classList.remove('hidden');
+  syncUrlBookmark();
 }
 
 function closeModal() {
@@ -709,6 +878,7 @@ function closeModal() {
   applyAutoRotateState();
   speechSynthesis.cancel();
   modalSpeak.textContent = '🔊';
+  syncUrlBookmark();
 }
 
 modalClose.onclick = closeModal;
@@ -791,7 +961,9 @@ modalSlideshow.onclick = () => {
 modalMap.onclick = () => {
   if (!currentTrip) return;
   stopSlideshow();
+  const tripIndex = trips.indexOf(currentTrip);
   closeModal();
+  mapEntryContext = { type: 'modal', tripIndex };
   goToMapAt(currentTrip);
 };
 
@@ -905,6 +1077,7 @@ function openLightbox(index) {
   currentPhotoIndex = index;
   updateLightboxPhoto();
   lightbox.classList.remove('hidden');
+  syncUrlBookmark();
 }
 
 function closeLightbox() {
@@ -912,6 +1085,7 @@ function closeLightbox() {
   lightboxImg.src = '';
   stopSlideshow();
   if (document.fullscreenElement) document.exitFullscreen();
+  syncUrlBookmark();
 }
 
 lightboxClose.onclick = closeLightbox;
@@ -963,7 +1137,14 @@ lightbox.addEventListener('touchend', e => {
 lightboxMap.onclick = () => {
   if (!currentTrip) return;
   stopSlideshow();
+  const tripIndex = trips.indexOf(currentTrip);
+  const photoIndex = currentPhotoIndex;
   closeLightbox();
   closeModal();
+  mapEntryContext = { type: 'lightbox', tripIndex, photoIndex };
   goToMapAt(currentTrip, currentPhotoIndex);
 };
+
+// Восстанавливаем состояние (альбом/фото/карта) из URL при загрузке —
+// перезагрузка страницы больше не сбрасывает на пустой глобус.
+restoreFromUrl();

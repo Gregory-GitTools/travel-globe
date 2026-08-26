@@ -102,6 +102,57 @@ body {
   z-index: 6;
 }
 
+.toolbar-left {
+  right: auto;
+  left: 16px;
+  /* Должна быть кликабельна поверх модалки поездки и лайтбокса (z-index 10
+     и 20), чтобы "Назад"/"Обновить" работали из любого состояния сайта. */
+  z-index: 25;
+}
+
+.back-joke {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  max-width: 90vw;
+  text-align: center;
+  background: rgba(8, 10, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 14px 22px;
+  font-size: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.back-joke.visible {
+  opacity: 1;
+}
+
+.map-tools {
+  position: fixed;
+  bottom: 20px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 6;
+}
+
+.toolbar-button.active {
+  background: rgba(66, 133, 244, 0.55);
+  border-color: rgba(66, 133, 244, 0.8);
+}
+
+.ruler-tooltip {
+  background: rgba(8, 10, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 600;
+}
+
 .toolbar-button {
   background: rgba(8, 10, 18, 0.82);
   backdrop-filter: blur(6px);
@@ -132,6 +183,12 @@ body {
   .toolbar-button:hover {
     background: none;
     opacity: 0.75;
+  }
+
+  .toolbar-button.active {
+    background: rgba(66, 133, 244, 0.55);
+    border: 1px solid rgba(66, 133, 244, 0.8);
+    backdrop-filter: blur(6px);
   }
 }
 
