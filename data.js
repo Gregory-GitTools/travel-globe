@@ -468,5 +468,61 @@ const trips = [
       { url: "photos/kramsach-soll-munich/21.jpg", caption: "Штаб-квартира BMW", lat: 48.175999, lng: 11.556251 },
       { url: "photos/kramsach-soll-munich/22.jpg", caption: "" }
     ]
+  },
+  {
+    city: "Riga",
+    country: "Latvia",
+    lat: 56.947612,
+    lng: 24.106705,
+    startDate: "2026-02-24",
+    endDate: "2026-02-24",
+    dateLabel: "24–25 февраля 2026",
+    title: "Riga",
+    notes: "Короткая остановка по пути на Кипр: заснеженная Старая Рига, Домский собор и собор Св. Петра, бременские музыканты, мост влюблённых с замочками и вид на площадь Ратуши с надписью RIGA.",
+    cover: "photos/riga/12.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/riga/01.jpg", caption: "", lat: 56.945610, lng: 24.112263 },
+      { url: "photos/riga/02.jpg", caption: "Здание Центрального рынка Риги", lat: 56.945603, lng: 24.112256 },
+      { url: "photos/riga/03.jpg", caption: "", lat: 56.947428, lng: 24.110603 },
+      { url: "photos/riga/04.jpg", caption: "Бременские музыканты у собора Св. Петра", lat: 56.947751, lng: 24.109780 },
+      { url: "photos/riga/05.jpg", caption: "", lat: 56.949483, lng: 24.106038 },
+      { url: "photos/riga/06.jpg", caption: "", lat: 56.950136, lng: 24.099575 },
+      { url: "photos/riga/07.jpg", caption: "Домский собор", lat: 56.951044, lng: 24.105321 },
+      { url: "photos/riga/08.jpg", caption: "", lat: 56.951172, lng: 24.106386 },
+      { url: "photos/riga/09.jpg", caption: "", lat: 56.951175, lng: 24.106349 },
+      { url: "photos/riga/10.jpg", caption: "", lat: 56.952328, lng: 24.109570 },
+      { url: "photos/riga/11.jpg", caption: "Мост влюблённых с замочками в парке Бастея", lat: 56.951432, lng: 24.111804 },
+      { url: "photos/riga/12.jpg", caption: "Площадь Ратуши", lat: 56.947612, lng: 24.106705 },
+      { url: "photos/riga/13.jpg", caption: "Вид из окна отеля на башни соборов", lat: 56.945664, lng: 24.112231 },
+      { url: "photos/riga/14.jpg", caption: "", lat: 56.945674, lng: 24.112193 }
+    ]
+  },
+  {
+    city: "Paphos",
+    country: "Cyprus",
+    lat: 34.711645,
+    lng: 32.488950,
+    startDate: "2026-02-25",
+    endDate: "2026-02-25",
+    dateLabel: "25–26 февраля 2026",
+    title: "Paphos",
+    notes: "Отдых в Пафосе: прилёт в аэропорт, отель Amaris у моря, ночной шторм с волнами о скалистый берег, пальмовые аллеи вечером и бассейн на рассвете.",
+    cover: "photos/paphos/12.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/paphos/01.jpg", caption: "Аэропорт Пафоса", lat: 34.711645, lng: 32.488950 },
+      { url: "photos/paphos/02.jpg", caption: "", lat: 34.711597, lng: 32.488884 },
+      { url: "photos/paphos/03.jpg", caption: "", lat: 34.741168, lng: 32.431247 },
+      { url: "photos/paphos/04.jpg", caption: "Отель Amaris", lat: 34.740986, lng: 32.430722 },
+      { url: "photos/paphos/05.jpg", caption: "Ночной шторм у отеля", lat: 34.742141, lng: 32.429799 },
+      { url: "photos/paphos/06.jpg", caption: "", lat: 34.742141, lng: 32.429799 },
+      { url: "photos/paphos/07.jpg", caption: "", lat: 34.742454, lng: 32.429675 },
+      { url: "photos/paphos/08.jpg", caption: "", lat: 34.743453, lng: 32.428916 },
+      { url: "photos/paphos/09.jpg", caption: "", lat: 34.743649, lng: 32.426853 },
+      { url: "photos/paphos/10.jpg", caption: "", lat: 34.744334, lng: 32.425481 },
+      { url: "photos/paphos/11.jpg", caption: "", lat: 34.743401, lng: 32.427540 },
+      { url: "photos/paphos/12.jpg", caption: "Бассейн на рассвете", lat: 34.741432, lng: 32.430900 }
+    ]
   }
 ];
