@@ -114,16 +114,40 @@ let flatMap = null;
 // нужно, чтобы кнопка "Назад" знала, куда вернуться, а не всегда на глобус.
 let mapEntryContext = null;
 
+// Провайдер тайлов настраивается через скрытую панель разработчика
+// (см. "Скрытые настройки разработчика" ниже) — по умолчанию OSM, без
+// ключа. Mapy.com выбирается и работает только в том браузере, где введён
+// личный API-ключ — обычным посетителям сайта эта опция не видна и не
+// активна.
+let currentTileLayer = null;
+function buildTileLayer() {
+  if (devSettings.provider === 'mapy' && devSettings.mapyKey) {
+    return L.tileLayer(`https://api.mapy.com/v1/maptiles/basic/256@1/{z}/{x}/{y}?apikey=${devSettings.mapyKey}`, {
+      attribution: '&copy; Mapy.com, &copy; Seznam.cz, a.s.',
+      maxZoom: 19
+    });
+  }
+  return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap',
+    maxZoom: 19
+  });
+}
+
+function rebuildTileLayer() {
+  if (!flatMap) return;
+  if (currentTileLayer) flatMap.removeLayer(currentTileLayer);
+  currentTileLayer = buildTileLayer();
+  currentTileLayer.addTo(flatMap);
+}
+
 function ensureFlatMap() {
   if (flatMap) return flatMap;
   // #flatMap остаётся смонтированным с реальными размерами (скрыт только
   // через opacity/pointer-events, не display:none), поэтому Leaflet сразу
   // получает верный размер контейнера и не грузит тайлы "вслепую".
   flatMap = L.map(flatMapCanvas, { attributionControl: true });
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap',
-    maxZoom: 19
-  }).addTo(flatMap);
+  currentTileLayer = buildTileLayer();
+  currentTileLayer.addTo(flatMap);
   // Названия городов/улиц на тайлах — это картинка, текст из неё не
   // скопировать. Клик по пустому месту карты (когда линейка выключена)
   // определяет, что там находится, через Nominatim, и показывает всплывашку
@@ -483,6 +507,62 @@ settingAutoRotate.onchange = () => {
   settings.autoRotate = settingAutoRotate.checked;
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   applyAutoRotateState();
+};
+
+// --- Скрытые настройки разработчика (провайдер карты Mapy.com) ---
+// Двойной клик по логотипу "About" запрашивает пароль. Ключ Mapy.com
+// хранится только в localStorage этого браузера — никогда не попадает в
+// репозиторий и не виден обычным посетителям, которые никогда не вводят
+// пароль и не открывают эту секцию.
+const DEV_SETTINGS_KEY = 'travelGlobeDevSettings';
+const DEV_PASSWORD_HASH = 'cf4bf3f159829c280f346e9b1827938a237ff7ed5e22d6091f450e55df5ee8de';
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function loadDevSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(DEV_SETTINGS_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+let devSettings = loadDevSettings();
+
+const aboutLogoEl = document.getElementById('aboutLogo');
+const devSettingsEl = document.getElementById('devSettings');
+const devMapProviderEl = document.getElementById('devMapProvider');
+const devMapyKeyRowEl = document.getElementById('devMapyKeyRow');
+const devMapyKeyEl = document.getElementById('devMapyKey');
+const devSettingsSaveBtn = document.getElementById('devSettingsSave');
+
+devMapProviderEl.value = devSettings.provider || 'osm';
+devMapyKeyEl.value = devSettings.mapyKey || '';
+devMapyKeyRowEl.classList.toggle('hidden', devMapProviderEl.value !== 'mapy');
+
+aboutLogoEl.ondblclick = async () => {
+  const pass = prompt('Пароль разработчика:');
+  if (pass == null) return;
+  const hash = await sha256Hex(pass);
+  if (hash === DEV_PASSWORD_HASH) {
+    devSettingsEl.classList.remove('hidden');
+  } else {
+    alert('Неверный пароль');
+  }
+};
+
+devMapProviderEl.onchange = () => {
+  devMapyKeyRowEl.classList.toggle('hidden', devMapProviderEl.value !== 'mapy');
+};
+
+devSettingsSaveBtn.onclick = () => {
+  devSettings = { provider: devMapProviderEl.value, mapyKey: devMapyKeyEl.value.trim() };
+  localStorage.setItem(DEV_SETTINGS_KEY, JSON.stringify(devSettings));
+  rebuildTileLayer();
+  devSettingsSaveBtn.textContent = 'Сохранено!';
+  setTimeout(() => { devSettingsSaveBtn.textContent = 'Сохранить'; }, 1500);
 };
 
 // Прогреваем кэш тайлов вокруг каждого альбома заранее (небольшой набор,

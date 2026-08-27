@@ -46,6 +46,28 @@
       <span>Автовращение глобуса</span>
       <input type="checkbox" id="settingAutoRotate">
     </label>
+
+    <div id="devSettings" class="dev-settings hidden">
+      <hr>
+      <h3>Настройки разработчика</h3>
+      <label class="settings-row">
+        <span>Провайдер карты</span>
+        <select id="devMapProvider">
+          <option value="osm">OpenStreetMap</option>
+          <option value="mapy">Mapy.com</option>
+        </select>
+      </label>
+      <label class="settings-row" id="devMapyKeyRow">
+        <span>Mapy.com API-ключ</span>
+        <input type="password" id="devMapyKey" placeholder="только в этом браузере">
+      </label>
+      <button id="devSettingsSave" class="map-button">Сохранить</button>
+    </div>
+
+    <div id="aboutRow" class="about-row">
+      <span id="aboutLogo" class="about-logo">D</span>
+      <span class="about-text">Travel Globe</span>
+    </div>
   </div>
 </div>
 

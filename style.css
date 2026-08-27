@@ -194,6 +194,46 @@ body {
   height: 20px;
 }
 
+.dev-settings h3 {
+  font-size: 15px;
+  margin: 4px 0 8px;
+  opacity: 0.8;
+}
+
+.dev-settings select,
+.dev-settings input[type="password"] {
+  font-size: 14px;
+  padding: 4px 6px;
+}
+
+/* Логотип-триггер скрытых настроек разработчика: двойной клик по нему
+   запрашивает пароль (см. aboutLogoEl.ondblclick в app.js). Обычным
+   посетителям выглядит просто как футер "About", ничего не намекает на
+   скрытую функцию. */
+.about-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  opacity: 0.6;
+  font-size: 13px;
+}
+
+.about-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+}
+
 /* Calendar */
 
 .albums-calendar {
