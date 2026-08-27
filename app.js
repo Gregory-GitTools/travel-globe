@@ -151,25 +151,29 @@ function onMapPlainClick(e) {
     nameEl.style.marginBottom = '8px';
     nameEl.style.maxWidth = '220px';
     box.appendChild(nameEl);
+    const buttonRow = document.createElement('div');
+    buttonRow.className = 'map-popup-button-row';
     const btn = document.createElement('button');
     btn.className = 'map-button map-popup-button';
-    btn.textContent = '📋 Копировать';
+    btn.textContent = '📋';
+    btn.title = 'Копировать';
     btn.onclick = () => navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = 'Скопировано!';
-      setTimeout(() => { btn.textContent = '📋 Копировать'; }, 1500);
+      btn.textContent = '✅';
+      setTimeout(() => { btn.textContent = '📋'; }, 1500);
     });
-    box.appendChild(btn);
+    buttonRow.appendChild(btn);
     const geminiBtn = document.createElement('button');
     geminiBtn.className = 'map-button map-popup-button';
-    geminiBtn.textContent = '🤖 Gemini';
-    geminiBtn.style.marginLeft = '6px';
+    geminiBtn.textContent = '🤖';
+    geminiBtn.title = 'Gemini';
     geminiBtn.onclick = () => {
       const question = name
         ? `Расскажи про это место: ${name} (координаты: ${coordText}).`
         : `Расскажи, что находится по координатам: ${coordText}.`;
       copyGeminiText(geminiBtn, question);
     };
-    box.appendChild(geminiBtn);
+    buttonRow.appendChild(geminiBtn);
+    box.appendChild(buttonRow);
     popup.setContent(box);
   }).catch(() => popup.setContent(coordText));
 }

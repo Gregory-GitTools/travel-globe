@@ -685,18 +685,28 @@ body {
   border-color: rgba(66, 133, 244, 0.8);
 }
 
-/* Map click popup ("📋 Копировать" / "🤖 Gemini") — 3x the base .map-button
-   size, requested since the default size was fiddly to tap precisely.
-   Leaflet's popup background is white, so .map-button's white text/
-   near-transparent background (meant for the dark page background)
-   need a dark override here or the label is invisible against it. */
+/* Map click popup (📋 copy / 🤖 Gemini) — icon-only, side by side, with a
+   thin ring around each icon rather than the base .map-button's padded
+   pill. Leaflet's popup background is white, so .map-button's white text/
+   near-transparent background (meant for the dark page background) need
+   a dark override here or the icon ring is invisible against it. */
+.map-popup-button-row {
+  display: flex;
+  gap: 10px;
+}
+
 .map-popup-button {
-  font-size: 39px;
-  padding: 21px 48px;
-  border-radius: 60px;
+  font-size: 28px;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
   color: #1a1a1a;
   background: rgba(0, 0, 0, 0.06);
   border-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .map-popup-button:hover {
