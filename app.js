@@ -108,7 +108,43 @@ function ensureFlatMap() {
     attribution: '&copy; OpenStreetMap',
     maxZoom: 19
   }).addTo(flatMap);
+  // Названия городов/улиц на тайлах — это картинка, текст из неё не
+  // скопировать. Клик по пустому месту карты (когда линейка выключена)
+  // определяет, что там находится, через Nominatim, и показывает всплывашку
+  // с настоящим, копируемым текстом.
+  flatMap.on('click', e => { if (!rulerActive) onMapPlainClick(e); });
   return flatMap;
+}
+
+async function reverseGeocode(lat, lng) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ru`;
+  const resp = await fetch(url);
+  const data = await resp.json();
+  return data.display_name || null;
+}
+
+function onMapPlainClick(e) {
+  const { lat, lng } = e.latlng;
+  const coordText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  const popup = L.popup().setLatLng(e.latlng).setContent('Ищу название места…').openOn(e.target);
+  reverseGeocode(lat, lng).then(name => {
+    const text = name || coordText;
+    const box = document.createElement('div');
+    const nameEl = document.createElement('div');
+    nameEl.textContent = text;
+    nameEl.style.marginBottom = '8px';
+    nameEl.style.maxWidth = '220px';
+    box.appendChild(nameEl);
+    const btn = document.createElement('button');
+    btn.className = 'map-button';
+    btn.textContent = '📋 Копировать';
+    btn.onclick = () => navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Скопировано!';
+      setTimeout(() => { btn.textContent = '📋 Копировать'; }, 1500);
+    });
+    box.appendChild(btn);
+    popup.setContent(box);
+  }).catch(() => popup.setContent(coordText));
 }
 
 // Точки альбома на карте: по одной на каждое фото с GPS-координатами
