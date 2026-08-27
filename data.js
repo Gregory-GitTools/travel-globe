@@ -19,14 +19,14 @@ const musicLibrary = [
 
 const trips = [
   {
-    city: "Юминда",
-    country: "Эстония",
+    city: "Juminda",
+    country: "Estonia",
     lat: 59.588719,
     lng: 25.595241,
     startDate: "2025-08-10",
     endDate: "2025-08-10",
     dateLabel: "10 августа 2025",
-    title: "Тропа Майакиви-Пиканымме",
+    title: "Majakivi-Pikanomme Trail",
     notes: "Учебная тропа RMK на полуострове Юминда в Лахемаа: деревянный настил через болотистые луга, берёзовые рощи и сосновый лес в вечернем свете.",
     cover: "photos/juminda/01.jpg",
     photos: [
@@ -39,14 +39,14 @@ const trips = [
     ]
   },
   {
-    city: "Малага",
-    country: "Испания / Марокко",
+    city: "Malaga",
+    country: "Spain / Morocco",
     lat: 36.720725,
     lng: -4.419294,
     startDate: "2025-11-28",
     endDate: "2025-11-28",
     dateLabel: "28 ноября – 3 декабря 2025",
-    title: "Малага — Марокко",
+    title: "Malaga — Morocco",
     notes: "Шесть дней между Испанией и Марокко: набережная и кафедральный собор Малаги, паром в Танжер, синие улочки Шефшауэна, дворцы и сады Альгамбры в Гранаде и прощальные тапас в Малаге.",
     cover: "photos/malaga-marocco/19.jpg",
     photos: [
@@ -83,14 +83,14 @@ const trips = [
     ]
   },
   {
-    city: "Стокгольм",
-    country: "Швеция",
+    city: "Stockholm",
+    country: "Sweden",
     lat: 59.3293,
     lng: 18.0686,
     startDate: "2025-10-16",
     endDate: "2025-10-16",
     dateLabel: "16–27 октября 2025",
-    title: "Стокгольм — Палермо",
+    title: "Stockholm — Palermo",
     notes: "Первая остановка большого путешествия: осенний Стокгольм, велопарковки у станций и жёлтые городские автобусы.",
     cover: "photos/stockholm/03.jpg",
     photos: [
@@ -108,14 +108,14 @@ const trips = [
     ]
   },
   {
-    city: "Фуншал",
-    country: "Мадейра, Португалия",
+    city: "Funchal",
+    country: "Madeira, Portugal",
     lat: 32.6669,
     lng: -16.9241,
     startDate: "2026-01-04",
     endDate: "2026-01-04",
     dateLabel: "4–11 января 2026",
-    title: "Мадейра",
+    title: "Madeira",
     notes: "Серпантины над океаном и вечерний вид на Фуншал с высоты.",
     cover: "photos/madeira/05.jpg",
     photos: [
@@ -127,14 +127,14 @@ const trips = [
     ]
   },
   {
-    city: "Виймси",
-    country: "Эстония",
+    city: "Viimsi",
+    country: "Estonia",
     lat: 59.512627,
     lng: 24.890923,
     startDate: "2026-01-13",
     endDate: "2026-01-13",
     dateLabel: "13 января 2026",
-    title: "Лыжная прогулка в Виймси",
+    title: "Skiing in Viimsi",
     notes: "Утренняя пробежка на беговых лыжах по укатанной трассе в лесу под Таллином — низкое зимнее солнце над снежной колеёй.",
     cover: "photos/viimsi-suusk/01.jpg",
     photos: [
@@ -142,14 +142,14 @@ const trips = [
     ]
   },
   {
-    city: "Таллин",
-    country: "Эстония",
+    city: "Tallinn",
+    country: "Estonia",
     lat: 59.388365,
     lng: 24.670288,
     startDate: "2026-01-24",
     endDate: "2026-01-24",
     dateLabel: "24 января 2026",
-    title: "Вечернее катание в Нымме Лумепарк",
+    title: "Evening Skiing at Nomme Lumepark",
     notes: "Катание на лыжах после захода солнца на освещённом склоне Мустамяэ: искусственный снег, прожекторы и силуэты лыжников на трассе.",
     cover: "photos/nomme-lumepark/01.jpg",
     photos: [
@@ -158,14 +158,14 @@ const trips = [
     ]
   },
   {
-    city: "Ныммевески",
-    country: "Эстония",
+    city: "Nommeveski",
+    country: "Estonia",
     lat: 59.508580,
     lng: 25.783505,
     startDate: "2026-02-01",
     endDate: "2026-02-01",
     dateLabel: "1 февраля 2026",
-    title: "Зимняя тропа Ныммевески",
+    title: "Winter Trail at Nommeveski",
     notes: "Прогулка по заснеженной учебной тропе RMK вдоль каньона Валгейыги — низкое солнце сквозь сосны, деревянный мостик через ручей и сугробы на елях. На обратном пути — ужин у камина в кафе «Artur» в Рымеда.",
     cover: "photos/nommeveski-veebruar/08.jpg",
     photos: [
@@ -193,14 +193,14 @@ const trips = [
     ]
   },
   {
-    city: "Ныммевески",
-    country: "Эстония",
+    city: "Nommeveski",
+    country: "Estonia",
     lat: 59.504172,
     lng: 25.788222,
     startDate: "2026-08-21",
     endDate: "2026-08-21",
     dateLabel: "21 августа 2026",
-    title: "Ныммевески",
+    title: "Nommeveski",
     notes: "Стоянка для костра на берегу Валгейыги в Лахемаа: жёлтая от болотной воды река, старые известняковые глыбы и небольшой, но эффектный водопад в глубоком каньоне.",
     cover: "photos/nommeveski/cover.jpg",
     photos: [
@@ -214,14 +214,14 @@ const trips = [
     ]
   },
   {
-    city: "Палдиски",
-    country: "Эстония",
+    city: "Paldiski",
+    country: "Estonia",
     lat: 59.353561,
     lng: 24.160162,
     startDate: "2026-06-23",
     endDate: "2026-06-23",
     dateLabel: "23 июня 2026",
-    title: "Яанипяев в Палдиски",
+    title: "Midsummer in Paldiski",
     notes: "Иванов день на полуострове Пакри: пасущиеся лошадки на лугу, скалистый берег залива, костёр на закате и вечерняя прогулка на скутере вдоль моря.",
     cover: "photos/paldiski/06.jpg",
     photos: [
@@ -235,14 +235,14 @@ const trips = [
     ]
   },
   {
-    city: "Таллин",
-    country: "Эстония",
+    city: "Tallinn",
+    country: "Estonia",
     lat: 59.439051,
     lng: 24.845401,
     startDate: "2026-08-12",
     endDate: "2026-08-12",
     dateLabel: "12 августа 2026",
-    title: "Солнечное затмение",
+    title: "Solar Eclipse",
     notes: "Частичное солнечное затмение прошло в Эстонии вечером 12 августа 2026 года, совпав по времени с закатом солнца и пиком метеорного потока Персеиды.",
     cover: "photos/eclipse/cover.jpg",
     music: "random",
@@ -253,14 +253,14 @@ const trips = [
     ]
   },
   {
-    city: "Силламяэ",
-    country: "Эстония",
+    city: "Sillamae",
+    country: "Estonia",
     lat: 59.399728,
     lng: 27.765953,
     startDate: "2026-07-03",
     endDate: "2026-07-03",
     dateLabel: "3–4 июля 2026",
-    title: "В гостях у Стасика в Силламяэ",
+    title: "Visiting Stasik in Sillamae",
     notes: "Небольшая поездка вдоль побережья Ида-Вирумаа 3–4 июля 2026 года: по дороге — водопад Валасте на клинте, замок Германа в Нарве и старый санаторий в Нарва-Йыэсуу, а вечером — приморский бульвар Силламяэ и в гости к Стасику. На второй день — прогулка лесной тропой вдоль ручья и праздник в саду с друзьями.",
     cover: "photos/sillamae/14.jpg",
     photos: [
@@ -295,14 +295,14 @@ const trips = [
     ]
   },
   {
-    city: "Нафплион",
-    country: "Греция",
+    city: "Nafplio",
+    country: "Greece",
     lat: 37.5679,
     lng: 22.7997,
     startDate: "2026-08-02",
     endDate: "2026-08-02",
     dateLabel: "2–10 августа 2026",
-    title: "Нафплион",
+    title: "Nafplio",
     notes: "Неделя в старом городе на побережье Арголического залива: венецианская крепость Паламиди над черепичными крышами, узкие улочки Старого города и вечера у моря.",
     cover: "photos/nafplio/01.jpg",
     photos: [
@@ -345,14 +345,14 @@ const trips = [
     ]
   },
   {
-    city: "Центральная Эстония",
-    country: "Эстония",
+    city: "Central Estonia",
+    country: "Estonia",
     lat: 58.818867,
     lng: 25.756507,
     startDate: "2026-07-26",
     endDate: "2026-07-26",
     dateLabel: "26 июля 2026",
-    title: "Дни открытых хуторов 2026",
+    title: "Open Farms Day 2026",
     notes: "Поездка по хуторам Центральной Эстонии в рамках ежегодного дня открытых дверей — фермы и усадьбы Ярвамаа, Вильяндимаа и Йыгевамаа, открытые для гостей всего один день в году.",
     cover: "photos/hutorud/01.jpg",
     music: "random",
@@ -375,14 +375,14 @@ const trips = [
     ]
   },
   {
-    city: "Лауласмаа",
-    country: "Эстония",
+    city: "Laulasmaa",
+    country: "Estonia",
     lat: 59.400864,
     lng: 24.201927,
     startDate: "2026-07-11",
     endDate: "2026-07-11",
     dateLabel: "11 июля 2026",
-    title: "Лауласмаа",
+    title: "Laulasmaa",
     notes: "Прогулка по побережью Лохусалуского полуострова — сосновый лес, пляж и закат над заливом в Лауласмаа.",
     cover: "photos/laulasmaa/01.jpg",
     music: "random",
@@ -394,14 +394,14 @@ const trips = [
     ]
   },
   {
-    city: "Неэме",
-    country: "Харьюмаа, Эстония",
+    city: "Neeme",
+    country: "Harjumaa, Estonia",
     lat: 59.473921,
     lng: 25.152025,
     startDate: "2026-07-12",
     endDate: "2026-07-12",
     dateLabel: "12 июля 2026",
-    title: "Неэме",
+    title: "Neeme",
     notes: "Вечерняя поездка на полуостров Виймси — рыбацкая деревня Неэме на берегу Финского залива.",
     cover: "photos/neeme/01.jpg",
     music: "random",
@@ -414,14 +414,14 @@ const trips = [
     ]
   },
   {
-    city: "Маарду",
-    country: "Харьюмаа, Эстония",
+    city: "Maardu",
+    country: "Harjumaa, Estonia",
     lat: 59.449533,
     lng: 24.987358,
     startDate: "2026-01-31",
     endDate: "2026-01-31",
     dateLabel: "31 января 2026",
-    title: "Озеро Маарду",
+    title: "Lake Maardu",
     notes: "Зимняя прогулка вдоль заснеженного тростника на берегу озера Маарду в низком солнце.",
     cover: "photos/maardu-lake/01.jpg",
     music: "random",
