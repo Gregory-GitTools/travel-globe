@@ -146,11 +146,6 @@ body {
   z-index: 6;
 }
 
-.toolbar-button.active {
-  background: rgba(66, 133, 244, 0.55);
-  border-color: rgba(66, 133, 244, 0.8);
-}
-
 .ruler-tooltip {
   background: rgba(8, 10, 18, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -158,10 +153,12 @@ body {
   font-weight: 600;
 }
 
+/* Фон-плашка не нужна ни на десктопе, ни на телефоне — оставляем только
+   текст/иконку с тенью для читаемости поверх глобуса и фото галереи. */
 .toolbar-button {
-  background: rgba(8, 10, 18, 0.82);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: none;
+  border: none;
+  backdrop-filter: none;
   color: #fff;
   font-family: inherit;
   font-size: 19px;
@@ -169,32 +166,18 @@ body {
   padding: 12px 22px;
   border-radius: 24px;
   cursor: pointer;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85), 0 0 14px rgba(0, 0, 0, 0.5);
 }
 
 .toolbar-button:hover {
-  background: rgba(20, 24, 38, 0.9);
+  background: none;
+  opacity: 0.75;
 }
 
-/* На десктопе кнопки и так крупные, с хорошей областью клика — фон-плашка
-   больше не нужна, оставляем только текст/иконку с тенью для читаемости. */
-@media (min-width: 801px) {
-  .toolbar-button {
-    background: none;
-    border: none;
-    backdrop-filter: none;
-    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.85), 0 0 14px rgba(0, 0, 0, 0.5);
-  }
-
-  .toolbar-button:hover {
-    background: none;
-    opacity: 0.75;
-  }
-
-  .toolbar-button.active {
-    background: rgba(66, 133, 244, 0.55);
-    border: 1px solid rgba(66, 133, 244, 0.8);
-    backdrop-filter: blur(6px);
-  }
+.toolbar-button.active {
+  background: rgba(66, 133, 244, 0.55);
+  border: 1px solid rgba(66, 133, 244, 0.8);
+  backdrop-filter: blur(6px);
 }
 
 .settings-row {
