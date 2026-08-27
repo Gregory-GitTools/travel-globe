@@ -122,7 +122,7 @@ let mapEntryContext = null;
 let currentTileLayer = null;
 function buildTileLayer() {
   if (devSettings.provider === 'mapy' && devSettings.mapyKey) {
-    return L.tileLayer(`https://api.mapy.com/v1/maptiles/basic/256@1/{z}/{x}/{y}?apikey=${devSettings.mapyKey}`, {
+    return L.tileLayer(`https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey=${devSettings.mapyKey}`, {
       attribution: '&copy; Mapy.com, &copy; Seznam.cz, a.s.',
       maxZoom: 19
     });
