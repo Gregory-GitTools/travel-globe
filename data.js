@@ -546,5 +546,38 @@ const trips = [
       { url: "photos/ulemiste-lake/06.jpg", caption: "", lat: 59.373632, lng: 24.756070 },
       { url: "photos/ulemiste-lake/07.jpg", caption: "Лесной ручей", lat: 59.364701, lng: 24.704892 }
     ]
+  },
+  {
+    city: "Haapsalu",
+    country: "Estonia",
+    lat: 58.938736,
+    lng: 23.532016,
+    startDate: "2026-06-21",
+    endDate: "2026-06-21",
+    dateLabel: "21 июня 2026",
+    title: "Marimetsa — Haapsalu",
+    notes: "Однодневная поездка: болотные тропы и деревянная смотровая вышка Мариметса, а вечером — старинный железнодорожный вокзал, набережная и закат над заливом в Хаапсалу.",
+    cover: "photos/marimetsa-haapsalu/18.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/marimetsa-haapsalu/01.jpg", caption: "Начало тропы в Мариметса", lat: 58.962459, lng: 24.066967 },
+      { url: "photos/marimetsa-haapsalu/02.jpg", caption: "", lat: 58.960727, lng: 24.060264 },
+      { url: "photos/marimetsa-haapsalu/03.jpg", caption: "", lat: 58.959147, lng: 24.052147 },
+      { url: "photos/marimetsa-haapsalu/04.jpg", caption: "", lat: 58.959016, lng: 24.050691 },
+      { url: "photos/marimetsa-haapsalu/05.jpg", caption: "", lat: 58.964403, lng: 24.042585 },
+      { url: "photos/marimetsa-haapsalu/06.jpg", caption: "", lat: 58.963710, lng: 24.039243 },
+      { url: "photos/marimetsa-haapsalu/07.jpg", caption: "Болотная тропа", lat: 58.962994, lng: 24.031836 },
+      { url: "photos/marimetsa-haapsalu/08.jpg", caption: "", lat: 58.962821, lng: 24.030169 },
+      { url: "photos/marimetsa-haapsalu/09.jpg", caption: "", lat: 58.962842, lng: 24.030179 },
+      { url: "photos/marimetsa-haapsalu/10.jpg", caption: "Смотровая вышка Мариметса", lat: 58.961958, lng: 24.020208 },
+      { url: "photos/marimetsa-haapsalu/11.jpg", caption: "Купальня у болотного озера", lat: 58.960624, lng: 24.008092 },
+      { url: "photos/marimetsa-haapsalu/12.jpg", caption: "Вокзал в Хаапсалу", lat: 58.938736, lng: 23.532016 },
+      { url: "photos/marimetsa-haapsalu/13.jpg", caption: "", lat: 58.938885, lng: 23.531444 },
+      { url: "photos/marimetsa-haapsalu/14.jpg", caption: "", lat: 58.952016, lng: 23.531042 },
+      { url: "photos/marimetsa-haapsalu/15.jpg", caption: "", lat: 58.950368, lng: 23.537206 },
+      { url: "photos/marimetsa-haapsalu/16.jpg", caption: "", lat: 58.950495, lng: 23.539406 },
+      { url: "photos/marimetsa-haapsalu/17.jpg", caption: "Лебединая семья", lat: 58.950853, lng: 23.542420 },
+      { url: "photos/marimetsa-haapsalu/18.jpg", caption: "Закат над заливом", lat: 58.949573, lng: 23.533037 }
+    ]
   }
 ];
