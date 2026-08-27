@@ -72,9 +72,12 @@ function checkGlobeZoomRotate() {
     zoomAllowsRotate = horizonVisible;
     applyAutoRotateState();
   }
-  // Провал на карту — отдельный, более близкий порог (в 2 раза ближе, чем
-  // порог исчезновения горизонта), чтобы переход не срабатывал слишком рано.
-  if (dist <= horizonThresholdDist * 0.5) descendToMap();
+  // Провал на карту — почти у самой поверхности (небольшой отступ сверх
+  // минимально возможной дистанции камеры), а не завязан на горизонт —
+  // раньше порог был в разы дальше от поверхности, и зум на глобусе
+  // "упирался" в провал на карту задолго до реального приближения.
+  const diveThresholdDist = globe.controls().minDistance + globeRadius * 0.03;
+  if (dist <= diveThresholdDist) descendToMap();
 }
 setInterval(checkGlobeZoomRotate, 250);
 
