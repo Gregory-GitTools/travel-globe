@@ -159,6 +159,17 @@ function onMapPlainClick(e) {
       setTimeout(() => { btn.textContent = '📋 Копировать'; }, 1500);
     });
     box.appendChild(btn);
+    const geminiBtn = document.createElement('button');
+    geminiBtn.className = 'map-button';
+    geminiBtn.textContent = '🤖 Gemini';
+    geminiBtn.style.marginLeft = '6px';
+    geminiBtn.onclick = () => {
+      const question = name
+        ? `Расскажи про это место: ${name} (координаты: ${coordText}).`
+        : `Расскажи, что находится по координатам: ${coordText}.`;
+      copyGeminiText(geminiBtn, question);
+    };
+    box.appendChild(geminiBtn);
     popup.setContent(box);
   }).catch(() => popup.setContent(coordText));
 }
