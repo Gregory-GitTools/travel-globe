@@ -19,6 +19,11 @@ body {
   width: 100vw;
   height: 100vh;
   transition: opacity 0.28s ease;
+  /* Three.js CSS3DRenderer assigns very high z-index values to individual
+     photo-pin elements for depth sorting — without an isolated stacking
+     context here, those values leak out and render above later siblings
+     like modals, no matter what z-index the modal itself declares. */
+  isolation: isolate;
 }
 
 .photo-pin {
@@ -732,17 +737,29 @@ body {
 /* Responsive */
 
 @media (max-width: 800px) {
-  #globeViz {
-    height: 60vh;
-  }
-
   .toolbar {
     gap: 6px;
+    max-width: calc(100vw - 32px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .toolbar-button {
     font-size: 16px;
     padding: 10px 14px;
+  }
+
+  /* Both toolbars anchored top would collide on narrow screens (combined
+     button widths exceed viewport width) — move Назад/Обновить to the
+     bottom instead of sharing the top row with Альбомы/Карта/⚙️. */
+  .toolbar-left {
+    top: auto;
+    bottom: 16px;
+  }
+
+  .map-tools,
+  .back-joke {
+    bottom: 90px;
   }
 
   .modal-content {

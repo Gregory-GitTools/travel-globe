@@ -15,6 +15,10 @@ const globe = Globe()(document.getElementById('globeViz'))
     return el;
   });
 
+// Стартовая точка обзора — без неё глобус открывается лицом к lat0/lng0
+// (Гвинейский залив у Африки), а не к региону, из которого путешествия.
+globe.pointOfView({ lat: 52, lng: 19, altitude: 2.5 }, 0);
+
 globe.controls().autoRotate = true;
 globe.controls().autoRotateSpeed = 0.4;
 
@@ -243,11 +247,17 @@ function updateMapToggleLabel() {
 function goToMapAt(trip, highlightIndex) {
   const points = getTripPoints(trip);
   const target = (highlightIndex != null && points.find(p => p.index === highlightIndex)) || points[0];
+  // Без конкретного выделенного фото (режим альбома целиком, не отдельного
+  // снимка) карта должна вмещать все точки альбома, а не только первую.
+  const bounds = highlightIndex == null && points.length > 1
+    ? L.latLngBounds(points.map(p => [p.lat, p.lng]))
+    : null;
   mapToolsEl.classList.remove('hidden');
   if (inFlatMapMode) {
     const map = ensureFlatMap();
     showTripMarkers(map, trip, highlightIndex);
-    map.flyTo([target.lat, target.lng], 17);
+    if (bounds) map.flyToBounds(bounds, { padding: [40, 40] });
+    else map.flyTo([target.lat, target.lng], 17);
     return;
   }
   if (modalOpenBlockingRotate) return;
@@ -257,7 +267,8 @@ function goToMapAt(trip, highlightIndex) {
   crossfade(globeVizEl, flatMapEl, () => {
     const map = ensureFlatMap();
     showTripMarkers(map, trip, highlightIndex);
-    map.setView([target.lat, target.lng], 17, { animate: false });
+    if (bounds) map.fitBounds(bounds, { padding: [40, 40], animate: false });
+    else map.setView([target.lat, target.lng], 17, { animate: false });
     map.invalidateSize();
   });
   updateMapToggleLabel();
@@ -799,7 +810,7 @@ function buildAlbums() {
 
 function openAlbumsModal() {
   setSelectedDate(todayStr);
-  setCalendarCollapsed(false);
+  setCalendarCollapsed(true);
   buildAlbums();
   albumsModal.classList.remove('hidden');
 }
@@ -855,6 +866,8 @@ function openTrip(trip) {
 
     const img = document.createElement('img');
     img.src = photo.url;
+    img.loading = 'lazy';
+    img.decoding = 'async';
     img.alt = photo.caption || trip.title;
     img.onclick = () => openLightbox(index);
     item.appendChild(img);
