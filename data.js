@@ -524,5 +524,27 @@ const trips = [
       { url: "photos/paphos/11.jpg", caption: "", lat: 34.743401, lng: 32.427540 },
       { url: "photos/paphos/12.jpg", caption: "Бассейн на рассвете", lat: 34.741432, lng: 32.430900 }
     ]
+  },
+  {
+    city: "Ulemiste",
+    country: "Estonia",
+    lat: 59.372563,
+    lng: 24.758710,
+    startDate: "2026-06-07",
+    endDate: "2026-06-07",
+    dateLabel: "7 июня 2026",
+    title: "Ulemiste lake",
+    notes: "Летний вечер на прогулке вдоль озера Юлемисте: лесные тропинки, ручей, сирень и ландыши в цвету.",
+    cover: "photos/ulemiste-lake/06.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/ulemiste-lake/01.jpg", caption: "Одуванчик", lat: 59.375050, lng: 24.752132 },
+      { url: "photos/ulemiste-lake/02.jpg", caption: "", lat: 59.373101, lng: 24.757262 },
+      { url: "photos/ulemiste-lake/03.jpg", caption: "", lat: 59.372563, lng: 24.758710 },
+      { url: "photos/ulemiste-lake/04.jpg", caption: "Ландыши", lat: 59.372471, lng: 24.759234 },
+      { url: "photos/ulemiste-lake/05.jpg", caption: "Сирень", lat: 59.370876, lng: 24.762926 },
+      { url: "photos/ulemiste-lake/06.jpg", caption: "", lat: 59.373632, lng: 24.756070 },
+      { url: "photos/ulemiste-lake/07.jpg", caption: "Лесной ручей", lat: 59.364701, lng: 24.704892 }
+    ]
   }
 ];
