@@ -145,7 +145,9 @@ function ensureFlatMap() {
 
 // Классическая "капля" с кольцом внутри — Gregory попросил заменить эмодзи
 // 📍, который на экране выглядит как леденец на палочке.
-const GPS_PIN_ICON = '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>';
+const GPS_PIN_ICON = '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>';
+
+const CALENDAR_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7 2a1 1 0 011 1v1h8V3a1 1 0 112 0v1h1a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h1V3a1 1 0 011-1zM4 10v10h16V10H4z"/><rect x="6" y="12" width="3" height="3"/><rect x="10.5" y="12" width="3" height="3"/><rect x="15" y="12" width="3" height="3"/><rect x="6" y="16.5" width="3" height="3"/><rect x="10.5" y="16.5" width="3" height="3"/><rect x="15" y="16.5" width="3" height="3"/></svg>';
 
 // Стандартное окно подсказки на карте (клик по пустому месту или результат
 // поиска) — одинаковое содержимое в обоих случаях, чтобы не плодить разные
@@ -506,9 +508,20 @@ function showBackJoke() {
   }, 2500);
 }
 
+// "Назад" всегда поднимает ровно на один уровень вверх — как команда cd ..:
+// какой бы экран ни был открыт поверх всего, он просто закрывается, без
+// дополнительных условий и исключений.
 function navBack() {
   if (!lightbox.classList.contains('hidden')) {
     closeLightbox();
+    return;
+  }
+  if (!settingsModal.classList.contains('hidden')) {
+    settingsModal.classList.add('hidden');
+    return;
+  }
+  if (!albumsModal.classList.contains('hidden')) {
+    closeAlbumsModal();
     return;
   }
   if (inFlatMapMode) {
@@ -926,7 +939,7 @@ let calendarCollapsed = false;
 function setCalendarCollapsed(collapsed) {
   calendarCollapsed = collapsed;
   calendarBodyEl.classList.toggle('collapsed', collapsed);
-  albumsCalendarToggle.textContent = collapsed ? '📅' : '🔼';
+  albumsCalendarToggle.innerHTML = collapsed ? CALENDAR_ICON : '🔼';
 }
 
 makeWheelScrollable(albumsModal, albumsModalBody, '#albumsCalendar');
