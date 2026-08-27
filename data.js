@@ -579,5 +579,25 @@ const trips = [
       { url: "photos/marimetsa-haapsalu/17.jpg", caption: "Лебединая семья", lat: 58.950853, lng: 23.542420 },
       { url: "photos/marimetsa-haapsalu/18.jpg", caption: "Закат над заливом", lat: 58.949573, lng: 23.533037 }
     ]
+  },
+  {
+    city: "Valge hobuse magi",
+    country: "Estonia",
+    lat: 59.221410,
+    lng: 25.563416,
+    startDate: "2026-06-28",
+    endDate: "2026-06-28",
+    dateLabel: "28 июня 2026",
+    title: "Valge hobuse magi",
+    notes: "Прогулка по парку в Валге хобусе мяги: пруд с карпами кои, деревянный мост в цветнике, неразлучники в вольере и чучела лесных зверей — куницы, совы и волка.",
+    cover: "photos/valge-hobuse-magi/02.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/valge-hobuse-magi/01.jpg", caption: "Карп кои в пруду", lat: 59.220555, lng: 25.563482 },
+      { url: "photos/valge-hobuse-magi/02.jpg", caption: "", lat: 59.221410, lng: 25.563410 },
+      { url: "photos/valge-hobuse-magi/03.jpg", caption: "Неразлучники", lat: 59.221426, lng: 25.563416 },
+      { url: "photos/valge-hobuse-magi/04.jpg", caption: "Чучела куницы и совы", lat: 59.221471, lng: 25.563346 },
+      { url: "photos/valge-hobuse-magi/05.jpg", caption: "Чучело волка", lat: 59.221471, lng: 25.563346 }
+    ]
   }
 ];
