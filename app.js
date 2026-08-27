@@ -121,6 +121,10 @@ let mapEntryContext = null;
 // должен вернуть на этот список, а не сразу закрывать на глобус/десктоп.
 let modalEntryFromAlbums = false;
 
+// Был ли на карте использован поиск места — если да, "Назад" ведёт в список
+// альбомов (без фильтров), а не туда, откуда нырнули на карту изначально.
+let mapSearchUsed = false;
+
 function ensureFlatMap() {
   if (flatMap) return flatMap;
   // #flatMap остаётся смонтированным с реальными размерами (скрыт только
@@ -212,6 +216,7 @@ async function runMapSearch() {
     }
     const lat = parseFloat(result.lat);
     const lng = parseFloat(result.lon);
+    mapSearchUsed = true;
     flatMap.flyTo([lat, lng], 15);
     L.popup({ maxWidth: 400 }).setLatLng([lat, lng]).setContent(buildStandardMapPopup(result.display_name, lat, lng)).openOn(flatMap);
   } catch (err) {
@@ -459,6 +464,7 @@ function returnToGlobe() {
   inFlatMapMode = false;
   zoomAllowsRotate = true;
   mapEntryContext = null;
+  mapSearchUsed = false;
   mapToolsEl.classList.add('hidden');
   mapSearchBarEl.classList.add('hidden');
   setRulerActive(false);
@@ -507,9 +513,13 @@ function navBack() {
   }
   if (inFlatMapMode) {
     const ctx = mapEntryContext;
+    const cameFromSearch = mapSearchUsed;
     mapEntryContext = null;
     returnToGlobe();
-    if (ctx && ctx.type === 'modal') {
+    if (cameFromSearch) {
+      albumsSearchText.value = '';
+      openAlbumsModal();
+    } else if (ctx && ctx.type === 'modal') {
       openTrip(trips[ctx.tripIndex]);
     } else if (ctx && ctx.type === 'lightbox') {
       openTrip(trips[ctx.tripIndex]);
