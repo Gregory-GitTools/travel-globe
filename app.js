@@ -11,7 +11,7 @@ const globe = Globe()(document.getElementById('globeViz'))
     el.style.backgroundImage = `url(${trip.cover})`;
     el.style.pointerEvents = 'auto';
     el.title = `${trip.city}, ${trip.country}`;
-    el.onclick = () => openTrip(trip);
+    el.onclick = () => { modalEntryFromAlbums = false; openTrip(trip); };
     return el;
   });
 
@@ -114,6 +114,10 @@ let flatMap = null;
 // нужно, чтобы кнопка "Назад" знала, куда вернуться, а не всегда на глобус.
 let mapEntryContext = null;
 
+// Открыт ли текущий модал поездки из списка альбомов — если да, "Назад"
+// должен вернуть на этот список, а не сразу закрывать на глобус/десктоп.
+let modalEntryFromAlbums = false;
+
 function ensureFlatMap() {
   if (flatMap) return flatMap;
   // #flatMap остаётся смонтированным с реальными размерами (скрыт только
@@ -191,6 +195,38 @@ function getTripPoints(trip) {
 
 let tripMarkersLayer = null;
 
+// Всплывающая подсказка маркера: подпись фото/поездки + кнопка копирования
+// координат — Gregory попросил возможность быстро скопировать GPS точки.
+function buildMarkerPopup(caption, lat, lng) {
+  const wrap = document.createElement('div');
+  wrap.className = 'map-popup';
+
+  if (caption) {
+    const capEl = document.createElement('div');
+    capEl.className = 'map-popup-caption';
+    capEl.textContent = caption;
+    wrap.appendChild(capEl);
+  }
+
+  const actions = document.createElement('div');
+  actions.className = 'map-popup-actions';
+  const copyBtn = document.createElement('button');
+  copyBtn.type = 'button';
+  copyBtn.className = 'map-popup-copy-gps';
+  copyBtn.textContent = '📋 Копировать GPS';
+  copyBtn.onclick = () => {
+    const text = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    navigator.clipboard.writeText(text).catch(() => {});
+    const original = copyBtn.textContent;
+    copyBtn.textContent = 'Скопировано!';
+    setTimeout(() => { copyBtn.textContent = original; }, 1500);
+  };
+  actions.appendChild(copyBtn);
+  wrap.appendChild(actions);
+
+  return wrap;
+}
+
 function showTripMarkers(map, trip, highlightIndex) {
   if (tripMarkersLayer) tripMarkersLayer.remove();
   tripMarkersLayer = L.layerGroup();
@@ -203,7 +239,7 @@ function showTripMarkers(map, trip, highlightIndex) {
           zIndexOffset: 1000
         })
       : L.marker([p.lat, p.lng]);
-    marker.bindPopup(p.caption || trip.title);
+    marker.bindPopup(buildMarkerPopup(p.caption || trip.title, p.lat, p.lng));
     marker.addTo(tripMarkersLayer);
   });
   tripMarkersLayer.addTo(map);
@@ -428,7 +464,9 @@ function navBack() {
     return;
   }
   if (!modal.classList.contains('hidden')) {
+    const returnToAlbums = modalEntryFromAlbums;
     closeModal();
+    if (returnToAlbums) albumsModal.classList.remove('hidden');
     return;
   }
   showBackJoke();
@@ -470,6 +508,7 @@ function restoreFromUrl() {
     goToMapAt(trip, mapEntryContext.type === 'lightbox' ? photoIndex : undefined);
     return;
   }
+  modalEntryFromAlbums = false;
   openTrip(trip);
   if (photoIndex != null && !Number.isNaN(photoIndex)) openLightbox(photoIndex);
 }
@@ -913,6 +952,7 @@ albumsSearchClear.onclick = () => {
 function focusTrip(tripIndex) {
   const trip = trips[tripIndex];
   globe.pointOfView({ lat: trip.lat, lng: trip.lng, altitude: 1.5 }, 1000);
+  modalEntryFromAlbums = true;
   openTrip(trip);
 }
 
