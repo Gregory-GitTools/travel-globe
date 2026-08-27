@@ -431,5 +431,42 @@ const trips = [
       { url: "photos/maardu-lake/03.jpg", caption: "", lat: 59.449140, lng: 24.987888 },
       { url: "photos/maardu-lake/04.jpg", caption: "", lat: 59.449379, lng: 24.987802 }
     ]
+  },
+  {
+    city: "Kramsach",
+    country: "Austria / Germany",
+    lat: 47.449766,
+    lng: 11.875694,
+    startDate: "2026-02-13",
+    endDate: "2026-02-13",
+    dateLabel: "13–16 февраля 2026",
+    title: "Kramsach — Soll — Munich",
+    notes: "Четыре дня в Тироле и Мюнхене: катание на лыжах на склонах Хохзёлль и в парке аттракционов Hexenwasser, ночёвки в Крамзахе — и день в Мюнхене на обратном пути: Хофбройхаус, башня собора Св. Петра, Мариенплац, Фрауэнкирхе, Олимпийская башня и штаб-квартира BMW.",
+    cover: "photos/kramsach-soll-munich/17.jpg",
+    music: "random",
+    photos: [
+      { url: "photos/kramsach-soll-munich/01.jpg", caption: "Мюнхенский аэропорт — начало поездки", lat: 48.354069, lng: 11.788362 },
+      { url: "photos/kramsach-soll-munich/02.jpg", caption: "Начало маршрута в парке Hexenwasser над Зёлль", lat: 47.497222, lng: 12.198481 },
+      { url: "photos/kramsach-soll-munich/03.jpg", caption: "", lat: 47.482411, lng: 12.197997 },
+      { url: "photos/kramsach-soll-munich/04.jpg", caption: "Единорог у подножия горы в сумерках", lat: 47.465450, lng: 11.984722 },
+      { url: "photos/kramsach-soll-munich/05.jpg", caption: "Утро в Крамзахе", lat: 47.449766, lng: 11.875694 },
+      { url: "photos/kramsach-soll-munich/06.jpg", caption: "", lat: 47.483750, lng: 12.241597 },
+      { url: "photos/kramsach-soll-munich/07.jpg", caption: "", lat: 47.482461, lng: 12.243028 },
+      { url: "photos/kramsach-soll-munich/08.jpg", caption: "" },
+      { url: "photos/kramsach-soll-munich/09.jpg", caption: "Лягушка-колдунья в парке Hexenwasser", lat: 47.493289, lng: 12.272300 },
+      { url: "photos/kramsach-soll-munich/10.jpg", caption: "", lat: 48.136678, lng: 11.592475 },
+      { url: "photos/kramsach-soll-munich/11.jpg", caption: "Изар и купола церкви Св. Луки", lat: 48.137042, lng: 11.590383 },
+      { url: "photos/kramsach-soll-munich/12.jpg", caption: "Знаменитый пивной зал Hofbräuhaus", lat: 48.137375, lng: 11.579602 },
+      { url: "photos/kramsach-soll-munich/13.jpg", caption: "", lat: 48.137324, lng: 11.579942 },
+      { url: "photos/kramsach-soll-munich/14.jpg", caption: "", lat: 48.137699, lng: 11.580607 },
+      { url: "photos/kramsach-soll-munich/15.jpg", caption: "", lat: 48.137446, lng: 11.578349 },
+      { url: "photos/kramsach-soll-munich/16.jpg", caption: "Смотровая площадка на башне собора Святого Петра", lat: 48.136519, lng: 11.575600 },
+      { url: "photos/kramsach-soll-munich/17.jpg", caption: "Новая ратуша на Мариенплац с высоты", lat: 48.136628, lng: 11.575631 },
+      { url: "photos/kramsach-soll-munich/18.jpg", caption: "Внутри собора Фрауэнкирхе", lat: 48.138531, lng: 11.572892 },
+      { url: "photos/kramsach-soll-munich/19.jpg", caption: "", lat: 48.138275, lng: 11.571566 },
+      { url: "photos/kramsach-soll-munich/20.jpg", caption: "Олимпийская башня", lat: 48.176123, lng: 11.547305 },
+      { url: "photos/kramsach-soll-munich/21.jpg", caption: "Штаб-квартира BMW", lat: 48.175999, lng: 11.556251 },
+      { url: "photos/kramsach-soll-munich/22.jpg", caption: "" }
+    ]
   }
 ];
