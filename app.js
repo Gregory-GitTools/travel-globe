@@ -583,18 +583,23 @@ const calendarGrid = document.getElementById('calendarGrid');
 // Custom dark dropdowns replace native <select> — Chrome/Edge on Windows
 // render a native <select>'s open popup list with an OS-controlled white
 // background that page CSS cannot restyle, which looked out of place here.
-monthNames.forEach((name, i) => {
-  const item = document.createElement('div');
-  item.className = 'calendar-dd-item';
-  item.dataset.value = String(i + 1).padStart(2, '0');
-  item.textContent = name;
-  item.onclick = () => {
-    const [year, , day] = selectedDate.split('-');
-    setSelectedDate(`${year}-${item.dataset.value}-${day}`);
-    closeCalendarDropdowns();
-  };
-  calendarMonthList.appendChild(item);
-});
+//
+// Day/month/year lists only offer values that actually have a trip (plus
+// whatever's currently selected, so "today" stays visible even outside any
+// trip) — matches the day grid, where non-travel cells already aren't
+// clickable, so there was no point listing dates the grid itself dead-ends on.
+const tripYears = [...new Set(tripDates.map(d => Number(d.slice(0, 4))))];
+
+function tripMonthsInYear(year) {
+  return new Set(
+    tripDates.filter(d => d.startsWith(`${year}-`)).map(d => Number(d.slice(5, 7)))
+  );
+}
+
+function tripDaysInYearMonth(year, month) {
+  const prefix = `${year}-${String(month).padStart(2, '0')}-`;
+  return new Set(tripDates.filter(d => d.startsWith(prefix)).map(d => Number(d.slice(8, 10))));
+}
 
 function closeCalendarDropdowns() {
   calendarDayList.classList.add('hidden');
@@ -613,25 +618,48 @@ calendarMonthBtn.onclick = e => { e.stopPropagation(); setCalendarCollapsed(fals
 calendarYearBtn.onclick = e => { e.stopPropagation(); setCalendarCollapsed(false); toggleCalendarDropdown(calendarYearList); };
 document.addEventListener('click', closeCalendarDropdowns);
 
-function rebuildDayList(daysInMonth, activeDay) {
+function rebuildDayList(year, month, daysInMonth, activeDay) {
   calendarDayList.innerHTML = '';
-  for (let d = 1; d <= daysInMonth; d++) {
+  const days = tripDaysInYearMonth(year, month);
+  days.add(activeDay);
+  [...days].filter(d => d >= 1 && d <= daysInMonth).sort((a, b) => a - b).forEach(d => {
     const item = document.createElement('div');
     item.className = 'calendar-dd-item';
     if (d === activeDay) item.classList.add('active');
     item.textContent = String(d);
     item.onclick = () => {
-      const [year, month] = selectedDate.split('-');
-      setSelectedDate(`${year}-${month}-${String(d).padStart(2, '0')}`);
+      const [y, m] = selectedDate.split('-');
+      setSelectedDate(`${y}-${m}-${String(d).padStart(2, '0')}`);
       closeCalendarDropdowns();
     };
     calendarDayList.appendChild(item);
-  }
+  });
+}
+
+function rebuildMonthList(year, activeMonth) {
+  calendarMonthList.innerHTML = '';
+  const months = tripMonthsInYear(year);
+  months.add(activeMonth);
+  [...months].sort((a, b) => a - b).forEach(m => {
+    const item = document.createElement('div');
+    item.className = 'calendar-dd-item';
+    item.dataset.value = String(m).padStart(2, '0');
+    if (m === activeMonth) item.classList.add('active');
+    item.textContent = monthNames[m - 1];
+    item.onclick = () => {
+      const [y, , d] = selectedDate.split('-');
+      setSelectedDate(`${y}-${String(m).padStart(2, '0')}-${d}`);
+      closeCalendarDropdowns();
+    };
+    calendarMonthList.appendChild(item);
+  });
 }
 
 function rebuildYearList(activeYear) {
   calendarYearList.innerHTML = '';
-  for (let y = activeYear - 6; y <= activeYear + 6; y++) {
+  const years = new Set(tripYears);
+  years.add(activeYear);
+  [...years].sort((a, b) => a - b).forEach(y => {
     const item = document.createElement('div');
     item.className = 'calendar-dd-item';
     if (y === activeYear) item.classList.add('active');
@@ -642,26 +670,7 @@ function rebuildYearList(activeYear) {
       closeCalendarDropdowns();
     };
     calendarYearList.appendChild(item);
-  }
-}
-
-function setDayLabel(day) {
-  calendarDayBtn.textContent = String(day);
-  calendarDayList.querySelectorAll('.calendar-dd-item').forEach(el => {
-    el.classList.toggle('active', el.textContent === String(day));
   });
-}
-
-function setMonthLabel(month) {
-  calendarMonthBtn.textContent = monthNames[month - 1];
-  calendarMonthList.querySelectorAll('.calendar-dd-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.value === String(month).padStart(2, '0'));
-  });
-}
-
-function setYearLabel(year) {
-  calendarYearBtn.textContent = String(year);
-  rebuildYearList(year);
 }
 
 let selectedDate = todayStr;
@@ -715,9 +724,9 @@ function fillDayGrid(container, year, month) {
 
 function renderCalendarMonth() {
   const [year, month, day] = selectedDate.split('-').map(Number);
-  setDayLabel(day);
-  setMonthLabel(month);
-  setYearLabel(year);
+  calendarDayBtn.textContent = String(day);
+  calendarMonthBtn.textContent = monthNames[month - 1];
+  calendarYearBtn.textContent = String(year);
 
   calendarWeekdaysRow.innerHTML = '';
   weekdayLetters.forEach(w => {
@@ -727,7 +736,9 @@ function renderCalendarMonth() {
   });
 
   const daysInMonth = fillDayGrid(calendarGrid, year, month);
-  rebuildDayList(daysInMonth, day);
+  rebuildDayList(year, month, daysInMonth, day);
+  rebuildMonthList(year, month);
+  rebuildYearList(year);
 }
 
 function setSelectedDate(dateStr) {
