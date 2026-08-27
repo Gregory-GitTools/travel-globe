@@ -108,8 +108,10 @@ body {
 }
 
 .toolbar-left {
-  right: auto;
-  left: 16px;
+  top: auto;
+  bottom: 16px;
+  right: 16px;
+  left: auto;
   /* Должна быть кликабельна поверх модалки поездки и лайтбокса (z-index 10
      и 20), чтобы "Назад"/"Обновить" работали из любого состояния сайта. */
   z-index: 25;
@@ -683,6 +685,24 @@ body {
   border-color: rgba(66, 133, 244, 0.8);
 }
 
+/* Map click popup ("📋 Копировать" / "🤖 Gemini") — 3x the base .map-button
+   size, requested since the default size was fiddly to tap precisely.
+   Leaflet's popup background is white, so .map-button's white text/
+   near-transparent background (meant for the dark page background)
+   need a dark override here or the label is invisible against it. */
+.map-popup-button {
+  font-size: 39px;
+  padding: 21px 48px;
+  border-radius: 60px;
+  color: #1a1a1a;
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.map-popup-button:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
 .lightbox-actions {
   display: flex;
   flex-wrap: wrap;
@@ -730,19 +750,6 @@ body {
   .toolbar-button {
     font-size: 16px;
     padding: 10px 14px;
-  }
-
-  /* Both toolbars anchored top would collide on narrow screens (combined
-     button widths exceed viewport width) — move Назад/Обновить to the
-     bottom instead of sharing the top row with Альбомы/Карта/⚙️. */
-  .toolbar-left {
-    top: auto;
-    bottom: 16px;
-  }
-
-  .map-tools,
-  .back-joke {
-    bottom: 90px;
   }
 
   .modal-content {

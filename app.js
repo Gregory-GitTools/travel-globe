@@ -142,7 +142,7 @@ async function reverseGeocode(lat, lng) {
 function onMapPlainClick(e) {
   const { lat, lng } = e.latlng;
   const coordText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  const popup = L.popup().setLatLng(e.latlng).setContent('Ищу название места…').openOn(e.target);
+  const popup = L.popup({ maxWidth: 400 }).setLatLng(e.latlng).setContent('Ищу название места…').openOn(e.target);
   reverseGeocode(lat, lng).then(name => {
     const text = name || coordText;
     const box = document.createElement('div');
@@ -152,7 +152,7 @@ function onMapPlainClick(e) {
     nameEl.style.maxWidth = '220px';
     box.appendChild(nameEl);
     const btn = document.createElement('button');
-    btn.className = 'map-button';
+    btn.className = 'map-button map-popup-button';
     btn.textContent = '📋 Копировать';
     btn.onclick = () => navigator.clipboard.writeText(text).then(() => {
       btn.textContent = 'Скопировано!';
@@ -160,7 +160,7 @@ function onMapPlainClick(e) {
     });
     box.appendChild(btn);
     const geminiBtn = document.createElement('button');
-    geminiBtn.className = 'map-button';
+    geminiBtn.className = 'map-button map-popup-button';
     geminiBtn.textContent = '🤖 Gemini';
     geminiBtn.style.marginLeft = '6px';
     geminiBtn.onclick = () => {
