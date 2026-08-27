@@ -176,6 +176,39 @@ body {
   z-index: 6;
 }
 
+.map-search-bar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 6;
+  background: rgba(8, 10, 18, 0.55);
+  backdrop-filter: blur(6px);
+  border-radius: 24px;
+  padding: 4px 4px 4px 18px;
+}
+
+.map-search-bar input {
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  width: 220px;
+}
+
+.map-search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.map-search-bar .toolbar-button {
+  padding: 8px 14px;
+}
+
 .ruler-tooltip {
   background: rgba(8, 10, 18, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.2);

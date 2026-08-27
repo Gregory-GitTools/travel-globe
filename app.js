@@ -104,6 +104,9 @@ const flatMapEl = document.getElementById('flatMap');
 const flatMapCanvas = document.getElementById('flatMapCanvas');
 const toolbarMapToggle = document.getElementById('toolbarMapToggle');
 const mapToolsEl = document.getElementById('mapTools');
+const mapSearchBarEl = document.getElementById('mapSearchBar');
+const mapSearchInput = document.getElementById('mapSearchInput');
+const mapSearchBtn = document.getElementById('mapSearchBtn');
 const rulerToggleBtn = document.getElementById('rulerToggle');
 const rulerClearBtn = document.getElementById('rulerClear');
 
@@ -143,6 +146,40 @@ async function reverseGeocode(lat, lng) {
   return data.display_name || null;
 }
 
+async function forwardGeocode(query) {
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=1&accept-language=ru`;
+  const resp = await fetch(url);
+  const data = await resp.json();
+  return data[0] || null;
+}
+
+async function runMapSearch() {
+  const query = mapSearchInput.value.trim();
+  if (!query || !flatMap) return;
+  const original = mapSearchBtn.textContent;
+  mapSearchBtn.disabled = true;
+  mapSearchBtn.textContent = '…';
+  try {
+    const result = await forwardGeocode(query);
+    if (!result) {
+      alert('Место не найдено');
+      return;
+    }
+    const lat = parseFloat(result.lat);
+    const lng = parseFloat(result.lon);
+    flatMap.flyTo([lat, lng], 15);
+    L.popup({ maxWidth: 400 }).setLatLng([lat, lng]).setContent(buildMarkerPopup(result.display_name, lat, lng)).openOn(flatMap);
+  } catch (err) {
+    alert('Не удалось выполнить поиск');
+  } finally {
+    mapSearchBtn.disabled = false;
+    mapSearchBtn.textContent = original;
+  }
+}
+
+mapSearchBtn.addEventListener('click', runMapSearch);
+mapSearchInput.addEventListener('keydown', e => { if (e.key === 'Enter') runMapSearch(); });
+
 function onMapPlainClick(e) {
   const { lat, lng } = e.latlng;
   const coordText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
@@ -166,6 +203,15 @@ function onMapPlainClick(e) {
       setTimeout(() => { btn.textContent = '📋'; }, 1500);
     });
     buttonRow.appendChild(btn);
+    const gpsBtn = document.createElement('button');
+    gpsBtn.className = 'map-button map-popup-button';
+    gpsBtn.textContent = '📍';
+    gpsBtn.title = 'Копировать GPS';
+    gpsBtn.onclick = () => navigator.clipboard.writeText(coordText).then(() => {
+      gpsBtn.textContent = '✅';
+      setTimeout(() => { gpsBtn.textContent = '📍'; }, 1500);
+    });
+    buttonRow.appendChild(gpsBtn);
     const geminiBtn = document.createElement('button');
     geminiBtn.className = 'map-button map-popup-button';
     geminiBtn.textContent = '🤖';
@@ -354,6 +400,7 @@ function goToMapAt(trip, highlightIndex) {
     ? L.latLngBounds(points.map(p => [p.lat, p.lng]))
     : null;
   mapToolsEl.classList.remove('hidden');
+  mapSearchBarEl.classList.remove('hidden');
   if (inFlatMapMode) {
     const map = ensureFlatMap();
     showTripMarkers(map, trip, highlightIndex);
@@ -402,6 +449,7 @@ function returnToGlobe() {
   zoomAllowsRotate = true;
   mapEntryContext = null;
   mapToolsEl.classList.add('hidden');
+  mapSearchBarEl.classList.add('hidden');
   setRulerActive(false);
   clearRuler();
   applyAutoRotateState();
