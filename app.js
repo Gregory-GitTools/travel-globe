@@ -139,6 +139,51 @@ function ensureFlatMap() {
   return flatMap;
 }
 
+// Классическая "капля" с кольцом внутри — Gregory попросил заменить эмодзи
+// 📍, который на экране выглядит как леденец на палочке.
+const GPS_PIN_ICON = '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>';
+
+// Стандартное окно подсказки на карте (клик по пустому месту или результат
+// поиска) — одинаковое содержимое в обоих случаях, чтобы не плодить разные
+// стили попапов.
+function buildStandardMapPopup(text, lat, lng) {
+  const coordText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  const box = document.createElement('div');
+  const nameEl = document.createElement('div');
+  nameEl.textContent = text;
+  nameEl.style.marginBottom = '8px';
+  nameEl.style.maxWidth = '220px';
+  box.appendChild(nameEl);
+  const buttonRow = document.createElement('div');
+  buttonRow.className = 'map-popup-button-row';
+  const btn = document.createElement('button');
+  btn.className = 'map-button map-popup-button';
+  btn.textContent = '📋';
+  btn.title = 'Копировать';
+  btn.onclick = () => navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅';
+    setTimeout(() => { btn.textContent = '📋'; }, 1500);
+  });
+  buttonRow.appendChild(btn);
+  const gpsBtn = document.createElement('button');
+  gpsBtn.className = 'map-button map-popup-button';
+  gpsBtn.innerHTML = GPS_PIN_ICON;
+  gpsBtn.title = 'Копировать GPS';
+  gpsBtn.onclick = () => navigator.clipboard.writeText(coordText).then(() => {
+    gpsBtn.textContent = '✅';
+    setTimeout(() => { gpsBtn.innerHTML = GPS_PIN_ICON; }, 1500);
+  });
+  buttonRow.appendChild(gpsBtn);
+  const geminiBtn = document.createElement('button');
+  geminiBtn.className = 'map-button map-popup-button';
+  geminiBtn.textContent = '🤖';
+  geminiBtn.title = 'Gemini';
+  geminiBtn.onclick = openGemini;
+  buttonRow.appendChild(geminiBtn);
+  box.appendChild(buttonRow);
+  return box;
+}
+
 async function reverseGeocode(lat, lng) {
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ru`;
   const resp = await fetch(url);
@@ -168,7 +213,7 @@ async function runMapSearch() {
     const lat = parseFloat(result.lat);
     const lng = parseFloat(result.lon);
     flatMap.flyTo([lat, lng], 15);
-    L.popup({ maxWidth: 400 }).setLatLng([lat, lng]).setContent(buildMarkerPopup(result.display_name, lat, lng)).openOn(flatMap);
+    L.popup({ maxWidth: 400 }).setLatLng([lat, lng]).setContent(buildStandardMapPopup(result.display_name, lat, lng)).openOn(flatMap);
   } catch (err) {
     alert('Не удалось выполнить поиск');
   } finally {
@@ -185,41 +230,7 @@ function onMapPlainClick(e) {
   const coordText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   const popup = L.popup({ maxWidth: 400 }).setLatLng(e.latlng).setContent('Ищу название места…').openOn(e.target);
   reverseGeocode(lat, lng).then(name => {
-    const text = name || coordText;
-    const box = document.createElement('div');
-    const nameEl = document.createElement('div');
-    nameEl.textContent = text;
-    nameEl.style.marginBottom = '8px';
-    nameEl.style.maxWidth = '220px';
-    box.appendChild(nameEl);
-    const buttonRow = document.createElement('div');
-    buttonRow.className = 'map-popup-button-row';
-    const btn = document.createElement('button');
-    btn.className = 'map-button map-popup-button';
-    btn.textContent = '📋';
-    btn.title = 'Копировать';
-    btn.onclick = () => navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = '✅';
-      setTimeout(() => { btn.textContent = '📋'; }, 1500);
-    });
-    buttonRow.appendChild(btn);
-    const gpsBtn = document.createElement('button');
-    gpsBtn.className = 'map-button map-popup-button';
-    gpsBtn.textContent = '📍';
-    gpsBtn.title = 'Копировать GPS';
-    gpsBtn.onclick = () => navigator.clipboard.writeText(coordText).then(() => {
-      gpsBtn.textContent = '✅';
-      setTimeout(() => { gpsBtn.textContent = '📍'; }, 1500);
-    });
-    buttonRow.appendChild(gpsBtn);
-    const geminiBtn = document.createElement('button');
-    geminiBtn.className = 'map-button map-popup-button';
-    geminiBtn.textContent = '🤖';
-    geminiBtn.title = 'Gemini';
-    geminiBtn.onclick = openGemini;
-    buttonRow.appendChild(geminiBtn);
-    box.appendChild(buttonRow);
-    popup.setContent(box);
+    popup.setContent(buildStandardMapPopup(name || coordText, lat, lng));
   }).catch(() => popup.setContent(coordText));
 }
 
