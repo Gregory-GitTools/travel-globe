@@ -19,6 +19,22 @@ const globe = Globe()(document.getElementById('globeViz'))
 // (Гвинейский залив у Африки), а не к региону, из которого путешествия.
 globe.pointOfView({ lat: 52, lng: 19, altitude: 2.5 }, 0);
 
+// globe.gl по умолчанию ограничивает pixel ratio до 2 (Math.min(2,
+// devicePixelRatio)) и не включает анизотропную фильтрацию текстуры —
+// на телефонах с devicePixelRatio 3 и на пологих углах обзора у горизонта
+// глобуса текстура из-за этого выглядит более размытой, чем могла бы.
+globe.renderer().setPixelRatio(window.devicePixelRatio);
+// Текстура грузится асинхронно (TextureLoader), поэтому .map появляется
+// не сразу — ждём её перед тем как включить анизотропную фильтрацию.
+const sharpenGlobeTextureInterval = setInterval(() => {
+  const globeTexture = globe.globeMaterial().map;
+  if (globeTexture) {
+    globeTexture.anisotropy = globe.renderer().capabilities.getMaxAnisotropy();
+    globeTexture.needsUpdate = true;
+    clearInterval(sharpenGlobeTextureInterval);
+  }
+}, 100);
+
 globe.controls().autoRotate = true;
 globe.controls().autoRotateSpeed = 0.4;
 
