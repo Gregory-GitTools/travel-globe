@@ -428,7 +428,10 @@ function goToMapAt(trip, highlightIndex) {
     return;
   }
   if (modalOpenBlockingRotate) return;
-  if (!albumsModal.classList.contains('hidden')) return;
+  // Открыть трипа из альбомов не закрывает albumsModal (чтобы "Назад" мог
+  // вернуть его) — но при уходе на карту он всё равно должен визуально
+  // скрыться, иначе перекроет карту тем же z-index, что у любой модалки.
+  albumsModal.classList.add('hidden');
   inFlatMapMode = true;
   applyAutoRotateState();
   crossfade(globeVizEl, flatMapEl, () => {
