@@ -170,12 +170,7 @@ function onMapPlainClick(e) {
     geminiBtn.className = 'map-button map-popup-button';
     geminiBtn.textContent = '🤖';
     geminiBtn.title = 'Gemini';
-    geminiBtn.onclick = () => {
-      const question = name
-        ? `Расскажи про это место: ${name} (координаты: ${coordText}).`
-        : `Расскажи, что находится по координатам: ${coordText}.`;
-      copyGeminiText(geminiBtn, question);
-    };
+    geminiBtn.onclick = openGemini;
     buttonRow.appendChild(geminiBtn);
     box.appendChild(buttonRow);
     popup.setContent(box);
@@ -1033,22 +1028,11 @@ modalSpeak.onclick = () => {
   speechSynthesis.speak(utterance);
 };
 
-// Gemini не читает адрес страницы и не подхватывает текст из параметра ?q=,
-// а буфер обмена с двумя представлениями (картинка + текст) при вставке
-// (Ctrl+V) отдаёт получателю только ОДНО из них на выбор приложения — не оба
-// сразу. Поэтому вопрос текстом и вопрос с фото — это две разные кнопки:
-// одна копирует только текст, другая — только фото.
-async function copyGeminiText(button, text) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (e) {
-    // clipboard недоступен (например, при просмотре файла локально)
-  }
-  const original = button.textContent;
-  button.textContent = 'Скопировано! Вставьте текст в Gemini (Ctrl+V)';
-  setTimeout(() => { button.textContent = original; }, 4000);
-  // Gemini не подхватывает текст из параметра ?q= (проверено — работает не
-  // всегда и не для всех поездок), поэтому просто открываем чат для вставки.
+// Gemini не подхватывает ни адрес страницы, ни текст из параметра ?q=, а
+// скопированный в буфер текст вставлять там всё равно некуда — голосовой
+// интерфейс Gemini просит сказать вопрос вслух, а не напечатать его.
+// Поэтому просто открываем чат, без подготовки текста заранее.
+function openGemini() {
   window.open('https://gemini.google.com/app', '_blank');
 }
 
@@ -1076,10 +1060,7 @@ async function copyGeminiPhoto(button, promptText, imgUrl) {
   window.open('https://gemini.google.com/app', '_blank');
 }
 
-modalGeminiText.onclick = async () => {
-  const question = `Расскажи и прочитай про это место: ${currentTrip.title} (${currentTrip.city}, ${currentTrip.country}). ${currentTrip.notes}`;
-  await copyGeminiText(modalGeminiText, question);
-};
+modalGeminiText.onclick = openGemini;
 
 modalGeminiPhoto.onclick = async () => {
   const prompt = `Расскажи и прочитай по скриншоту окна: поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).`;
@@ -1149,12 +1130,7 @@ function playMusicForTrip(trip) {
   });
 }
 
-lightboxGeminiText.onclick = async () => {
-  const photo = currentTrip.photos[currentPhotoIndex];
-  const captionPart = photo.caption ? ` Подпись к фото: ${photo.caption}.` : '';
-  const question = `Расскажи и прочитай про это место: поездка "${currentTrip.title}" (${currentTrip.city}, ${currentTrip.country}).${captionPart}`;
-  await copyGeminiText(lightboxGeminiText, question);
-};
+lightboxGeminiText.onclick = openGemini;
 
 lightboxGeminiPhoto.onclick = async () => {
   // Gemini не может сам открыть ссылку на фото сайта (не индексируется извне) —
