@@ -1,5 +1,7 @@
 const globe = Globe()(document.getElementById('globeViz'))
-  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  // Локальная текстура 4096×2048 (Solar System Scope, CC BY 4.0, textures/README.md) —
+  // вчетверо детальнее дефолтной earth-blue-marble.jpg от three-globe (2048×1024).
+  .globeImageUrl('textures/earth-daymap-4k.jpg')
   .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
   .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
   .htmlElementsData(trips)
