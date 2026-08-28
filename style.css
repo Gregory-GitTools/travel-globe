@@ -248,25 +248,63 @@ body {
   opacity: 0.8;
 }
 
-/* Логотип-триггер скрытых настроек разработчика: двойной клик по нему
-   запрашивает пароль (см. aboutLogoEl.ondblclick в app.js). Обычным
-   посетителям выглядит просто как футер "About", ничего не намекает на
-   скрытую функцию. */
+/* Двойной клик по логотипу запрашивает пароль скрытых настроек
+   разработчика (см. aboutLogoEl.ondblclick в app.js); наведение/фокус
+   запускает декоративную анимацию "вращения" (см. spinAboutLogo). */
 .about-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.about-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  opacity: 0.6;
-  font-size: 13px;
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
 .about-logo {
   border-radius: 50%;
   cursor: pointer;
   user-select: none;
+  flex-shrink: 0;
+}
+
+.about-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.about-epigraph {
+  margin: 0;
+  font-style: italic;
+  opacity: 0.75;
+  font-size: 13px;
+}
+
+.about-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.about-text {
+  margin: 0 0 10px;
+}
+
+.about-credits {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.about-row a {
+  color: #4285f4;
 }
 
 /* Calendar */
