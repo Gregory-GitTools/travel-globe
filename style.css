@@ -271,15 +271,20 @@ body {
   background: #1f4d2e;
 }
 
-.edit-mode-status {
-  display: inline-block;
+.edit-mode-banner {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   margin: 0;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 6px;
   background: #1f4d2e;
   color: #6bdb8f;
   font-size: 14px;
   font-weight: 600;
+  z-index: 40;
+  pointer-events: none;
 }
 
 /* Двойной клик по логотипу запрашивает пароль скрытых настроек

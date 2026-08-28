@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<link rel="stylesheet" href="style.css?v=20260828b">
+<link rel="stylesheet" href="style.css?v=20260828c">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#05070d">
@@ -18,6 +18,8 @@
 <body>
 
 <div id="globeViz"></div>
+
+<p id="editModeBanner" class="edit-mode-banner hidden">✏️ Режим редактирования</p>
 
 <div id="cloudOverlay" class="cloud-overlay hidden"></div>
 
@@ -62,15 +64,13 @@
     <div id="devSettings" class="dev-settings hidden">
       <hr>
       <h3>Настройки разработчика <button id="editModeToggle" class="edit-mode-toggle hidden" title="Режим редактирования" aria-label="Режим редактирования">✏️</button></h3>
-      <p id="editModeStatus" class="edit-mode-status hidden">Режим редактирования</p>
     </div>
 
     <div id="aboutRow" class="about-row">
       <div class="about-header">
         <svg id="aboutLogo" class="about-logo" width="130" height="130" viewBox="0 0 512 512" tabindex="0" role="img" aria-label="Travel Globe">
           <path d="M 443.1 289 A 190 190 0 1 1 321 77.5" fill="none" stroke="#767676" stroke-width="90"/>
-          <path d="M 300 352 L 460 352 L 460 410 L 300 410 Z" fill="#767676"/>
-          <path d="M 390 270 L 495 270 L 495 352 L 390 352 Z" fill="#767676"/>
+          <path d="M 390 270 L 495 270 L 495 352 L 460 410 L 300 410 L 300 352 L 390 352 Z" fill="#767676"/>
           <defs>
             <clipPath id="globeClip"><circle cx="352" cy="192" r="150"/></clipPath>
             <g id="worldTile">
@@ -181,7 +181,7 @@
 
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="data.js?v=20260828b"></script>
-<script src="app.js?v=20260828b"></script>
+<script src="data.js?v=20260828c"></script>
+<script src="app.js?v=20260828c"></script>
 </body>
 </html>

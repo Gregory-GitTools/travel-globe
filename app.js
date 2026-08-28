@@ -648,7 +648,7 @@ async function sha256Hex(text) {
 const aboutLogoEl = document.getElementById('aboutLogo');
 const devSettingsEl = document.getElementById('devSettings');
 const editModeToggleEl = document.getElementById('editModeToggle');
-const editModeStatusEl = document.getElementById('editModeStatus');
+const editModeStatusEl = document.getElementById('editModeBanner');
 
 // Режим редактирования живёт только в памяти вкладки (не в localStorage) —
 // клик по "Обновить" (location.reload(), см. navRefreshBtn.onclick) сам
