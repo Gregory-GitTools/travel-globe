@@ -600,6 +600,12 @@ settingAutoRotate.onchange = () => {
 // прячем и показываем "родной" диалог установки по клику. iOS Safari не
 // поддерживает эту API вообще, поэтому там просто показываем инструкцию
 // (там установка возможна только вручную через кнопку "Поделиться").
+// Chrome требует зарегистрированный service worker как одно из условий
+// показа beforeinstallprompt — без него кнопка никогда не появлялась.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
 const installAppBtn = document.getElementById('installAppBtn');
 let deferredInstallPrompt = null;
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
