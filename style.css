@@ -268,11 +268,11 @@ body {
 }
 
 .about-logo {
-  border-radius: 50%;
   cursor: pointer;
   user-select: none;
   flex-shrink: 0;
 }
+
 
 .about-titles {
   display: flex;

@@ -66,7 +66,28 @@
 
     <div id="aboutRow" class="about-row">
       <div class="about-header">
-        <img id="aboutLogo" class="about-logo" src="icons/icon-192.png" width="130" height="130" alt="Travel Globe" tabindex="0">
+        <svg id="aboutLogo" class="about-logo" width="130" height="130" viewBox="0 0 512 512" tabindex="0" role="img" aria-label="Travel Globe">
+          <path d="M 443.1 289 A 190 190 0 1 1 321 77.5" fill="none" stroke="#767676" stroke-width="90"/>
+          <path d="M 256 352 L 460 352 L 460 422 L 256 422 Z" fill="#767676"/>
+          <path d="M 340 282 L 460 282 L 460 352 L 340 352 Z" fill="#767676"/>
+          <defs>
+            <clipPath id="globeClip"><circle cx="352" cy="192" r="150"/></clipPath>
+            <g id="worldTile">
+              <path fill="#159c1f" d="M 98 60 C 118 70 128 100 123 140 C 138 150 148 170 143 200 C 138 230 98 240 78 220 C 58 210 48 190 53 170 C 43 150 48 120 68 100 C 78 80 88 65 98 60 Z"/>
+              <path fill="#159c1f" d="M 128 220 C 158 215 198 230 218 260 C 238 290 228 320 198 330 C 178 340 148 330 138 310 C 118 300 113 270 118 250 C 113 235 118 225 128 220 Z"/>
+            </g>
+          </defs>
+          <g clip-path="url(#globeClip)">
+            <circle cx="352" cy="192" r="150" fill="#3d4b74"/>
+            <g id="aboutGlobeContinents">
+              <animateTransform id="aboutGlobeSpinAnim" attributeName="transform" type="translate"
+                from="0 0" to="-300 0" dur="1s" begin="indefinite" fill="remove"
+                calcMode="spline" keyTimes="0;1" keySplines="0.215 0.61 0.355 1"/>
+              <use href="#worldTile" x="202" y="0"/>
+              <use href="#worldTile" x="502" y="0"/>
+            </g>
+          </g>
+        </svg>
         <div class="about-titles">
           <p class="about-epigraph">Sole / Soul — travel barefoot, dream wide.</p>
           <h3 class="about-title">Travel Globe — эта страница полностью сгенерирована ИИ-помощником Claude.</h3>

@@ -659,27 +659,13 @@ aboutLogoEl.ondblclick = async () => {
   }
 };
 
-// Имитация вращения логотипа: 3 промежуточных кадра "наклона" + возврат
-// к статичной иконке, с растущими паузами (эффект затухания за ~1с).
-const ABOUT_LOGO_REST_SRC = 'icons/icon-192.png';
-const ABOUT_SPIN_FRAMES = ['icons/icon-spin-1.png', 'icons/icon-spin-2.png', 'icons/icon-spin-3.png', ABOUT_LOGO_REST_SRC];
-const ABOUT_SPIN_DELAYS = [90, 150, 260, 420];
-let aboutLogoSpinning = false;
+// Вращение глобуса внутри буквы G: полоса с материками едет по горизонтали
+// под круглой маской (SMIL animateTransform #aboutGlobeSpinAnim) — один полный
+// оборот с затуханием к концу (keySplines), буква G статична.
+const aboutGlobeSpinAnim = document.getElementById('aboutGlobeSpinAnim');
 
 function spinAboutLogo() {
-  if (aboutLogoSpinning) return;
-  aboutLogoSpinning = true;
-  let i = 0;
-  const step = () => {
-    aboutLogoEl.src = ABOUT_SPIN_FRAMES[i];
-    if (i < ABOUT_SPIN_FRAMES.length - 1) {
-      setTimeout(step, ABOUT_SPIN_DELAYS[i]);
-      i++;
-    } else {
-      aboutLogoSpinning = false;
-    }
-  };
-  step();
+  aboutGlobeSpinAnim.beginElement();
 }
 
 aboutLogoEl.addEventListener('mouseenter', spinAboutLogo);
