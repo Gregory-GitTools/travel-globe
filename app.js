@@ -668,10 +668,17 @@ aboutLogoEl.ondblclick = async () => {
   }
 };
 
+const modalEditBtn = document.getElementById('modalEditBtn');
+
+function updateEditUI() {
+  modalEditBtn.classList.toggle('hidden', !(editModeActive && isDesktop));
+}
+
 editModeToggleEl.onclick = () => {
   editModeActive = !editModeActive;
   editModeStatusEl.classList.toggle('hidden', !editModeActive);
   editModeToggleEl.classList.toggle('active', editModeActive);
+  updateEditUI();
 };
 
 // Вращение глобуса внутри буквы G: полоса с материками едет по горизонтали
@@ -1150,6 +1157,7 @@ function openTrip(trip) {
     modalGallery.appendChild(item);
   });
   modal.classList.remove('hidden');
+  updateEditUI();
   syncUrlBookmark();
 }
 
@@ -1165,6 +1173,116 @@ function closeModal() {
 modalClose.onclick = closeModal;
 modal.onclick = e => {
   if (e.target === modal) closeModal();
+};
+
+// Окно редактирования собирает запрос на изменение альбома в текст для
+// вставки в чат с ИИ (сайт статический, без бэкенда — правки применяет ИИ
+// вручную через data.js). Ничего здесь не сохраняется и не отправляется
+// само по себе.
+const editAlbumModal = document.getElementById('editAlbumModal');
+const editAlbumClose = document.getElementById('editAlbumClose');
+const editAlbumTitle = document.getElementById('editAlbumTitle');
+const editAlbumNotes = document.getElementById('editAlbumNotes');
+const editAlbumCoverGrid = document.getElementById('editAlbumCoverGrid');
+const editAlbumOrderList = document.getElementById('editAlbumOrderList');
+const editAlbumLat = document.getElementById('editAlbumLat');
+const editAlbumLng = document.getElementById('editAlbumLng');
+const editAlbumCopy = document.getElementById('editAlbumCopy');
+
+let editDraftPhotos = [];
+let editDraftCover = '';
+
+function renderEditCoverGrid() {
+  editAlbumCoverGrid.innerHTML = '';
+  editDraftPhotos.forEach(photo => {
+    const thumb = document.createElement('img');
+    thumb.src = photo.url;
+    thumb.loading = 'lazy';
+    thumb.className = 'edit-cover-thumb' + (photo.url === editDraftCover ? ' selected' : '');
+    thumb.onclick = () => {
+      editDraftCover = photo.url;
+      renderEditCoverGrid();
+    };
+    editAlbumCoverGrid.appendChild(thumb);
+  });
+}
+
+function renderEditOrderList() {
+  editAlbumOrderList.innerHTML = '';
+  editDraftPhotos.forEach((photo, index) => {
+    const row = document.createElement('div');
+    row.className = 'edit-order-row';
+
+    const thumb = document.createElement('img');
+    thumb.src = photo.url;
+    thumb.loading = 'lazy';
+    row.appendChild(thumb);
+
+    const name = document.createElement('span');
+    name.className = 'edit-order-name';
+    name.textContent = photo.url.split('/').pop();
+    row.appendChild(name);
+
+    const upBtn = document.createElement('button');
+    upBtn.className = 'icon-button';
+    upBtn.textContent = '▲';
+    upBtn.disabled = index === 0;
+    upBtn.onclick = () => {
+      [editDraftPhotos[index - 1], editDraftPhotos[index]] = [editDraftPhotos[index], editDraftPhotos[index - 1]];
+      renderEditOrderList();
+    };
+    row.appendChild(upBtn);
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'icon-button';
+    downBtn.textContent = '▼';
+    downBtn.disabled = index === editDraftPhotos.length - 1;
+    downBtn.onclick = () => {
+      [editDraftPhotos[index + 1], editDraftPhotos[index]] = [editDraftPhotos[index], editDraftPhotos[index + 1]];
+      renderEditOrderList();
+    };
+    row.appendChild(downBtn);
+
+    editAlbumOrderList.appendChild(row);
+  });
+}
+
+modalEditBtn.onclick = () => {
+  editDraftPhotos = currentTrip.photos.slice();
+  editDraftCover = currentTrip.cover;
+  editAlbumTitle.value = currentTrip.title;
+  editAlbumNotes.value = currentTrip.notes;
+  editAlbumLat.value = currentTrip.lat;
+  editAlbumLng.value = currentTrip.lng;
+  renderEditCoverGrid();
+  renderEditOrderList();
+  editAlbumModal.classList.remove('hidden');
+};
+
+function closeEditAlbumModal() {
+  editAlbumModal.classList.add('hidden');
+}
+
+editAlbumClose.onclick = closeEditAlbumModal;
+editAlbumModal.onclick = e => {
+  if (e.target === editAlbumModal) closeEditAlbumModal();
+};
+
+editAlbumCopy.onclick = () => {
+  const orderList = editDraftPhotos.map(p => p.url.split('/').pop()).join(', ');
+  const request = [
+    `Запрос на изменение альбома (текущее название в data.js: "${currentTrip.title}")`,
+    ``,
+    `Название: ${editAlbumTitle.value}`,
+    `Комментарий: ${editAlbumNotes.value}`,
+    `Титульное фото: ${editDraftCover.split('/').pop()}`,
+    `Порядок фото: ${orderList}`,
+    `Геолокация: ${editAlbumLat.value}, ${editAlbumLng.value}`,
+  ].join('\n');
+  navigator.clipboard.writeText(request).then(() => {
+    editAlbumCopy.textContent = '✅ Скопировано';
+    setTimeout(() => { editAlbumCopy.textContent = '📋 Скопировать запрос'; }, 1500);
+  });
 };
 
 modalSpeak.onclick = () => {
