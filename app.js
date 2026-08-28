@@ -592,6 +592,64 @@ settingAutoRotate.onchange = () => {
   applyAutoRotateState();
 };
 
+// --- Установка сайта на экран (PWA) ---
+// Chromium (desktop/Android) сам предлагает событие beforeinstallprompt —
+// прячем и показываем "родной" диалог установки по клику. iOS Safari не
+// поддерживает эту API вообще, поэтому там просто показываем инструкцию
+// (там установка возможна только вручную через кнопку "Поделиться").
+const installAppBtn = document.getElementById('installAppBtn');
+let deferredInstallPrompt = null;
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+if (!isStandalone) {
+  if (isIOS) {
+    installAppBtn.classList.remove('hidden');
+  } else {
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      installAppBtn.classList.remove('hidden');
+    });
+  }
+}
+
+installAppBtn.onclick = async () => {
+  if (isIOS) {
+    alert('Чтобы установить сайт на экран "Домой":\n\n1. Нажмите кнопку "Поделиться" внизу экрана Safari (квадрат со стрелкой вверх)\n2. Выберите "На экран «Домой»"\n3. Нажмите "Добавить"');
+    return;
+  }
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installAppBtn.classList.add('hidden');
+};
+
+// --- Скрытые настройки разработчика ---
+// Двойной клик по логотипу "About" запрашивает пароль (проверяется по
+// SHA-256 хэшу, сам пароль нигде в коде не хранится в открытом виде).
+const DEV_PASSWORD_HASH = 'cf4bf3f159829c280f346e9b1827938a237ff7ed5e22d6091f450e55df5ee8de';
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+const aboutLogoEl = document.getElementById('aboutLogo');
+const devSettingsEl = document.getElementById('devSettings');
+
+aboutLogoEl.ondblclick = async () => {
+  const pass = prompt('Пароль разработчика:');
+  if (pass == null) return;
+  const hash = await sha256Hex(pass);
+  if (hash === DEV_PASSWORD_HASH) {
+    devSettingsEl.classList.remove('hidden');
+  } else {
+    alert('Неверный пароль');
+  }
+};
+
 // Прогреваем кэш тайлов вокруг каждого альбома заранее (небольшой набор,
 // не весь земной шар), чтобы при провале карта открывалась уже в резком
 // разрешении, а не догружалась на глазах.

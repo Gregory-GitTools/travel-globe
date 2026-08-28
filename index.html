@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#05070d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
@@ -52,6 +57,17 @@
       <input type="checkbox" id="settingAutoRotate">
     </label>
 
+    <button id="installAppBtn" class="map-button install-app-btn hidden">📲 Установить на экран</button>
+
+    <div id="devSettings" class="dev-settings hidden">
+      <hr>
+      <h3>Настройки разработчика</h3>
+    </div>
+
+    <div id="aboutRow" class="about-row">
+      <img id="aboutLogo" class="about-logo" src="icons/icon-192.png" width="22" height="22" alt="">
+      <span class="about-text">Travel Globe</span>
+    </div>
   </div>
 </div>
 
