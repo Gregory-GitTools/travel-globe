@@ -647,6 +647,7 @@ async function sha256Hex(text) {
 
 const aboutLogoEl = document.getElementById('aboutLogo');
 const devSettingsEl = document.getElementById('devSettings');
+const editModeToggleEl = document.getElementById('editModeToggle');
 const editModeStatusEl = document.getElementById('editModeStatus');
 
 // Режим редактирования живёт только в памяти вкладки (не в localStorage) —
@@ -661,11 +662,16 @@ aboutLogoEl.ondblclick = async () => {
   const hash = await sha256Hex(pass);
   if (hash === DEV_PASSWORD_HASH) {
     devSettingsEl.classList.remove('hidden');
-    editModeActive = true;
-    if (isDesktop) editModeStatusEl.classList.remove('hidden');
+    if (isDesktop) editModeToggleEl.classList.remove('hidden');
   } else {
     alert('Неверный пароль');
   }
+};
+
+editModeToggleEl.onclick = () => {
+  editModeActive = !editModeActive;
+  editModeStatusEl.classList.toggle('hidden', !editModeActive);
+  editModeToggleEl.classList.toggle('active', editModeActive);
 };
 
 // Вращение глобуса внутри буквы G: полоса с материками едет по горизонтали
