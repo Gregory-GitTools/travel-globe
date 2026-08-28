@@ -248,6 +248,17 @@ body {
   opacity: 0.8;
 }
 
+.edit-mode-status {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #1f4d2e;
+  color: #6bdb8f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 /* Двойной клик по логотипу запрашивает пароль скрытых настроек
    разработчика (см. aboutLogoEl.ondblclick в app.js); наведение/фокус
    запускает декоративную анимацию "вращения" (см. spinAboutLogo). */

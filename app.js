@@ -647,6 +647,13 @@ async function sha256Hex(text) {
 
 const aboutLogoEl = document.getElementById('aboutLogo');
 const devSettingsEl = document.getElementById('devSettings');
+const editModeStatusEl = document.getElementById('editModeStatus');
+
+// Режим редактирования живёт только в памяти вкладки (не в localStorage) —
+// клик по "Обновить" (location.reload(), см. navRefreshBtn.onclick) сам
+// сбрасывает его без отдельного кода выхода.
+let editModeActive = false;
+const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 aboutLogoEl.ondblclick = async () => {
   const pass = prompt('Пароль разработчика:');
@@ -654,6 +661,8 @@ aboutLogoEl.ondblclick = async () => {
   const hash = await sha256Hex(pass);
   if (hash === DEV_PASSWORD_HASH) {
     devSettingsEl.classList.remove('hidden');
+    editModeActive = true;
+    if (isDesktop) editModeStatusEl.classList.remove('hidden');
   } else {
     alert('Неверный пароль');
   }
