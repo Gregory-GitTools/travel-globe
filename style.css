@@ -252,8 +252,8 @@ body {
    разработчика (см. aboutLogoEl.ondblclick в app.js); наведение/фокус
    запускает декоративную анимацию "вращения" (см. spinAboutLogo). */
 .about-row {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 14px;
   line-height: 1.5;
@@ -263,8 +263,8 @@ body {
 .about-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .about-logo {

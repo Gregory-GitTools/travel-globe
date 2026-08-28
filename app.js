@@ -580,7 +580,10 @@ settingAutoRotate.checked = !userAutoRotateOff;
 // событии (зум/модалка/карта) — на самой загрузке страницы игнорировалась.
 applyAutoRotateState();
 
-toolbarSettings.onclick = () => settingsModal.classList.remove('hidden');
+toolbarSettings.onclick = () => {
+  settingsModal.classList.remove('hidden');
+  spinAboutLogo();
+};
 settingsModalClose.onclick = () => settingsModal.classList.add('hidden');
 settingsModal.onclick = e => {
   if (e.target === settingsModal) settingsModal.classList.add('hidden');
