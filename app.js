@@ -257,38 +257,6 @@ function getTripPoints(trip) {
 
 let tripMarkersLayer = null;
 
-// Всплывающая подсказка маркера: подпись фото/поездки + кнопка копирования
-// координат — Gregory попросил возможность быстро скопировать GPS точки.
-function buildMarkerPopup(caption, lat, lng) {
-  const wrap = document.createElement('div');
-  wrap.className = 'map-popup';
-
-  if (caption) {
-    const capEl = document.createElement('div');
-    capEl.className = 'map-popup-caption';
-    capEl.textContent = caption;
-    wrap.appendChild(capEl);
-  }
-
-  const actions = document.createElement('div');
-  actions.className = 'map-popup-actions';
-  const copyBtn = document.createElement('button');
-  copyBtn.type = 'button';
-  copyBtn.className = 'map-popup-copy-gps';
-  copyBtn.textContent = '📋 Копировать GPS';
-  copyBtn.onclick = () => {
-    const text = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    navigator.clipboard.writeText(text).catch(() => {});
-    const original = copyBtn.textContent;
-    copyBtn.textContent = 'Скопировано!';
-    setTimeout(() => { copyBtn.textContent = original; }, 1500);
-  };
-  actions.appendChild(copyBtn);
-  wrap.appendChild(actions);
-
-  return wrap;
-}
-
 function showTripMarkers(map, trip, highlightIndex) {
   if (tripMarkersLayer) tripMarkersLayer.remove();
   tripMarkersLayer = L.layerGroup();
@@ -301,7 +269,9 @@ function showTripMarkers(map, trip, highlightIndex) {
           zIndexOffset: 1000
         })
       : L.marker([p.lat, p.lng]);
-    marker.bindPopup(buildMarkerPopup(p.caption || trip.title, p.lat, p.lng));
+    // Тот же попап, что и при клике по пустому месту карты/поиске (Gregory:
+    // "окно всегда одно") — единый вид для всех трёх сценариев.
+    marker.bindPopup(buildStandardMapPopup(p.caption || trip.title, p.lat, p.lng), { maxWidth: 400 });
     marker.addTo(tripMarkersLayer);
   });
   tripMarkersLayer.addTo(map);

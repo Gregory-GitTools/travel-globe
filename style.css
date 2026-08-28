@@ -87,34 +87,6 @@ body {
   inset: 0;
 }
 
-.map-popup {
-  text-align: center;
-}
-
-.map-popup-caption {
-  margin-bottom: 6px;
-  color: #12141c;
-}
-
-.map-popup-actions {
-  display: flex;
-  justify-content: center;
-}
-
-.map-popup-copy-gps {
-  background: #12141c;
-  border: none;
-  color: #fff;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 16px;
-  cursor: pointer;
-}
-
-.map-popup-copy-gps:hover {
-  opacity: 0.85;
-}
-
 .highlight-pin {
   width: 20px;
   height: 20px;
