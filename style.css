@@ -421,12 +421,17 @@ body {
 
 .about-wordmark {
   display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
 }
 
 .about-titles {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .about-epigraph {
@@ -1075,6 +1080,18 @@ body {
   .modal-content {
     max-height: 92vh;
     padding: 20px;
+  }
+
+  /* Рядом с иконкой (130px) на узком экране wordmark-у не хватает места
+     в одну строку — переносим подписи под лого, чтобы About не вылезал
+     за пределы модального окна вбок. */
+  .about-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .about-wordmark {
+    max-width: 260px;
   }
 
   .modal-actions {
