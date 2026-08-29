@@ -425,7 +425,8 @@ body {
   width: 100%;
   max-width: 110px;
   height: auto;
-  margin-top: -8px;
+  margin-top: -14px;
+  margin-left: 10px;
 }
 
 .about-titles {

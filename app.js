@@ -676,6 +676,9 @@ let devClickCount = 0;
 let devClickTimer = null;
 
 aboutLogoEl.addEventListener('click', () => {
+  // На телефоне клик по логотипу вращает глобус (см. ниже) — счётчик
+  // пароля разработчика там не нужен и мешал бы случайными тапами.
+  if (!isDesktop) return;
   devClickCount += 1;
   clearTimeout(devClickTimer);
   if (devClickCount >= DEV_UNLOCK_CLICKS) {
