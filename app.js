@@ -640,7 +640,7 @@ installAppBtn.onclick = async () => {
 // SHA-256 хэшу, сам пароль нигде в коде не хранится в открытом виде).
 // Пять кликов вместо двух — чтобы случайные тапы, вращающие глобус на
 // телефоне (см. ниже), не открывали это окно по ошибке.
-const DEV_PASSWORD_HASH = 'cf4bf3f159829c280f346e9b1827938a237ff7ed5e22d6091f450e55df5ee8de';
+const DEV_PASSWORD_HASH = '5e0d828e2f68acf1805ccd4bcf226e9d5b7c942d8cf9ef8b192138100141b9e4';
 
 async function sha256Hex(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
