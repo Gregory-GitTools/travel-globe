@@ -530,6 +530,7 @@ body {
 
 .albums-calendar {
   margin-top: 10px;
+  touch-action: pan-y;
 }
 
 #calendarBody.collapsed {
