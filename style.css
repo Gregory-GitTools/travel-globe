@@ -1147,7 +1147,8 @@ body {
   }
 
   .modal-content {
-    max-height: 92vh;
+    width: 95%;
+    max-height: 94vh;
     padding: 20px;
   }
 
@@ -1167,11 +1168,17 @@ body {
    спискам даты не хватало места — подужимаем отступы. */
 @media (max-width: 400px) {
   .modal-content {
-    padding: 16px;
+    width: 97%;
+    max-height: 96vh;
+    padding: 14px;
   }
 
   .calendar-months {
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .calendar-grid {
+    gap: 3px;
   }
 
   .calendar-nav {
