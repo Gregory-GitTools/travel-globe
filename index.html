@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Мои путешествия</title>
+<title>Travel Globe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<link rel="stylesheet" href="style.css?v=20260828e">
+<link rel="stylesheet" href="style.css?v=20260829a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#05070d">
@@ -69,29 +69,78 @@
     <div id="aboutRow" class="about-row">
       <div class="about-header">
         <svg id="aboutLogo" class="about-logo" width="130" height="130" viewBox="0 0 512 512" tabindex="0" role="img" aria-label="Travel Globe">
-          <path d="M 443.1 289 A 190 190 0 1 1 321 77.5" fill="none" stroke="#767676" stroke-width="90"/>
-          <path d="M 370 250 L 495 250 L 495 352 L 460 410 L 300 410 L 300 352 L 370 352 Z" fill="#767676"/>
           <defs>
-            <clipPath id="globeClip"><circle cx="352" cy="192" r="150"/></clipPath>
-            <g id="worldTile">
-              <path fill="#159c1f" d="M 98 60 C 118 70 128 100 123 140 C 138 150 148 170 143 200 C 138 230 98 240 78 220 C 58 210 48 190 53 170 C 43 150 48 120 68 100 C 78 80 88 65 98 60 Z"/>
-              <path fill="#159c1f" d="M 128 220 C 158 215 198 230 218 260 C 238 290 228 320 198 330 C 178 340 148 330 138 310 C 118 300 113 270 118 250 C 113 235 118 225 128 220 Z"/>
-            </g>
+            <clipPath id="globeClip"><circle cx="352.00" cy="192.00" r="150.00"/></clipPath>
+            <clipPath id="aboutGClip"><path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z"/></clipPath>
+            <linearGradient id="steelGradAbout" gradientUnits="userSpaceOnUse" x1="321.25" y1="2013.86" x2="1792.75" y2="-534.86">
+              <stop offset="0%" stop-color="#9ea6ad"/>
+              <stop offset="55%" stop-color="#959ea6"/>
+              <stop offset="100%" stop-color="#8a929a"/>
+            </linearGradient>
+            <linearGradient id="bevelLightAbout" gradientUnits="userSpaceOnUse" x1="321.25" y1="2013.86" x2="1792.75" y2="-534.86">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+              <stop offset="20%" stop-color="#ffffff" stop-opacity="1"/>
+              <stop offset="45%" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="bevelDarkAbout" gradientUnits="userSpaceOnUse" x1="1792.75" y1="-534.86" x2="321.25" y2="2013.86">
+              <stop offset="0%" stop-color="#000000" stop-opacity="0.7"/>
+              <stop offset="20%" stop-color="#000000" stop-opacity="0.6"/>
+              <stop offset="45%" stop-color="#000000" stop-opacity="0"/>
+            </linearGradient>
+            <filter id="logoLift" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="3" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.35"/>
+            </filter>
+            <filter id="bevelBlurAbout" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="9.067"/>
+            </filter>
           </defs>
-          <g clip-path="url(#globeClip)">
-            <circle cx="352" cy="192" r="150" fill="#3d4b74"/>
-            <g id="aboutGlobeContinents">
-              <animateTransform id="aboutGlobeSpinAnim" attributeName="transform" type="translate"
-                from="0 0" to="-300 0" dur="1s" begin="indefinite" fill="remove"
-                calcMode="spline" keyTimes="0;1" keySplines="0.215 0.61 0.355 1"/>
-              <use href="#worldTile" x="202" y="0"/>
-              <use href="#worldTile" x="502" y="0"/>
+          <g filter="url(#logoLift)">
+            <g transform="translate(133.62,356.23) scale(0.220588,-0.220588)">
+              <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="url(#steelGradAbout)"/>
+              <g clip-path="url(#aboutGClip)" filter="url(#bevelBlurAbout)">
+                <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="url(#bevelDarkAbout)" stroke-width="68.00"/>
+                <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="url(#bevelLightAbout)" stroke-width="68.00"/>
+              </g>
+            </g>
+            <g clip-path="url(#globeClip)">
+              <circle cx="352.00" cy="192.00" r="150.00" fill="#1b2a4a"/>
+              <g id="aboutGlobeContinents">
+                <animateTransform id="aboutGlobeSpinAnim" attributeName="transform" type="translate"
+                  from="0 0" to="-300 0" dur="1s" begin="indefinite" fill="remove"
+                  calcMode="spline" keyTimes="0;1" keySplines="0.215 0.61 0.355 1"/>
+                <image href="textures/earth-daymap-4k.jpg" x="-331" y="-141" width="1200" height="600"/>
+              </g>
             </g>
           </g>
         </svg>
         <div class="about-titles">
+          <svg class="about-wordmark" width="220" height="18.73" viewBox="0 0 18292 1557" role="img" aria-label="Travel Globe">
+            <defs>
+              <linearGradient id="wordmarkGrad" gradientUnits="userSpaceOnUse" x1="0" y1="1557" x2="18292" y2="0">
+                <stop offset="0%" stop-color="#c3c9ce"/>
+                <stop offset="50%" stop-color="#9aa1a7"/>
+                <stop offset="100%" stop-color="#767e86"/>
+              </linearGradient>
+              <filter id="wordmarkLift" x="-10%" y="-40%" width="120%" height="180%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"/>
+              </filter>
+            </defs>
+            <g transform="translate(0,1518) scale(1,-1)" filter="url(#wordmarkLift)" fill="url(#wordmarkGrad)">
+                <path transform="translate(-4,0)" d="M539 0V1104H4V1479H1649V1104H1112V0Z"/>
+                <path transform="translate(1649,0)" d="M141 0V1147H649L655 1059Q713 1117 793.0 1146.5Q873 1176 973 1176Q1171 1176 1263.5 1068.5Q1356 961 1356 729V629H903V637Q903 724 873.0 766.5Q843 809 782 809Q717 809 689.5 760.0Q662 711 662 592V0Z"/>
+                <path transform="translate(3052,0)" d="M1177 534Q1097 494 903 481Q847 478 817 475Q704 465 663.5 442.0Q623 419 623 371Q623 317 671.5 287.5Q720 258 809 258Q978 258 1079.0 326.0Q1180 394 1180 506Q1180 518 1179.5 523.5Q1179 529 1177 534ZM1179 157Q1083 56 947.5 9.5Q812 -37 604 -37Q323 -37 182.0 57.0Q41 151 41 340Q41 402 57.0 454.5Q73 507 102 545Q161 618 259.5 653.5Q358 689 631 707Q721 713 865 718Q1155 730 1155 799Q1155 846 1094.0 874.5Q1033 903 928 903Q792 903 734.0 877.0Q676 851 666 788H137Q153 997 332.5 1087.5Q512 1178 924 1178Q1149 1178 1303.0 1146.5Q1457 1115 1536 1053Q1622 986 1658.0 891.5Q1694 797 1694 621V178Q1694 114 1705.5 79.5Q1717 45 1745 25V0H1212Q1198 34 1189.5 73.5Q1181 113 1179 157Z"/>
+                <path transform="translate(4877,0)" d="M492 0 -43 1147H547L729 635Q744 593 756.0 548.0Q768 503 776 455Q785 496 797.0 537.5Q809 579 825 625L1008 1147H1591L1057 0Z"/>
+                <path transform="translate(6442,0)" d="M584 700H1192Q1181 795 1106.0 847.0Q1031 899 905 899Q769 899 686.5 848.0Q604 797 584 700ZM1708 350Q1650 159 1439.0 60.0Q1228 -39 877 -39Q487 -39 274.0 121.0Q61 281 61 573Q61 866 274.0 1026.0Q487 1186 877 1186Q1291 1186 1504.5 1005.5Q1718 825 1718 475V455H610Q610 362 688.0 311.0Q766 260 907 260Q1000 260 1062.0 283.0Q1124 306 1151 350Z"/>
+                <path transform="translate(8218,0)" d="M154 0V1491H676V0Z"/>
+                <path transform="translate(10024,0)" d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z"/>
+                <path transform="translate(12176,0)" d="M154 0V1491H676V0Z"/>
+                <path transform="translate(13003,0)" d="M602 573Q602 455 673.5 385.0Q745 315 866 315Q987 315 1058.5 385.0Q1130 455 1130 573Q1130 692 1058.5 761.5Q987 831 866 831Q745 831 673.5 761.5Q602 692 602 573ZM61 573Q61 865 272.0 1025.5Q483 1186 868 1186Q1254 1186 1463.5 1026.0Q1673 866 1673 573Q1673 281 1463.5 121.0Q1254 -39 868 -39Q483 -39 272.0 121.0Q61 281 61 573Z"/>
+                <path transform="translate(14738,0)" d="M651 573Q651 458 723.0 388.5Q795 319 913 319Q1033 319 1104.5 388.5Q1176 458 1176 573Q1176 689 1104.5 758.0Q1033 827 913 827Q795 827 723.0 758.0Q651 689 651 573ZM139 0V1491H651V1053Q744 1115 848.5 1145.5Q953 1176 1077 1176Q1369 1176 1541.5 1013.0Q1714 850 1714 573Q1714 300 1543.0 135.5Q1372 -29 1085 -29Q950 -29 837.0 6.5Q724 42 631 113L627 0Z"/>
+                <path transform="translate(16516,0)" d="M584 700H1192Q1181 795 1106.0 847.0Q1031 899 905 899Q769 899 686.5 848.0Q604 797 584 700ZM1708 350Q1650 159 1439.0 60.0Q1228 -39 877 -39Q487 -39 274.0 121.0Q61 281 61 573Q61 866 274.0 1026.0Q487 1186 877 1186Q1291 1186 1504.5 1005.5Q1718 825 1718 475V455H610Q610 362 688.0 311.0Q766 260 907 260Q1000 260 1062.0 283.0Q1124 306 1151 350Z"/>
+            </g>
+          </svg>
           <p class="about-epigraph">Sole / Soul — travel barefoot, dream wide.</p>
-          <h3 class="about-title">Travel Globe — эта страница полностью сгенерирована ИИ-помощником Claude.</h3>
+          <h3 class="about-title">Эта страница полностью сгенерирована ИИ-помощником Claude.</h3>
         </div>
       </div>
       <p class="about-text">Останови мгновение в кадре. А как видишь мир ты?</p>
@@ -99,6 +148,7 @@
       <p class="about-text">Личный некоммерческий проект. Здесь нет рекламы, аналитики и сбора данных — только фотографии, сделанные автором. Больше — на канале <a href="https://www.youtube.com/@Gregory-Flow" target="_blank" rel="noopener">Gregory Flow</a>.</p>
       <p class="about-credits">Сделано на основе открытых инструментов: <a href="https://leafletjs.com/" target="_blank" rel="noopener">Leaflet</a>, <a href="https://globe.gl/" target="_blank" rel="noopener">globe.gl</a> (Three.js), тайлы и геокодирование — <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> / Nominatim, шрифт — Google Fonts (Poppins).</p>
     </div>
+  </div>
   </div>
 </div>
 
@@ -221,7 +271,7 @@
 
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="data.js?v=20260828e"></script>
-<script src="app.js?v=20260828e"></script>
+<script src="data.js?v=20260829a"></script>
+<script src="app.js?v=20260829a"></script>
 </body>
 </html>

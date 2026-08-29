@@ -636,8 +636,10 @@ installAppBtn.onclick = async () => {
 };
 
 // --- Скрытые настройки разработчика ---
-// Двойной клик по логотипу "About" запрашивает пароль (проверяется по
+// 5 кликов подряд по логотипу "About" запрашивают пароль (проверяется по
 // SHA-256 хэшу, сам пароль нигде в коде не хранится в открытом виде).
+// Пять кликов вместо двух — чтобы случайные тапы, вращающие глобус на
+// телефоне (см. ниже), не открывали это окно по ошибке.
 const DEV_PASSWORD_HASH = 'cf4bf3f159829c280f346e9b1827938a237ff7ed5e22d6091f450e55df5ee8de';
 
 async function sha256Hex(text) {
@@ -656,7 +658,7 @@ const editModeStatusEl = document.getElementById('editModeBanner');
 let editModeActive = false;
 const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-aboutLogoEl.ondblclick = async () => {
+async function unlockDevSettings() {
   const pass = prompt('Пароль разработчика:');
   if (pass == null) return;
   const hash = await sha256Hex(pass);
@@ -666,7 +668,23 @@ aboutLogoEl.ondblclick = async () => {
   } else {
     alert('Неверный пароль');
   }
-};
+}
+
+const DEV_UNLOCK_CLICKS = 5;
+const DEV_UNLOCK_WINDOW_MS = 600;
+let devClickCount = 0;
+let devClickTimer = null;
+
+aboutLogoEl.addEventListener('click', () => {
+  devClickCount += 1;
+  clearTimeout(devClickTimer);
+  if (devClickCount >= DEV_UNLOCK_CLICKS) {
+    devClickCount = 0;
+    unlockDevSettings();
+  } else {
+    devClickTimer = setTimeout(() => { devClickCount = 0; }, DEV_UNLOCK_WINDOW_MS);
+  }
+});
 
 const modalEditBtn = document.getElementById('modalEditBtn');
 
@@ -692,6 +710,9 @@ function spinAboutLogo() {
 
 aboutLogoEl.addEventListener('mouseenter', spinAboutLogo);
 aboutLogoEl.addEventListener('focus', spinAboutLogo);
+// На телефоне нет hover — вращаем по тапу (свайп по глобусу здесь не
+// годится: он перехватывается системным жестом смахивания приложения).
+aboutLogoEl.addEventListener('click', spinAboutLogo);
 
 // Прогреваем кэш тайлов вокруг каждого альбома заранее (небольшой набор,
 // не весь земной шар), чтобы при провале карта открывалась уже в резком
