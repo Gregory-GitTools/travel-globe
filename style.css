@@ -401,7 +401,8 @@ body {
 
 .about-header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 6px;
 }
@@ -422,7 +423,7 @@ body {
 .about-wordmark {
   display: block;
   width: 100%;
-  max-width: 220px;
+  max-width: 130px;
   height: auto;
 }
 
@@ -1080,18 +1081,6 @@ body {
   .modal-content {
     max-height: 92vh;
     padding: 20px;
-  }
-
-  /* Рядом с иконкой (130px) на узком экране wordmark-у не хватает места
-     в одну строку — переносим подписи под лого, чтобы About не вылезал
-     за пределы модального окна вбок. */
-  .about-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .about-wordmark {
-    max-width: 260px;
   }
 
   .modal-actions {
