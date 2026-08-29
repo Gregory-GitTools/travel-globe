@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<link rel="stylesheet" href="style.css?v=20260829b">
-<link rel="manifest" href="manifest.json?v=20260829c">
+<link rel="stylesheet" href="style.css?v=20260829c">
+<link rel="manifest" href="manifest.json?v=20260829d">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#05070d">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -68,9 +68,9 @@
 
     <div id="aboutRow" class="about-row">
       <div class="about-header">
-        <svg id="aboutLogo" class="about-logo" width="130" height="130" viewBox="0 0 512 512" tabindex="0" role="img" aria-label="Travel Globe">
+        <svg id="aboutLogo" class="about-logo" width="130" height="130" viewBox="0 0 900 900" tabindex="0" role="img" aria-label="Travel Globe">
           <defs>
-            <clipPath id="globeClip"><circle cx="352.00" cy="192.00" r="150.00"/></clipPath>
+            <clipPath id="globeClip"><circle cx="424.18" cy="448.07" r="262.02"/></clipPath>
             <clipPath id="aboutGClip"><path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z"/></clipPath>
             <linearGradient id="steelGradAbout" gradientUnits="userSpaceOnUse" x1="321.25" y1="2013.86" x2="1792.75" y2="-534.86">
               <stop offset="0%" stop-color="#9ea6ad"/>
@@ -87,29 +87,37 @@
               <stop offset="20%" stop-color="#000000" stop-opacity="0.6"/>
               <stop offset="45%" stop-color="#000000" stop-opacity="0"/>
             </linearGradient>
+            <radialGradient id="sphereShadeAbout" cx="35%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
+              <stop offset="35%" stop-color="#ffffff" stop-opacity="0.1"/>
+              <stop offset="70%" stop-color="#000000" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0.35"/>
+            </radialGradient>
             <filter id="logoLift" x="-30%" y="-30%" width="160%" height="160%">
               <feDropShadow dx="3" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.35"/>
             </filter>
             <filter id="bevelBlurAbout" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="9.067"/>
+              <feGaussianBlur stdDeviation="5.190"/>
             </filter>
           </defs>
           <g filter="url(#logoLift)">
-            <g transform="translate(133.62,356.23) scale(0.220588,-0.220588)">
+            <g transform="translate(42.72,734.94) scale(0.385321,-0.385321)">
               <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="url(#steelGradAbout)"/>
+              <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="#000000" stroke-opacity="0.32" stroke-width="7.79"/>
               <g clip-path="url(#aboutGClip)" filter="url(#bevelBlurAbout)">
-                <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="url(#bevelDarkAbout)" stroke-width="68.00"/>
-                <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="url(#bevelLightAbout)" stroke-width="68.00"/>
+                <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="url(#bevelDarkAbout)" stroke-width="38.93"/>
+                <path d="M1718 131Q1618 43 1461.5 2.0Q1305 -39 1071 -39Q578 -39 327.0 157.5Q76 354 76 739Q76 1125 327.0 1321.5Q578 1518 1071 1518Q1486 1518 1736.0 1377.0Q1986 1236 2019 985H1391Q1345 1075 1269.5 1119.0Q1194 1163 1087 1163Q908 1163 800.0 1048.0Q692 933 692 739Q692 543 798.5 434.5Q905 326 1096 326Q1239 326 1334.0 378.0Q1429 430 1450 520H1212V840H2038V0H1780Z" fill="none" stroke="url(#bevelLightAbout)" stroke-width="38.93"/>
               </g>
             </g>
             <g clip-path="url(#globeClip)">
-              <circle cx="352.00" cy="192.00" r="150.00" fill="#1b2a4a"/>
+              <circle cx="424.18" cy="448.07" r="262.02" fill="#1b2a4a"/>
               <g id="aboutGlobeContinents">
                 <animateTransform id="aboutGlobeSpinAnim" attributeName="transform" type="translate"
-                  from="0 0" to="-300 0" dur="1s" begin="indefinite" fill="remove"
+                  from="0 0" to="-524 0" dur="1s" begin="indefinite" fill="remove"
                   calcMode="spline" keyTimes="0;1" keySplines="0.215 0.61 0.355 1"/>
-                <image href="textures/earth-daymap-4k.jpg" x="-331" y="-141" width="1200" height="600"/>
+                <image href="textures/earth-daymap-4k.jpg" x="-178.46" y="146.75" width="1205.28" height="602.64"/>
               </g>
+              <circle cx="424.18" cy="448.07" r="262.02" fill="url(#sphereShadeAbout)"/>
             </g>
           </g>
         </svg>
