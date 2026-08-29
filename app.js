@@ -470,7 +470,12 @@ const backJokes = [
   '🌍 Дальше только открытый космос. Тут разворачиваемся.',
   '🚀 Ракеты пока не подвезли — возвращайтесь на глобус.',
   '🧭 Приехали. Дальше пешком не выйдет.',
-  '🪐 За глобусом — только соседние планеты, а туда мы ещё не летали.'
+  '🪐 За глобусом — только соседние планеты, а туда мы ещё не летали.',
+  '🛰️ Спутник докладывает: дальше связи нет.',
+  '🧳 Чемоданы собраны, но билетов дальше глобуса не продают.',
+  '🌌 Здесь края карты в буквальном смысле.',
+  '🐢 На черепахах, которые держат Землю, экскурсии не водят.',
+  '🛸 НЛО пролетало мимо, но мест не предложило.'
 ];
 let jokeTimer = null;
 function showBackJoke() {
@@ -798,8 +803,12 @@ const calendarMonthBtn = document.getElementById('calendarMonthBtn');
 const calendarMonthList = document.getElementById('calendarMonthList');
 const calendarYearBtn = document.getElementById('calendarYearBtn');
 const calendarYearList = document.getElementById('calendarYearList');
-const calendarWeekdaysRow = document.getElementById('calendarWeekdays');
-const calendarGrid = document.getElementById('calendarGrid');
+const calendarMonthTitleA = document.getElementById('calendarMonthTitleA');
+const calendarWeekdaysRowA = document.getElementById('calendarWeekdaysA');
+const calendarGridA = document.getElementById('calendarGridA');
+const calendarMonthTitleB = document.getElementById('calendarMonthTitleB');
+const calendarWeekdaysRowB = document.getElementById('calendarWeekdaysB');
+const calendarGridB = document.getElementById('calendarGridB');
 
 // Custom dark dropdowns replace native <select> — Chrome/Edge on Windows
 // render a native <select>'s open popup list with an OS-controlled white
@@ -943,20 +952,35 @@ function fillDayGrid(container, year, month) {
   return daysInMonth;
 }
 
+function fillWeekdaysRow(container) {
+  container.innerHTML = '';
+  weekdayLetters.forEach(w => {
+    const cell = document.createElement('div');
+    cell.textContent = w;
+    container.appendChild(cell);
+  });
+}
+
+// Второй месяц всегда показывается рядом с выбранным — на телефоне это
+// делает ячейки вдвое меньше без изменения шрифта (просто вдвое меньше
+// ширины на тот же грид), а заодно видно соседний месяц целиком.
 function renderCalendarMonth() {
   const [year, month, day] = selectedDate.split('-').map(Number);
   calendarDayBtn.textContent = String(day);
   calendarMonthBtn.textContent = monthNames[month - 1];
   calendarYearBtn.textContent = String(year);
 
-  calendarWeekdaysRow.innerHTML = '';
-  weekdayLetters.forEach(w => {
-    const cell = document.createElement('div');
-    cell.textContent = w;
-    calendarWeekdaysRow.appendChild(cell);
-  });
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
 
-  const daysInMonth = fillDayGrid(calendarGrid, year, month);
+  calendarMonthTitleA.textContent = `${monthNames[month - 1]} ${year}`;
+  calendarMonthTitleB.textContent = `${monthNames[nextMonth - 1]} ${nextYear}`;
+
+  fillWeekdaysRow(calendarWeekdaysRowA);
+  fillWeekdaysRow(calendarWeekdaysRowB);
+
+  const daysInMonth = fillDayGrid(calendarGridA, year, month);
+  fillDayGrid(calendarGridB, nextYear, nextMonth);
   rebuildDayList(year, month, daysInMonth, day);
   rebuildMonthList(year, month);
   rebuildYearList(year);
@@ -1041,6 +1065,7 @@ function setCalendarCollapsed(collapsed) {
   calendarCollapsed = collapsed;
   calendarBodyEl.classList.toggle('collapsed', collapsed);
   albumsCalendarToggle.innerHTML = collapsed ? CALENDAR_ICON : CHEVRON_UP_ICON;
+  albumsCalendarToggle.title = collapsed ? 'Развернуть календарь' : 'Свернуть календарь';
 }
 
 makeWheelScrollable(albumsModal, albumsModalBody, '#albumsCalendar');
@@ -1060,7 +1085,9 @@ function buildAlbums() {
         if (!words.every(w => haystack.includes(w))) return false;
       }
       return true;
-    });
+    })
+    // Ближе к сегодня — выше; листая вниз, уходишь всё дальше в прошлое.
+    .sort((a, b) => b.trip.startDate.localeCompare(a.trip.startDate));
 
   if (!filtered.length) {
     const empty = document.createElement('div');

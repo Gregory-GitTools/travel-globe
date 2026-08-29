@@ -130,18 +130,51 @@ body {
   z-index: 15;
   max-width: 90vw;
   text-align: center;
-  background: rgba(8, 10, 18, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 14px;
-  padding: 14px 22px;
+  background: rgba(42, 48, 68, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Неровные радиусы вместо ровного прямоугольника — читается как облачко. */
+  border-radius: 55% 45% 48% 52% / 60% 55% 45% 40%;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  padding: 16px 28px;
   font-size: 15px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
+/* Хвостик из двух уменьшающихся кружков — как у мысленного облака,
+   указывает в сторону кнопки "Назад", которая его вызвала. */
+.back-joke::before,
+.back-joke::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+}
+
+.back-joke::before {
+  width: 16px;
+  height: 16px;
+  right: 28px;
+  bottom: -20px;
+}
+
+.back-joke::after {
+  width: 9px;
+  height: 9px;
+  right: 16px;
+  bottom: -32px;
+}
+
 .back-joke.visible {
   opacity: 1;
+  animation: backJokeFloat 3s ease-in-out infinite;
+}
+
+@keyframes backJokeFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
 }
 
 .map-tools {
@@ -525,6 +558,15 @@ body {
   flex-shrink: 0;
 }
 
+/* Стрелки календаря и крестик очистки поиска были едва заметны рядом с
+   крупным крестиком закрытия окна (28px) — увеличиваем сам символ, но не
+   кружок кнопки (остаётся 32x32, как у .icon-button). */
+#calendarPrev,
+#calendarNext,
+#albumsSearchClear {
+  font-size: 24px;
+}
+
 .calendar-nav .map-button {
   flex-shrink: 0;
   padding: 7px 10px;
@@ -611,6 +653,23 @@ body {
 .calendar-dd-item.active {
   background: rgba(66, 133, 244, 0.5);
   font-weight: 600;
+}
+
+.calendar-months {
+  display: flex;
+  gap: 14px;
+}
+
+.calendar-month-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-month-title {
+  font-size: 13px;
+  opacity: 0.6;
+  text-align: center;
+  margin-bottom: 4px;
 }
 
 .calendar-grid {
@@ -1061,27 +1120,29 @@ body {
 
 @media (max-width: 800px) {
   .toolbar {
-    gap: 8px;
+    gap: 4px;
     max-width: calc(100vw - 32px);
-    flex-direction: column;
-    align-items: flex-end;
   }
 
   .toolbar-left {
     flex-direction: row;
   }
 
-  /* Шестерёнка остаётся в верхней строке рядом с окном поиска, а Альбомы
-     и Глобус переносятся ниже — на телефоне они иначе перекрывают друг
-     друга. */
-  #toolbarSettings {
-    order: -1;
-    margin-right: -6px;
+  .toolbar-button {
+    font-size: 14px;
+    padding: 8px 10px;
   }
 
-  .toolbar-button {
-    font-size: 16px;
-    padding: 10px 14px;
+  .back-joke {
+    /* Поднимаем над нижним рядом кнопок "Обновить"/"Назад" — иначе окно
+       шутки перекрывалось ими на телефоне. */
+    bottom: 76px;
+  }
+
+  /* Верхний ряд (Альбомы/Карта/Настройки) теперь в одну строку и на
+     телефоне — сдвигаем строку поиска карты ниже, чтобы не перекрывались. */
+  .map-search-bar {
+    top: 60px;
   }
 
   .modal-content {
@@ -1098,5 +1159,29 @@ body {
   .album-notes,
   #modalNotes {
     font-size: 13px;
+  }
+}
+
+/* На узких телефонах (~360px) двум месяцам рядом и трём выпадающим
+   спискам даты не хватало места — подужимаем отступы. */
+@media (max-width: 400px) {
+  .modal-content {
+    padding: 16px;
+  }
+
+  .calendar-months {
+    gap: 6px;
+  }
+
+  .calendar-nav {
+    gap: 3px;
+  }
+
+  #calendarDayDD {
+    flex: 0.45;
+  }
+
+  .calendar-select {
+    padding: 6px 2px;
   }
 }
