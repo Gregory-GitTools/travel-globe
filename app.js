@@ -663,17 +663,38 @@ const editModeStatusEl = document.getElementById('editModeBanner');
 let editModeActive = false;
 const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-async function unlockDevSettings() {
-  const pass = prompt('Пароль разработчика:');
-  if (pass == null) return;
-  const hash = await sha256Hex(pass);
+const devPasswordModal = document.getElementById('devPasswordModal');
+const devPasswordInput = document.getElementById('devPasswordInput');
+const devPasswordClose = document.getElementById('devPasswordClose');
+const devPasswordSubmit = document.getElementById('devPasswordSubmit');
+
+function unlockDevSettings() {
+  devPasswordInput.value = '';
+  devPasswordModal.classList.remove('hidden');
+  devPasswordInput.focus();
+}
+
+async function submitDevPassword() {
+  const hash = await sha256Hex(devPasswordInput.value);
   if (hash === DEV_PASSWORD_HASH) {
+    devPasswordModal.classList.add('hidden');
     devSettingsEl.classList.remove('hidden');
     if (isDesktop) editModeToggleEl.classList.remove('hidden');
   } else {
     alert('Неверный пароль');
+    devPasswordInput.value = '';
+    devPasswordInput.focus();
   }
 }
+
+devPasswordSubmit.onclick = submitDevPassword;
+devPasswordInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitDevPassword();
+});
+devPasswordClose.onclick = () => devPasswordModal.classList.add('hidden');
+devPasswordModal.onclick = e => {
+  if (e.target === devPasswordModal) devPasswordModal.classList.add('hidden');
+};
 
 const DEV_UNLOCK_CLICKS = 5;
 const DEV_UNLOCK_WINDOW_MS = 600;
@@ -705,7 +726,6 @@ editModeToggleEl.onclick = () => {
   editModeActive = !editModeActive;
   editModeStatusEl.classList.toggle('hidden', !editModeActive);
   settingsEditBannerEl.classList.toggle('hidden', !editModeActive);
-  editModeToggleEl.classList.toggle('active', editModeActive);
   updateEditUI();
 };
 

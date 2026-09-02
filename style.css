@@ -289,6 +289,7 @@ body {
 }
 
 .edit-field input[type="text"],
+.edit-field input[type="password"],
 .edit-field input[type="number"],
 .edit-field textarea {
   background: rgba(255, 255, 255, 0.08);
@@ -307,13 +308,6 @@ body {
 
 .edit-geo-row input {
   flex: 1;
-}
-
-.edit-mode-banner-inline {
-  position: static;
-  transform: none;
-  margin: 0 0 14px;
-  width: fit-content;
 }
 
 .edit-mode-radio-row {
@@ -458,6 +452,7 @@ body {
   opacity: 0.8;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -477,8 +472,13 @@ body {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.edit-mode-toggle.active {
-  background: #1f4d2e;
+.dev-password-content {
+  max-width: 320px;
+  text-align: center;
+}
+
+.dev-password-content .edit-field {
+  margin-bottom: 14px;
 }
 
 .edit-mode-banner {
@@ -495,6 +495,13 @@ body {
   font-weight: 600;
   z-index: 40;
   pointer-events: none;
+}
+
+.edit-mode-banner-inline {
+  position: static;
+  transform: none;
+  margin: 0 auto 14px;
+  width: fit-content;
 }
 
 /* Двойной клик по логотипу запрашивает пароль скрытых настроек
