@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-<link rel="stylesheet" href="style.css?v=20260830d">
+<link rel="stylesheet" href="style.css?v=20260902a">
 <link rel="manifest" href="manifest.json?v=20260829d">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#05070d">
@@ -63,6 +63,7 @@
 
     <div id="devSettings" class="dev-settings hidden">
       <hr>
+      <p id="settingsEditBanner" class="edit-mode-banner edit-mode-banner-inline hidden">✏️ Режим редактирования</p>
       <h3>Настройки разработчика <button id="editModeToggle" class="edit-mode-toggle hidden" title="Режим редактирования" aria-label="Режим редактирования">✏️</button></h3>
     </div>
 
@@ -235,39 +236,50 @@
 </div>
 
 <div id="editAlbumModal" class="modal hidden">
-  <div class="modal-content">
+  <div class="modal-content modal-content-split wide">
     <button id="editAlbumClose" class="modal-close">&times;</button>
-    <h2>Редактирование альбома</h2>
+    <div class="modal-header">
+      <p class="edit-mode-banner edit-mode-banner-inline">✏️ Режим редактирования</p>
 
-    <label class="edit-field">
-      <span>Название альбома</span>
-      <input type="text" id="editAlbumTitle">
-    </label>
+      <label class="edit-field">
+        <span>Название альбома</span>
+        <input type="text" id="editAlbumTitle">
+      </label>
 
-    <label class="edit-field">
-      <span>Комментарий</span>
-      <textarea id="editAlbumNotes" rows="4"></textarea>
-    </label>
+      <label class="edit-field">
+        <span>Комментарий</span>
+        <textarea id="editAlbumNotes" rows="3"></textarea>
+      </label>
 
-    <div class="edit-field">
-      <span>Титульное фото</span>
-      <div id="editAlbumCoverGrid" class="edit-cover-grid"></div>
-    </div>
+      <div class="edit-field">
+        <span>Геолокация</span>
+        <div class="edit-geo-row">
+          <input type="number" step="any" id="editAlbumLat" placeholder="Широта">
+          <input type="number" step="any" id="editAlbumLng" placeholder="Долгота">
+        </div>
+      </div>
 
-    <div class="edit-field">
-      <span>Порядок фото</span>
-      <div id="editAlbumOrderList" class="edit-order-list"></div>
-    </div>
-
-    <div class="edit-field">
-      <span>Геолокация</span>
-      <div class="edit-geo-row">
-        <input type="number" step="any" id="editAlbumLat" placeholder="Широта">
-        <input type="number" step="any" id="editAlbumLng" placeholder="Долгота">
+      <div class="edit-field">
+        <span>Что делает клик по фото</span>
+        <div class="edit-mode-radio-row">
+          <label class="edit-mode-radio"><input type="radio" name="editClickMode" value="order" checked><span>🔢 Порядок фото</span></label>
+          <label class="edit-mode-radio"><input type="radio" name="editClickMode" value="remove"><span>🚫 Убрать из альбома</span></label>
+          <label class="edit-mode-radio"><input type="radio" name="editClickMode" value="delete"><span>🗑 Стереть фото</span></label>
+        </div>
       </div>
     </div>
 
-    <button id="editAlbumCopy" class="map-button edit-copy-btn">📋 Скопировать запрос</button>
+    <div class="modal-body">
+      <div id="editAlbumPhotoGrid" class="edit-photo-grid"></div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="edit-request-row">
+        <span>Запрос для ИИ</span>
+        <button id="editAlbumCopy" class="map-button edit-copy-btn">📋 Скопировать запрос</button>
+      </div>
+      <textarea id="editAlbumRequestPreview" class="edit-request-preview" readonly rows="6"></textarea>
+    </div>
   </div>
 </div>
 
@@ -290,6 +302,6 @@
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="data.js?v=20260829a"></script>
-<script src="app.js?v=20260829d"></script>
+<script src="app.js?v=20260902a"></script>
 </body>
 </html>

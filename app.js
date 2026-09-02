@@ -695,6 +695,7 @@ aboutLogoEl.addEventListener('click', () => {
 });
 
 const modalEditBtn = document.getElementById('modalEditBtn');
+const settingsEditBannerEl = document.getElementById('settingsEditBanner');
 
 function updateEditUI() {
   modalEditBtn.classList.toggle('hidden', !(editModeActive && isDesktop));
@@ -703,6 +704,7 @@ function updateEditUI() {
 editModeToggleEl.onclick = () => {
   editModeActive = !editModeActive;
   editModeStatusEl.classList.toggle('hidden', !editModeActive);
+  settingsEditBannerEl.classList.toggle('hidden', !editModeActive);
   editModeToggleEl.classList.toggle('active', editModeActive);
   updateEditUI();
 };
@@ -1231,82 +1233,189 @@ modal.onclick = e => {
 // вручную через data.js). Ничего здесь не сохраняется и не отправляется
 // само по себе.
 const editAlbumModal = document.getElementById('editAlbumModal');
+const editAlbumBody = editAlbumModal.querySelector('.modal-body');
 const editAlbumClose = document.getElementById('editAlbumClose');
 const editAlbumTitle = document.getElementById('editAlbumTitle');
 const editAlbumNotes = document.getElementById('editAlbumNotes');
-const editAlbumCoverGrid = document.getElementById('editAlbumCoverGrid');
-const editAlbumOrderList = document.getElementById('editAlbumOrderList');
+const editAlbumPhotoGrid = document.getElementById('editAlbumPhotoGrid');
 const editAlbumLat = document.getElementById('editAlbumLat');
 const editAlbumLng = document.getElementById('editAlbumLng');
 const editAlbumCopy = document.getElementById('editAlbumCopy');
+const editAlbumRequestPreview = document.getElementById('editAlbumRequestPreview');
+const editClickModeRadios = document.querySelectorAll('input[name="editClickMode"]');
+
+makeWheelScrollable(editAlbumModal, editAlbumBody);
 
 let editDraftPhotos = [];
-let editDraftCover = '';
+let editClickMode = 'order';
 
-function renderEditCoverGrid() {
-  editAlbumCoverGrid.innerHTML = '';
+function fileName(url) {
+  return url.split('/').pop();
+}
+
+function nextOrderNumber() {
+  const used = editDraftPhotos.filter(p => p.order != null).map(p => p.order);
+  return used.length ? Math.max(...used) + 1 : 1;
+}
+
+// Клик по уже пронумерованному фото стирает номер и сдвигает все номера
+// после него на 1 вниз — последовательность 1..N всегда остаётся без дыр.
+function clearOrderAndRenumber(removedOrder) {
+  editDraftPhotos.forEach(p => {
+    if (p.order != null && p.order > removedOrder) p.order -= 1;
+  });
+}
+
+function onEditPhotoClick(photo) {
+  if (editClickMode === 'order') {
+    if (photo.order != null) {
+      const removed = photo.order;
+      photo.order = null;
+      clearOrderAndRenumber(removed);
+    } else {
+      photo.order = nextOrderNumber();
+    }
+  } else if (editClickMode === 'remove') {
+    photo.removed = !photo.removed;
+    if (photo.removed && photo.order != null) {
+      const removed = photo.order;
+      photo.order = null;
+      clearOrderAndRenumber(removed);
+    }
+  } else if (editClickMode === 'delete') {
+    photo.deleted = !photo.deleted;
+    if (photo.deleted && photo.order != null) {
+      const removed = photo.order;
+      photo.order = null;
+      clearOrderAndRenumber(removed);
+    }
+  }
+  renderEditPhotoGrid();
+  updateEditRequestPreview();
+}
+
+function renderEditPhotoGrid() {
+  editAlbumPhotoGrid.innerHTML = '';
   editDraftPhotos.forEach(photo => {
-    const thumb = document.createElement('img');
-    thumb.src = photo.url;
-    thumb.loading = 'lazy';
-    thumb.className = 'edit-cover-thumb' + (photo.url === editDraftCover ? ' selected' : '');
-    thumb.onclick = () => {
-      editDraftCover = photo.url;
-      renderEditCoverGrid();
+    const card = document.createElement('div');
+    card.className = 'edit-photo-card';
+    if (photo.removed) card.classList.add('is-removed');
+    if (photo.deleted) card.classList.add('is-deleted');
+
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'edit-photo-thumb-wrap';
+    thumbWrap.onclick = () => onEditPhotoClick(photo);
+
+    const img = document.createElement('img');
+    img.src = photo.url;
+    img.loading = 'lazy';
+    img.className = 'edit-photo-thumb';
+    thumbWrap.appendChild(img);
+
+    if (photo.order != null) {
+      const badge = document.createElement('span');
+      badge.className = 'edit-photo-badge' + (photo.order === 1 ? ' is-cover' : '');
+      badge.textContent = String(photo.order);
+      thumbWrap.appendChild(badge);
+    } else if (photo.deleted) {
+      const badge = document.createElement('span');
+      badge.className = 'edit-photo-badge is-deleted-badge';
+      badge.textContent = '🗑';
+      thumbWrap.appendChild(badge);
+    } else if (photo.removed) {
+      const badge = document.createElement('span');
+      badge.className = 'edit-photo-badge is-removed-badge';
+      badge.textContent = '🚫';
+      thumbWrap.appendChild(badge);
+    }
+
+    if (photo.url === currentTrip.cover && photo.order == null) {
+      const star = document.createElement('span');
+      star.className = 'edit-photo-current-cover';
+      star.title = 'Текущее титульное фото';
+      star.textContent = '★';
+      thumbWrap.appendChild(star);
+    }
+
+    card.appendChild(thumbWrap);
+
+    const caption = document.createElement('textarea');
+    caption.className = 'edit-photo-caption';
+    caption.rows = 2;
+    caption.placeholder = 'Комментарий к фото';
+    caption.value = photo.caption;
+    caption.oninput = () => {
+      photo.caption = caption.value;
+      updateEditRequestPreview();
     };
-    editAlbumCoverGrid.appendChild(thumb);
+    card.appendChild(caption);
+
+    editAlbumPhotoGrid.appendChild(card);
   });
 }
 
-function renderEditOrderList() {
-  editAlbumOrderList.innerHTML = '';
-  editDraftPhotos.forEach((photo, index) => {
-    const row = document.createElement('div');
-    row.className = 'edit-order-row';
+function buildEditRequestText() {
+  const lines = [
+    `Запрос на изменение альбома (текущее название в data.js: "${currentTrip.title}")`,
+    ``,
+    `Название: ${editAlbumTitle.value}`,
+    `Комментарий: ${editAlbumNotes.value}`,
+    `Геолокация: ${editAlbumLat.value}, ${editAlbumLng.value}`,
+  ];
 
-    const thumb = document.createElement('img');
-    thumb.src = photo.url;
-    thumb.loading = 'lazy';
-    row.appendChild(thumb);
+  const numbered = editDraftPhotos.filter(p => p.order != null).sort((a, b) => a.order - b.order);
+  if (numbered.length) {
+    lines.push('', 'Новый порядок фото (1 — титульное):');
+    numbered.forEach(p => lines.push(`${p.order}. ${fileName(p.url)}`));
+  }
 
-    const name = document.createElement('span');
-    name.className = 'edit-order-name';
-    name.textContent = photo.url.split('/').pop();
-    row.appendChild(name);
+  const captioned = editDraftPhotos.filter(p => p.caption.trim());
+  if (captioned.length) {
+    lines.push('', 'Комментарии к фото:');
+    captioned.forEach(p => lines.push(`${fileName(p.url)}: ${p.caption.trim()}`));
+  }
 
-    const upBtn = document.createElement('button');
-    upBtn.className = 'icon-button';
-    upBtn.textContent = '▲';
-    upBtn.disabled = index === 0;
-    upBtn.onclick = () => {
-      [editDraftPhotos[index - 1], editDraftPhotos[index]] = [editDraftPhotos[index], editDraftPhotos[index - 1]];
-      renderEditOrderList();
-    };
-    row.appendChild(upBtn);
+  const removed = editDraftPhotos.filter(p => p.removed);
+  if (removed.length) {
+    lines.push('', `Убрать из альбома (файлы оставить, скрыть из показа): ${removed.map(p => fileName(p.url)).join(', ')}`);
+  }
 
-    const downBtn = document.createElement('button');
-    downBtn.className = 'icon-button';
-    downBtn.textContent = '▼';
-    downBtn.disabled = index === editDraftPhotos.length - 1;
-    downBtn.onclick = () => {
-      [editDraftPhotos[index + 1], editDraftPhotos[index]] = [editDraftPhotos[index], editDraftPhotos[index + 1]];
-      renderEditOrderList();
-    };
-    row.appendChild(downBtn);
+  const deleted = editDraftPhotos.filter(p => p.deleted);
+  if (deleted.length) {
+    lines.push('', `Удалить полностью (стереть файлы): ${deleted.map(p => fileName(p.url)).join(', ')}`);
+  }
 
-    editAlbumOrderList.appendChild(row);
-  });
+  return lines.join('\n');
 }
+
+function updateEditRequestPreview() {
+  editAlbumRequestPreview.value = buildEditRequestText();
+}
+
+[editAlbumTitle, editAlbumNotes, editAlbumLat, editAlbumLng].forEach(el => {
+  el.oninput = updateEditRequestPreview;
+});
+
+editClickModeRadios.forEach(radio => {
+  radio.onchange = () => { if (radio.checked) editClickMode = radio.value; };
+});
 
 modalEditBtn.onclick = () => {
-  editDraftPhotos = currentTrip.photos.slice();
-  editDraftCover = currentTrip.cover;
+  editDraftPhotos = currentTrip.photos.map(p => ({
+    url: p.url,
+    caption: p.caption || '',
+    order: null,
+    removed: false,
+    deleted: false,
+  }));
   editAlbumTitle.value = currentTrip.title;
   editAlbumNotes.value = currentTrip.notes;
   editAlbumLat.value = currentTrip.lat;
   editAlbumLng.value = currentTrip.lng;
-  renderEditCoverGrid();
-  renderEditOrderList();
+  editClickMode = 'order';
+  editAlbumModal.querySelector('input[name="editClickMode"][value="order"]').checked = true;
+  renderEditPhotoGrid();
+  updateEditRequestPreview();
   editAlbumModal.classList.remove('hidden');
 };
 
@@ -1320,17 +1429,7 @@ editAlbumModal.onclick = e => {
 };
 
 editAlbumCopy.onclick = () => {
-  const orderList = editDraftPhotos.map(p => p.url.split('/').pop()).join(', ');
-  const request = [
-    `Запрос на изменение альбома (текущее название в data.js: "${currentTrip.title}")`,
-    ``,
-    `Название: ${editAlbumTitle.value}`,
-    `Комментарий: ${editAlbumNotes.value}`,
-    `Титульное фото: ${editDraftCover.split('/').pop()}`,
-    `Порядок фото: ${orderList}`,
-    `Геолокация: ${editAlbumLat.value}, ${editAlbumLng.value}`,
-  ].join('\n');
-  navigator.clipboard.writeText(request).then(() => {
+  navigator.clipboard.writeText(buildEditRequestText()).then(() => {
     editAlbumCopy.textContent = '✅ Скопировано';
     setTimeout(() => { editAlbumCopy.textContent = '📋 Скопировать запрос'; }, 1500);
   });
